@@ -107,6 +107,11 @@ body {
   will-change: transform;
 }
 
+.card.training {
+  background: linear-gradient(135deg, rgba(12, 81, 72, 0.6), rgba(17, 34, 63, 0.7));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .card::before {
   content: '';
   position: absolute;
@@ -120,6 +125,22 @@ body {
   z-index: 1;
   font-size: 18px;
   line-height: 1.5;
+}
+
+.pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  margin-bottom: 8px;
+}
+
+.direction {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 12px;
 }
 
 .card[data-state='behind'] {
@@ -153,6 +174,17 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
   padding: 8px 4px 6px;
+}
+
+.hint {
+  text-align: center;
+  color: var(--muted);
+  margin: 0 0 6px;
+  min-height: 22px;
+}
+
+.hint.hidden {
+  visibility: hidden;
 }
 
 .action {
