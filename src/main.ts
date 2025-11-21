@@ -150,7 +150,7 @@ const helpBtn = document.getElementById('helpBtn') as HTMLButtonElement;
 const restartBtn = document.getElementById('restart') as HTMLButtonElement;
 
 function formatProgress() {
-  progressText.textContent = `${Math.min(state.index + 1, cards.length)} / ${cards.length}`;
+  progressText.textContent = `${Math.min(state.index + 1, cards.length)}/${cards.length}`;
   const percent = (state.index / cards.length) * 100;
   progressFill.style.width = `${percent}%`;
 }
