@@ -26,6 +26,42 @@ const archetypeDescriptions: Record<string, string> = {
   Шут: 'Твой архетип — Шут. Ты умеешь разряжать напряжение и смотреть на ситуацию с юмором. Помогаешь людям не застревать в серьёзности.'
 };
 
+const archetypeIcons: Record<string, string> = {
+  Дитя: '🧸',
+  'Славный малый': '🤝',
+  Воин: '⚔️',
+  Опекун: '🛡️',
+  Искатель: '🧭',
+  Бунтарь: '🔥',
+  Эстет: '🎨',
+  Творец: '💡',
+  Правитель: '👑',
+  Маг: '✨',
+  Мудрец: '📚',
+  Шут: '🎭'
+};
+
+const tutorialSlides = [
+  {
+    title: 'Выбери то, что откликается',
+    description: 'Смахивай карточки вправо, если согласен, и влево, если не про тебя. Так мы подберём точный архетип.',
+    accent: 'Готово за пару минут',
+    icon: '✨'
+  },
+  {
+    title: 'Карточки сразу обновляются',
+    description: 'Каждый ответ влияет на следующую карточку. Слушай интуицию — так результат будет точнее.',
+    accent: '16 историй про тебя',
+    icon: '🎯'
+  },
+  {
+    title: 'Получишь понятный портрет',
+    description: 'В конце покажем твой главный архетип и топ-5 качеств, которые усиливают твой стиль.',
+    accent: 'Сохранить и поделиться',
+    icon: '📊'
+  }
+];
+
 const cards: ArchetypeCard[] = [
   {
     id: 1,
@@ -139,6 +175,8 @@ const progressText = document.getElementById('progress') as HTMLDivElement;
 const progressFill = document.getElementById('progressFill') as HTMLDivElement;
 const resultsOverlay = document.getElementById('resultsOverlay') as HTMLDivElement;
 const tutorialOverlay = document.getElementById('tutorial') as HTMLDivElement;
+const tutorialSteps = document.getElementById('tutorialSteps') as HTMLDivElement;
+const tutorialDots = document.getElementById('tutorialDots') as HTMLDivElement;
 const mainResult = document.getElementById('mainResult') as HTMLParagraphElement;
 const mainDescription = document.getElementById('mainDescription') as HTMLParagraphElement;
 const profileList = document.getElementById('profileList') as HTMLDivElement;
@@ -146,6 +184,8 @@ const profileList = document.getElementById('profileList') as HTMLDivElement;
 const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
 const dislikeBtn = document.getElementById('dislikeBtn') as HTMLButtonElement;
 const startTestBtn = document.getElementById('startTest') as HTMLButtonElement;
+const nextTutorialBtn = document.getElementById('nextTutorial') as HTMLButtonElement;
+const skipTutorialBtn = document.getElementById('skipTutorial') as HTMLButtonElement;
 const helpBtn = document.getElementById('helpBtn') as HTMLButtonElement;
 const restartBtn = document.getElementById('restart') as HTMLButtonElement;
 
@@ -161,8 +201,10 @@ function resetState() {
     state.scores[a] = 0;
     state.exposure[a] = 0;
   });
+  tutorialIndex = 0;
   resultsOverlay.classList.add('hidden');
   tutorialOverlay.classList.remove('hidden');
+  renderTutorial();
   renderStack();
   formatProgress();
 }
@@ -177,13 +219,44 @@ function renderStack() {
     el.dataset.id = card.id.toString();
     el.style.zIndex = (cards.length - state.index - idx).toString();
     el.innerHTML = `
-      <div class="indicator like">❤</div>
-      <div class="indicator dislike">✕</div>
-      <div class="card-content">${card.description}</div>
+      <div class="card-glow"></div>
+      <div class="indicator like" aria-hidden="true">
+        <span class="pill-icon">👍</span>
+        <span>Откликается</span>
+      </div>
+      <div class="indicator dislike" aria-hidden="true">
+        <span class="pill-icon">👎</span>
+        <span>Не моё</span>
+      </div>
+      <div class="card-content">
+        <div class="card-meta">
+          <span class="pill pill-dark">История ${card.id.toString().padStart(2, '0')}</span>
+          <span class="pill pill-soft">Проверяем отклик</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">${card.title}</h3>
+          <p class="card-description">${card.description}</p>
+          <div class="composition">${renderComposition(card.composition)}</div>
+        </div>
+      </div>
     `;
     attachDrag(el, card);
     stackEl.appendChild(el);
   });
+}
+
+function renderComposition(comp: Record<string, number>) {
+  return Object.entries(comp)
+    .map(
+      ([name, weight]) => `
+        <span class="pill pill-ghost">
+          <span class="pill-icon">${archetypeIcons[name] ?? '✦'}</span>
+          ${name}
+          <span class="pill-value">${Math.round(weight * 100)}%</span>
+        </span>
+      `
+    )
+    .join('');
 }
 
 function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
@@ -288,7 +361,10 @@ function showResults() {
     const row = document.createElement('div');
     row.className = 'profile-row';
     row.innerHTML = `
-      <span class="profile-label">${item.name}</span>
+      <span class="profile-label">
+        <span class="pill-icon">${archetypeIcons[item.name] ?? '✦'}</span>
+        ${item.name}
+      </span>
       <span class="profile-value">${item.percent.toFixed(1)}%</span>
     `;
     profileList.appendChild(row);
@@ -315,6 +391,38 @@ async function sendResults(profile: ArchetypeResult[]) {
   console.log('Результат готов к отправке', profile.slice(0, 3));
 }
 
+let tutorialIndex = 0;
+
+function renderTutorial() {
+  tutorialSteps.innerHTML = '';
+  tutorialDots.innerHTML = '';
+
+  const slide = tutorialSlides[tutorialIndex];
+  const card = document.createElement('div');
+  card.className = 'tutorial-card';
+  card.innerHTML = `
+    <div class="tutorial-icon">${slide.icon}</div>
+    <p class="tutorial-accent">${slide.accent}</p>
+    <h3>${slide.title}</h3>
+    <p>${slide.description}</p>
+  `;
+  tutorialSteps.appendChild(card);
+
+  tutorialSlides.forEach((_, idx) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (idx === tutorialIndex ? ' active' : '');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Шаг ${idx + 1}`);
+    dot.addEventListener('click', () => {
+      tutorialIndex = idx;
+      renderTutorial();
+    });
+    tutorialDots.appendChild(dot);
+  });
+
+  nextTutorialBtn.textContent = tutorialIndex === tutorialSlides.length - 1 ? 'Начать' : 'Далее';
+}
+
 function bindControls() {
   likeBtn.addEventListener('click', () => {
     const card = cards[state.index];
@@ -330,7 +438,18 @@ function bindControls() {
     swipeAway(topCard, card, -1);
   });
 
-  startTestBtn.addEventListener('click', () => tutorialOverlay.classList.add('hidden'));
+  startTestBtn.addEventListener('click', () => {
+    tutorialOverlay.classList.add('hidden');
+  });
+  nextTutorialBtn.addEventListener('click', () => {
+    if (tutorialIndex < tutorialSlides.length - 1) {
+      tutorialIndex += 1;
+      renderTutorial();
+    } else {
+      tutorialOverlay.classList.add('hidden');
+    }
+  });
+  skipTutorialBtn.addEventListener('click', () => tutorialOverlay.classList.add('hidden'));
   helpBtn.addEventListener('click', () => tutorialOverlay.classList.toggle('hidden'));
   restartBtn.addEventListener('click', () => resetState());
 }
@@ -338,3 +457,4 @@ function bindControls() {
 bindControls();
 renderStack();
 formatProgress();
+renderTutorial();
