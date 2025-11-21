@@ -5,6 +5,12 @@ interface ArchetypeCard {
   composition: Record<string, number>;
 }
 
+interface TutorialCard {
+  id: string;
+  description: string;
+  direction: 1 | -1;
+}
+
 interface ArchetypeResult {
   name: string;
   percent: number;
@@ -25,6 +31,19 @@ const archetypeDescriptions: Record<string, string> = {
   Мудрец: 'Твой архетип — Мудрец. Тебе важно понимать причины и смыслы, разбираться в сложном и объяснять просто. Ты принимаешь взвешенные решения.',
   Шут: 'Твой архетип — Шут. Ты умеешь разряжать напряжение и смотреть на ситуацию с юмором. Помогаешь людям не застревать в серьёзности.'
 };
+
+const tutorialCards: TutorialCard[] = [
+  {
+    id: 'tutorial-left',
+    description: 'Смахните влево, если утверждение вам не подходит.',
+    direction: -1
+  },
+  {
+    id: 'tutorial-right',
+    description: 'Смахните вправо, если утверждение откликается вам.',
+    direction: 1
+  }
+];
 
 const cards: ArchetypeCard[] = [
   {
@@ -128,6 +147,8 @@ const cards: ArchetypeCard[] = [
 const archetypes = Object.keys(archetypeDescriptions);
 
 const state = {
+  mode: 'intro' as 'intro' | 'tutorial' | 'test',
+  tutorialIndex: 0,
   index: 0,
   scores: Object.fromEntries(archetypes.map((a) => [a, 0])),
   exposure: Object.fromEntries(archetypes.map((a) => [a, 0])),
@@ -139,6 +160,7 @@ const progressText = document.getElementById('progress') as HTMLDivElement;
 const progressFill = document.getElementById('progressFill') as HTMLDivElement;
 const resultsOverlay = document.getElementById('resultsOverlay') as HTMLDivElement;
 const tutorialOverlay = document.getElementById('tutorial') as HTMLDivElement;
+const tutorialHint = document.getElementById('tutorialHint') as HTMLParagraphElement;
 const mainResult = document.getElementById('mainResult') as HTMLParagraphElement;
 const mainDescription = document.getElementById('mainDescription') as HTMLParagraphElement;
 const profileList = document.getElementById('profileList') as HTMLDivElement;
@@ -150,17 +172,26 @@ const helpBtn = document.getElementById('helpBtn') as HTMLButtonElement;
 const restartBtn = document.getElementById('restart') as HTMLButtonElement;
 
 function formatProgress() {
+  if (state.mode !== 'test') {
+    progressText.textContent = 'Обучение';
+    progressFill.style.width = '0%';
+    return;
+  }
+
   progressText.textContent = `${Math.min(state.index + 1, cards.length)} / ${cards.length}`;
   const percent = (state.index / cards.length) * 100;
   progressFill.style.width = `${percent}%`;
 }
 
 function resetState() {
+  state.mode = 'intro';
+  state.tutorialIndex = 0;
   state.index = 0;
   archetypes.forEach((a) => {
     state.scores[a] = 0;
     state.exposure[a] = 0;
   });
+  tutorialHint.classList.add('hidden');
   resultsOverlay.classList.add('hidden');
   tutorialOverlay.classList.remove('hidden');
   renderStack();
@@ -169,19 +200,36 @@ function resetState() {
 
 function renderStack() {
   stackEl.innerHTML = '';
-  const activeCards = cards.slice(state.index, state.index + 2);
+  const activeCards =
+    state.mode === 'tutorial'
+      ? tutorialCards.slice(state.tutorialIndex, state.tutorialIndex + 2)
+      : cards.slice(state.index, state.index + 2);
+
   activeCards.forEach((card, idx) => {
     const el = document.createElement('div');
     el.className = 'card';
+    if (state.mode === 'tutorial') {
+      el.classList.add('training');
+    }
     el.dataset.state = idx === 0 ? 'front' : 'behind';
-    el.dataset.id = card.id.toString();
-    el.style.zIndex = (cards.length - state.index - idx).toString();
+    el.dataset.id = (card as ArchetypeCard).id?.toString() ?? (card as TutorialCard).id;
+    const stackSize = state.mode === 'tutorial' ? tutorialCards.length : cards.length;
+    const stackIndex = state.mode === 'tutorial' ? state.tutorialIndex : state.index;
+    el.style.zIndex = (stackSize - stackIndex - idx).toString();
+    const isTraining = state.mode === 'tutorial';
+    const directionText = isTraining
+      ? `Смахните ${((card as TutorialCard).direction ?? 1) > 0 ? 'вправо' : 'влево'}, чтобы продолжить`
+      : '';
     el.innerHTML = `
       <div class="indicator like">❤</div>
       <div class="indicator dislike">✕</div>
-      <div class="card-content">${card.description}</div>
+      <div class="card-content">
+        ${isTraining ? '<span class="pill">Обучение</span>' : ''}
+        <p>${card.description}</p>
+        ${isTraining ? `<p class="direction">${directionText}</p>` : ''}
+      </div>
     `;
-    attachDrag(el, card);
+    attachDrag(el, card as ArchetypeCard);
     stackEl.appendChild(el);
   });
 }
@@ -231,13 +279,25 @@ function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
 
 function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -1) {
   if (state.locked) return;
+
+  const voteAccepted = handleVote(card, direction > 0);
+  if (!voteAccepted) {
+    cardEl.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+    cardEl.style.transform = '';
+    cardEl.style.opacity = '1';
+    cardEl.classList.remove('like', 'dislike');
+    setTimeout(() => {
+      cardEl.style.transition = '';
+    }, 220);
+    return;
+  }
+
   state.locked = true;
   const offset = direction * 650;
   cardEl.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
   cardEl.style.transform = `translate(${offset}px, -40px) rotate(${direction * 15}deg)`;
   cardEl.style.opacity = '0';
   cardEl.classList.add(direction > 0 ? 'like' : 'dislike');
-  handleVote(card, direction > 0);
   setTimeout(() => {
     state.locked = false;
     renderStack();
@@ -245,6 +305,24 @@ function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -
 }
 
 function handleVote(card: ArchetypeCard, liked: boolean) {
+  if (state.mode === 'tutorial') {
+    const trainingCard = tutorialCards[state.tutorialIndex];
+    const isCorrectDirection = liked === (trainingCard?.direction ?? 1) > 0;
+    if (!isCorrectDirection) {
+      tutorialHint.textContent = `Попробуйте смахнуть ${trainingCard.direction > 0 ? 'вправо' : 'влево'}.`;
+      tutorialHint.classList.remove('hidden');
+      return false;
+    }
+
+    tutorialHint.classList.add('hidden');
+    state.tutorialIndex += 1;
+    if (state.tutorialIndex >= tutorialCards.length) {
+      state.mode = 'test';
+      formatProgress();
+    }
+    return true;
+  }
+
   const factor = liked ? 1 : -0.7;
   Object.entries(card.composition).forEach(([name, weight]) => {
     state.exposure[name] += weight;
@@ -256,6 +334,8 @@ function handleVote(card: ArchetypeCard, liked: boolean) {
   if (state.index >= cards.length) {
     showResults();
   }
+
+  return true;
 }
 
 function computeProfile(): ArchetypeResult[] {
@@ -317,20 +397,26 @@ async function sendResults(profile: ArchetypeResult[]) {
 
 function bindControls() {
   likeBtn.addEventListener('click', () => {
-    const card = cards[state.index];
+    const card = state.mode === 'tutorial' ? (tutorialCards[state.tutorialIndex] as unknown as ArchetypeCard) : cards[state.index];
     if (!card || state.locked) return;
     const topCard = stackEl.querySelector('.card[data-state="front"]') as HTMLDivElement;
     swipeAway(topCard, card, 1);
   });
 
   dislikeBtn.addEventListener('click', () => {
-    const card = cards[state.index];
+    const card = state.mode === 'tutorial' ? (tutorialCards[state.tutorialIndex] as unknown as ArchetypeCard) : cards[state.index];
     if (!card || state.locked) return;
     const topCard = stackEl.querySelector('.card[data-state="front"]') as HTMLDivElement;
     swipeAway(topCard, card, -1);
   });
 
-  startTestBtn.addEventListener('click', () => tutorialOverlay.classList.add('hidden'));
+  startTestBtn.addEventListener('click', () => {
+    state.mode = 'tutorial';
+    tutorialOverlay.classList.add('hidden');
+    renderStack();
+    formatProgress();
+  });
+
   helpBtn.addEventListener('click', () => tutorialOverlay.classList.toggle('hidden'));
   restartBtn.addEventListener('click', () => resetState());
 }
