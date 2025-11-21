@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тест архетипов</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="top-bar">
+      <div class="progress-text" id="progress">1 / 16</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <button class="help" id="helpBtn" aria-label="Как отвечать">?</button>
+    </header>
+
+    <main class="content">
+      <div class="card-area">
+        <div id="cardStack" class="card-stack"></div>
+      </div>
+      <div class="controls">
+        <button class="action dislike" id="dislikeBtn" aria-label="Не нравится">
+          <span>✕</span>
+        </button>
+        <button class="action like" id="likeBtn" aria-label="Нравится">
+          <span>❤</span>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <div class="overlay" id="tutorial">
+    <div class="overlay-content">
+      <h2>Как проходить тест</h2>
+      <p>Смахните карточку вправо, если откликается, и влево, если нет. Можно нажимать кнопки снизу или пользоваться мышью.</p>
+      <button id="startTest" class="primary">Понятно</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="resultsOverlay">
+    <div class="overlay-content results">
+      <h2>Тест завершен</h2>
+      <p id="mainResult" class="result-title"></p>
+      <p id="mainDescription" class="result-description"></p>
+      <div class="profile" id="profileList"></div>
+      <button id="restart" class="primary">Пройти ещё раз</button>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

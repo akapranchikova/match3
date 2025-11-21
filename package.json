@@ -1,0 +1,16 @@
+{
+  "name": "match3-archetype-quiz",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm run clean && npm run build:js && npm run copy:static",
+    "build:js": "esbuild src/main.ts --bundle --minify --sourcemap --outdir=dist",
+    "copy:static": "mkdir -p dist && cp src/index.html dist/index.html && cp src/style.css dist/style.css",
+    "clean": "rm -rf dist",
+    "start": "npm run build && npx serve dist",
+    "dev": "npm run build:js -- --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.5",
+    "serve": "^14.2.3"
+  }
+}
