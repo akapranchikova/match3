@@ -40,9 +40,28 @@ body {
   margin-bottom: 8px;
 }
 
+.progress-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.progress-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+}
+
 .progress-text {
+  font-size: 16px;
+  font-weight: 700;
   letter-spacing: 0.4px;
-  font-weight: 600;
 }
 
 .progress-bar {
