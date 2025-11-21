@@ -9,45 +9,26 @@
 <body>
   <div class="app">
     <header class="top-bar">
-      <div class="brand">
-        <div class="brand-mark">A</div>
-        <div>
-          <div class="eyebrow">AVANGARD</div>
-          <div class="brand-title">Архетипы</div>
-        </div>
+      <div class="progress-chip">
+        <span class="progress-label">Вопрос</span>
+        <span class="progress-text" id="progress">1/16</span>
       </div>
-      <div class="status">
-        <div class="progress-chip">
-          <span class="progress-label">Вопрос</span>
-          <span class="progress-text" id="progress">1/16</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
-        </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
       </div>
       <button class="help" id="helpBtn" aria-label="Как отвечать">?</button>
     </header>
 
     <main class="content">
       <div class="card-area">
-        <div class="badge">Свайпни, если чувствуешь отклик</div>
         <div id="cardStack" class="card-stack"></div>
-        <div class="floating-chip">16 карточек — ~2 минуты</div>
       </div>
       <div class="controls">
         <button class="action dislike" id="dislikeBtn" aria-label="Не нравится">
-          <div class="action-icon" aria-hidden="true">👎</div>
-          <div class="action-text">
-            <span class="action-label">Не моё</span>
-            <span class="action-sub">Смахни влево</span>
-          </div>
+          <span>✕</span>
         </button>
         <button class="action like" id="likeBtn" aria-label="Нравится">
-          <div class="action-icon" aria-hidden="true">👍</div>
-          <div class="action-text">
-            <span class="action-label">Откликается</span>
-            <span class="action-sub">Смахни вправо</span>
-          </div>
+          <span>❤</span>
         </button>
       </div>
     </main>
@@ -55,34 +36,15 @@
 
   <div class="overlay" id="tutorial">
     <div class="overlay-content">
-      <div class="overlay-head">
-        <div class="head-mark">A</div>
-        <div>
-          <p class="eyebrow">Привет!</p>
-          <h2>Давай найдем твой архетип</h2>
-        </div>
-      </div>
-      <div id="tutorialSteps" class="tutorial-steps"></div>
-      <div class="tutorial-nav">
-        <div id="tutorialDots" class="dots"></div>
-        <div class="tutorial-actions">
-          <button class="secondary" id="skipTutorial">Пропустить</button>
-          <button class="primary ghost" id="startTest">Начать тест</button>
-          <button class="primary" id="nextTutorial">Далее</button>
-        </div>
-      </div>
+      <h2>Как проходить тест</h2>
+      <p>Смахните карточку вправо, если откликается, и влево, если нет. Можно нажимать кнопки снизу или пользоваться мышью.</p>
+      <button id="startTest" class="primary">Понятно</button>
     </div>
   </div>
 
   <div class="overlay hidden" id="resultsOverlay">
     <div class="overlay-content results">
-      <div class="overlay-head">
-        <div class="head-mark success">★</div>
-        <div>
-          <p class="eyebrow">Готово</p>
-          <h2>Твой профиль</h2>
-        </div>
-      </div>
+      <h2>Тест завершен</h2>
       <p id="mainResult" class="result-title"></p>
       <p id="mainDescription" class="result-description"></p>
       <div class="profile" id="profileList"></div>
