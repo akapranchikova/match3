@@ -1,57 +1,54 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Тест архетипов</title>
-  <link rel="stylesheet" href="./style.css" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Тест архетипов</title>
+    <link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
-  <div class="app">
-    <header class="top-bar">
-      <div class="progress-chip">
-        <span class="progress-label">Вопрос</span>
-        <span class="progress-text" id="progress">1/24</span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-      <button class="help" id="helpBtn" aria-label="Как отвечать">?</button>
-    </header>
+<div class="app">
 
     <main class="content">
-      <div class="card-area">
-        <div id="cardStack" class="card-stack"></div>
-      </div>
-      <div class="controls">
-        <button class="action dislike" id="dislikeBtn" aria-label="Не нравится">
-          <span>✕</span>
-        </button>
-        <button class="action like" id="likeBtn" aria-label="Нравится">
-          <span>❤</span>
-        </button>
-      </div>
+        <div class="top-bar">
+            <div class="progress-chip">
+                <span class="progress-text" id="progress">1/24</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        <div class="card-area">
+            <div id="cardStack" class="card-stack"></div>
+        </div>
+        <div class="controls">
+            <button class="action dislike" id="dislikeBtn" aria-label="Не нравится">
+                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M26.4258 0.605469C26.7904 0.240885 27.2266 0.0651042 27.7344 0.078125C28.2552 0.078125 28.6979 0.253906 29.0625 0.605469C29.4401 0.957031 29.6224 1.39974 29.6094 1.93359C29.6094 2.46745 29.4336 2.91016 29.082 3.26172L3.26172 29.0625C3.01432 29.2969 2.72786 29.4531 2.40234 29.5312C2.08984 29.6224 1.77083 29.6224 1.44531 29.5312C1.11979 29.4531 0.839844 29.2969 0.605469 29.0625C0.358073 28.8281 0.195312 28.5482 0.117188 28.2227C0.0390625 27.8971 0.0390625 27.5716 0.117188 27.2461C0.208333 26.9206 0.371094 26.6406 0.605469 26.4062L26.4258 0.605469ZM29.082 26.4062C29.4336 26.7578 29.6094 27.2005 29.6094 27.7344C29.6094 28.2552 29.4271 28.6979 29.0625 29.0625C28.6979 29.4271 28.2552 29.6029 27.7344 29.5898C27.2135 29.5898 26.7773 29.4141 26.4258 29.0625L0.605469 3.26172C0.371094 3.02734 0.214844 2.7474 0.136719 2.42188C0.0585938 2.09635 0.0585938 1.77734 0.136719 1.46484C0.214844 1.13932 0.371094 0.852865 0.605469 0.605469C0.839844 0.358073 1.11979 0.195312 1.44531 0.117188C1.77083 0.0390625 2.08984 0.0455729 2.40234 0.136719C2.72786 0.214844 3.01432 0.371094 3.26172 0.605469L29.082 26.4062Z"
+                          fill="#E7704B"
+                          style="fill:#E7704B;fill:color(display-p3 0.9059 0.4392 0.2941);fill-opacity:1;"/>
+                </svg>
+            </button>
+            <button class="action like" id="likeBtn" aria-label="Нравится">
+                <svg width="38" height="35" viewBox="0 0 38 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 11.3477C0 9.68099 0.266927 8.15755 0.800781 6.77734C1.34766 5.39714 2.09635 4.19922 3.04688 3.18359C4.01042 2.15495 5.13672 1.36719 6.42578 0.820312C7.71484 0.273438 9.11458 0 10.625 0C12.3568 0 13.8997 0.377604 15.2539 1.13281C16.6081 1.88802 17.7018 2.87109 18.5352 4.08203C19.3555 2.85807 20.4362 1.875 21.7773 1.13281C23.1315 0.377604 24.681 0 26.4258 0C27.9362 0 29.3294 0.273438 30.6055 0.820312C31.8945 1.36719 33.0208 2.15495 33.9844 3.18359C34.9609 4.19922 35.7096 5.39714 36.2305 6.77734C36.7643 8.15755 37.0312 9.68099 37.0312 11.3477C37.0312 13.9779 36.3346 16.582 34.9414 19.1602C33.5612 21.7253 31.6016 24.2318 29.0625 26.6797C26.5234 29.1146 23.5221 31.4388 20.0586 33.6523C19.8242 33.8086 19.5573 33.9518 19.2578 34.082C18.9714 34.2122 18.7305 34.2773 18.5352 34.2773C18.3138 34.2773 18.0599 34.2122 17.7734 34.082C17.487 33.9518 17.2201 33.8086 16.9727 33.6523C13.5221 31.4388 10.5208 29.1146 7.96875 26.6797C5.42969 24.2318 3.46354 21.7253 2.07031 19.1602C0.690104 16.582 0 13.9779 0 11.3477ZM3.37891 11.3281C3.37891 13.0078 3.77604 14.707 4.57031 16.4258C5.3776 18.1445 6.47135 19.8372 7.85156 21.5039C9.24479 23.1576 10.8268 24.7526 12.5977 26.2891C14.3685 27.8125 16.224 29.2188 18.1641 30.5078C18.3594 30.638 18.4831 30.7031 18.5352 30.7031C18.5742 30.7031 18.6914 30.638 18.8867 30.5078C20.8268 29.2188 22.6823 27.8125 24.4531 26.2891C26.224 24.7526 27.7995 23.1576 29.1797 21.5039C30.5599 19.8372 31.6536 18.1445 32.4609 16.4258C33.2682 14.707 33.6719 13.0078 33.6719 11.3281C33.6719 9.73958 33.3529 8.34635 32.7148 7.14844C32.0768 5.95052 31.2044 5.01953 30.0977 4.35547C28.9909 3.67839 27.7344 3.33984 26.3281 3.33984C25.2083 3.33984 24.2383 3.54167 23.418 3.94531C22.5977 4.34896 21.8945 4.85026 21.3086 5.44922C20.7357 6.04818 20.2409 6.64062 19.8242 7.22656C19.5508 7.59115 19.3229 7.84505 19.1406 7.98828C18.9714 8.13151 18.7695 8.20312 18.5352 8.20312C18.3008 8.20312 18.0859 8.13802 17.8906 8.00781C17.6953 7.86458 17.4674 7.60417 17.207 7.22656C16.8164 6.6276 16.3281 6.02865 15.7422 5.42969C15.1693 4.83073 14.4727 4.33594 13.6523 3.94531C12.832 3.54167 11.8555 3.33984 10.7227 3.33984C9.31641 3.33984 8.0599 3.67839 6.95312 4.35547C5.84635 5.01953 4.97396 5.95052 4.33594 7.14844C3.69792 8.34635 3.37891 9.73958 3.37891 11.3281Z" fill="#B0E681" style="fill:#B0E681;fill:color(display-p3 0.6902 0.9020 0.5059);fill-opacity:1;"/>
+                </svg>
+            </button>
+        </div>
     </main>
-  </div>
+</div>
 
-  <div class="overlay" id="tutorial">
-    <div class="overlay-content">
-      <h2>Как проходить тест</h2>
-      <p>24 фиксированных карточки. Смахните вправо, если откликается, и влево, если нет. Кнопки снизу дают тот же эффект.</p>
-      <button id="startTest" class="primary">Понятно</button>
-    </div>
-  </div>
 
-  <div class="overlay hidden" id="resultsOverlay">
+<div class="overlay hidden" id="resultsOverlay">
     <div class="overlay-content results">
-      <h2>Тест завершен</h2>
-      <p id="mainResult" class="result-title"></p>
-      <p id="mainDescription" class="result-description"></p>
-      <div class="profile" id="profileList"></div>
-      <button id="restart" class="primary">Пройти ещё раз</button>
+        <h2>Тест завершен</h2>
+        <p id="mainResult" class="result-title"></p>
+        <p id="mainDescription" class="result-description"></p>
+        <div class="profile" id="profileList"></div>
+        <button id="restart" class="primary">Пройти ещё раз</button>
     </div>
-  </div>
+</div>
 
-  <script type="module" src="./main.js"></script>
+<script type="module" src="./main.js"></script>
 </body>
 </html>
