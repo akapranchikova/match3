@@ -87,7 +87,14 @@ const state = {
   mapPosition: { x: -140, y: -110 },
 }
 
+let teardown = null
+
 const render = () => {
+  if (typeof teardown === 'function') {
+    teardown()
+    teardown = null
+  }
+
   const screen = {
     onboardingPrompt: renderHeadphonesPrompt,
     onboardingSlide: renderOnboardingSlide,
@@ -101,7 +108,15 @@ const render = () => {
 
   if (screen) {
     app.innerHTML = ''
-    app.appendChild(screen())
+    const result = screen()
+    if (result instanceof HTMLElement) {
+      app.appendChild(result)
+    } else if (result?.element instanceof HTMLElement) {
+      app.appendChild(result.element)
+      if (typeof result.cleanup === 'function') {
+        teardown = result.cleanup
+      }
+    }
   }
 }
 
@@ -539,17 +554,134 @@ const renderScanner = () => {
   wrapper.appendChild(title)
 
   const text = document.createElement('p')
-  text.textContent = 'В реальном приложении здесь откроется камера для сканирования следующей точки маршрута.'
+  text.textContent =
+    'Откройте камеру и наведите её на QR-код точки маршрута. Распознавание запустится автоматически.'
   wrapper.appendChild(text)
+
+  const preview = document.createElement('div')
+  preview.className = 'scanner__preview'
+
+  const video = document.createElement('video')
+  video.className = 'scanner__video'
+  video.setAttribute('playsinline', 'true')
+  video.muted = true
+  video.autoplay = true
+  preview.appendChild(video)
+
+  const overlay = document.createElement('div')
+  overlay.className = 'scanner__frame'
+  preview.appendChild(overlay)
+
+  wrapper.appendChild(preview)
+
+  const status = document.createElement('p')
+  status.className = 'scanner__status'
+  status.textContent = 'Запрашиваем доступ к камере…'
+  wrapper.appendChild(status)
+
+  const tip = document.createElement('p')
+  tip.className = 'muted'
+  tip.textContent = 'Если распознавание не начинается, включите освещение и подержите камеру неподвижно.'
+  wrapper.appendChild(tip)
+
+  const actions = document.createElement('div')
+  actions.className = 'stack'
 
   const back = createButton('Вернуться к маршруту', 'secondary')
   back.addEventListener('click', () => {
     state.screen = 'routeList'
     render()
   })
-  wrapper.appendChild(back)
+  actions.appendChild(back)
+  wrapper.appendChild(actions)
 
-  return wrapper
+  let active = true
+  let stream = null
+  let rafId = null
+
+  const stopScanner = () => {
+    active = false
+    if (rafId) cancelAnimationFrame(rafId)
+    rafId = null
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop())
+      stream = null
+    }
+  }
+
+  const showStatus = (message) => {
+    status.textContent = message
+  }
+
+  const handleScan = (payload) => {
+    const matchedIndex = points.findIndex((point) => point.id === payload)
+    stopScanner()
+
+    if (matchedIndex >= 0) {
+      viewedPoints.add(points[matchedIndex].id)
+      saveViewed(viewedPoints)
+      state.currentPointIndex = matchedIndex
+      state.screen = 'pointInfo'
+      render()
+    } else {
+      showStatus('QR-код считан, но точка маршрута не найдена. Попробуйте другой код.')
+    }
+  }
+
+  const startScan = async () => {
+    try {
+      const detectorFormats = (await window?.BarcodeDetector?.getSupportedFormats?.()) || []
+      const supportsQr = detectorFormats.includes('qr_code')
+
+      if (!supportsQr) {
+        showStatus('Распознавание QR-кодов не поддерживается в этом браузере')
+        return
+      }
+
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+        audio: false,
+      })
+      video.srcObject = stream
+
+      const detector = new BarcodeDetector({ formats: ['qr_code'] })
+
+      const scanFrame = async () => {
+        if (!active) return
+
+        if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+          try {
+            const codes = await detector.detect(video)
+            if (codes.length > 0) {
+              showStatus('QR-код найден! Открываем точку маршрута…')
+              handleScan(codes[0].rawValue)
+              return
+            }
+
+            showStatus('Наведите камеру на QR-код')
+          } catch (err) {
+            console.error('Ошибка распознавания', err)
+            showStatus('Не удалось распознать QR-код, попробуйте ещё раз')
+          }
+        }
+
+        rafId = requestAnimationFrame(scanFrame)
+      }
+
+      await video.play()
+      showStatus('Камера включена. Наведите её на QR-код.')
+      scanFrame()
+    } catch (error) {
+      console.error('Не удалось запустить сканер', error)
+      showStatus(
+        'Не удалось открыть камеру. Проверьте разрешения браузера и попробуйте ещё раз.',
+      )
+    }
+  }
+
+  startScan()
+
+  return { element: wrapper, cleanup: stopScanner }
 }
 
 render()
