@@ -40,9 +40,9 @@ const points = [
 
 const onboardingSlides = [
   {
-    title: 'Используйте наушники',
+    title: 'История места',
     body:
-      'Большая часть маршрута сопровождается аудио-историями. Чтобы ничего не пропустить — наденьте наушники. Если наушников нет, то всегда будут субтитры.',
+      'Открывайте исторические «сторис» — видео, панорамы, артефакты и аудиогида.',
   },
   {
     title: 'Голос времени',
@@ -50,9 +50,9 @@ const onboardingSlides = [
       'Гид — это не человек, а дух самого места. «Голос времени» будет главным проводником в историю Перми и новой галереи. Голос отражает философию места от древнего пермского периода до современного времени.',
   },
   {
-    title: 'История места',
+    title: 'Используйте наушники',
     body:
-      'Открывайте исторические «сторис» — видео, панорамы, артефакты и аудиогида.',
+      'Большая часть маршрута сопровождается аудио-историями. Чтобы ничего не пропустить — наденьте наушники. Если наушников нет, то всегда будут субтитры.',
   },
 ]
 
@@ -75,7 +75,7 @@ const saveViewed = (set) => {
 let viewedPoints = loadViewed()
 
 const state = {
-  screen: 'onboardingPrompt',
+  screen: 'onboardingSlide',
   slideIndex: 0,
   currentPointIndex: 0,
 }
@@ -140,8 +140,7 @@ const renderCard = ({ title, body, showProgress }) => {
     if (state.screen === 'onboardingSlide') {
       const nextSlide = state.slideIndex + 1
       if (nextSlide >= onboardingSlides.length) {
-        state.screen = 'pointInfo'
-        state.slideIndex = 0
+        state.screen = 'onboardingPrompt'
       } else {
         state.slideIndex = nextSlide
       }
@@ -181,15 +180,13 @@ const renderHeadphonesPrompt = () => {
 
   const yes = createButton('Да, уже подключил')
   yes.addEventListener('click', () => {
-    state.screen = 'onboardingSlide'
-    state.slideIndex = 0
+    state.screen = 'pointInfo'
     render()
   })
 
   const no = createButton('Нет, буду читать субтитры', 'secondary')
   no.addEventListener('click', () => {
-    state.screen = 'onboardingSlide'
-    state.slideIndex = 0
+    state.screen = 'pointInfo'
     render()
   })
 
