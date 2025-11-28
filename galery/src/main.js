@@ -10,31 +10,37 @@ const points = [
     title: 'Создание и история галереи',
     description:
       'Коротко рассказываем, как появилось здание и почему оно стало домом новой галереи.',
+    map: { x: 18, y: 30 },
   },
   {
     id: 'perm-period',
     title: 'Пермский период, пермское море и геология',
     description: 'История пермского периода и артефакты, которые нашли неподалёку.',
+    map: { x: 45, y: 18 },
   },
   {
     id: 'metal-plant',
     title: 'Медеплавильный завод и история посёлка',
     description: 'Как промышленность повлияла на развитие территории и людей.',
+    map: { x: 72, y: 22 },
   },
   {
     id: 'excavation',
     title: 'История археологических раскопок',
     description: 'Находки и открытия, которые легли в основу экспозиции.',
+    map: { x: 65, y: 54 },
   },
   {
     id: 'railway',
     title: 'Железная дорога — будущий завод Шпагина',
     description: 'Как железная дорога изменила экономику места и городскую ткань.',
+    map: { x: 36, y: 60 },
   },
   {
     id: 'final',
     title: 'Финальная точка',
     description: 'Завершение маршрута и приглашение поделиться впечатлениями.',
+    map: { x: 50, y: 78 },
   },
 ]
 
@@ -78,6 +84,7 @@ const state = {
   screen: 'onboardingSlide',
   slideIndex: 0,
   currentPointIndex: 0,
+  mapPosition: { x: -140, y: -110 },
 }
 
 const render = () => {
@@ -89,6 +96,7 @@ const render = () => {
     nextPoint: renderNextPoint,
     routeList: renderRouteList,
     scanner: renderScanner,
+    map: renderMap,
   }[state.screen]
 
   if (screen) {
@@ -313,7 +321,11 @@ const renderNextPoint = () => {
   mapLink.href = '#'
   mapLink.className = 'link'
   mapLink.textContent = 'Открыть на карте'
-  mapLink.addEventListener('click', (e) => e.preventDefault())
+  mapLink.addEventListener('click', (e) => {
+    e.preventDefault()
+    state.screen = 'map'
+    render()
+  })
 
   card.appendChild(mapLink)
   actions.appendChild(scan)
@@ -386,6 +398,123 @@ const renderRouteList = () => {
     render()
   })
   container.appendChild(cta)
+
+  return container
+}
+
+const renderMap = () => {
+  const point = points[state.currentPointIndex]
+  const container = document.createElement('section')
+  container.className = 'map'
+
+  const title = document.createElement('h1')
+  title.textContent = 'Карта музея'
+  container.appendChild(title)
+
+  const subtitle = document.createElement('p')
+  subtitle.className = 'muted'
+  subtitle.textContent = 'Передвигайте карту, чтобы найти нужную точку и нажмите на неё.'
+  container.appendChild(subtitle)
+
+  const viewport = document.createElement('div')
+  viewport.className = 'map__viewport'
+
+  const inner = document.createElement('div')
+  inner.className = 'map__inner'
+  const applyTransform = () => {
+    inner.style.transform = `translate(${state.mapPosition.x}px, ${state.mapPosition.y}px)`
+  }
+  applyTransform()
+
+  const grid = document.createElement('div')
+  grid.className = 'map__grid'
+  inner.appendChild(grid)
+
+  const mapImage = document.createElement('div')
+  mapImage.className = 'map__image'
+  inner.appendChild(mapImage)
+
+  points.forEach((item, index) => {
+    const marker = document.createElement('button')
+    marker.className = 'map__marker'
+    marker.style.left = `${item.map.x}%`
+    marker.style.top = `${item.map.y}%`
+    marker.title = item.title
+    marker.innerHTML = `<span class="map__marker-dot"></span><span class="map__marker-label">${index + 1}</span>`
+
+    marker.addEventListener('click', (event) => {
+      event.stopPropagation()
+      state.currentPointIndex = index
+      state.screen = 'nextPoint'
+      render()
+    })
+
+    if (index === state.currentPointIndex) {
+      marker.classList.add('is-active')
+    }
+
+    inner.appendChild(marker)
+  })
+
+  const dragState = { active: false, start: { x: 0, y: 0 }, origin: { x: 0, y: 0 } }
+
+  const startDrag = (event) => {
+    dragState.active = true
+    dragState.start = { x: event.clientX, y: event.clientY }
+    dragState.origin = { ...state.mapPosition }
+    viewport.setPointerCapture(event.pointerId)
+  }
+
+  const moveDrag = (event) => {
+    if (!dragState.active) return
+    const deltaX = event.clientX - dragState.start.x
+    const deltaY = event.clientY - dragState.start.y
+    state.mapPosition = { x: dragState.origin.x + deltaX, y: dragState.origin.y + deltaY }
+    applyTransform()
+  }
+
+  const endDrag = (event) => {
+    if (!dragState.active) return
+    dragState.active = false
+    viewport.releasePointerCapture(event.pointerId)
+  }
+
+  viewport.addEventListener('pointerdown', startDrag)
+  viewport.addEventListener('pointermove', moveDrag)
+  viewport.addEventListener('pointerup', endDrag)
+  viewport.addEventListener('pointercancel', endDrag)
+
+  viewport.appendChild(inner)
+  container.appendChild(viewport)
+
+  const hint = document.createElement('div')
+  hint.className = 'map__hint'
+  hint.innerHTML = '<span class="hint__icon">👆</span> Передвигайте карту и нажмите на точку маршрута'
+  container.appendChild(hint)
+
+  const actions = document.createElement('div')
+  actions.className = 'stack'
+
+  const focusButton = createButton(`Перейти к точке ${state.currentPointIndex + 1}`, 'primary')
+  focusButton.addEventListener('click', () => {
+    state.screen = 'nextPoint'
+    render()
+  })
+
+  const routeButton = createButton('Открыть весь маршрут', 'secondary')
+  routeButton.addEventListener('click', () => {
+    state.screen = 'routeList'
+    render()
+  })
+
+  actions.appendChild(focusButton)
+  actions.appendChild(routeButton)
+  container.appendChild(actions)
+
+  const caption = document.createElement('p')
+  caption.className = 'muted'
+  caption.textContent = `Текущая точка: ${point.title}`
+  container.appendChild(caption)
 
   return container
 }
