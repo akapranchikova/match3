@@ -25,6 +25,10 @@ body {
   min-height: calc(100vh - 48px);
 }
 
+#app > * {
+  flex: 1;
+}
+
 h1 {
   font-size: 24px;
   font-weight: 700;
@@ -54,6 +58,7 @@ main,
   padding: 20px;
   width: 100%;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  min-height: 100%;
 }
 
 .card {
@@ -74,6 +79,11 @@ main,
 }
 
 .card__footer {
+  margin-top: auto;
+}
+
+.card > .button:last-child,
+.card > .stack:last-child {
   margin-top: auto;
 }
 
@@ -185,12 +195,17 @@ main,
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 100%;
 }
 
 .route {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.route > .button:last-child {
+  margin-top: auto;
 }
 
 .route__list {
@@ -305,10 +320,18 @@ main,
   gap: 12px;
 }
 
+.scanner > .button:last-child {
+  margin-top: auto;
+}
+
 .map {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.map > .stack {
+  margin-top: auto;
 }
 
 .map__viewport {
