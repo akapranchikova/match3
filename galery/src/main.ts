@@ -1,10 +1,72 @@
 import './style.css'
 
-const app = document.querySelector('#app')
+// Types
+
+type AppScreen =
+  | 'onboardingPrompt'
+  | 'onboardingSlide'
+  | 'pointInfo'
+  | 'infoComplete'
+  | 'nextPoint'
+  | 'routeList'
+  | 'scanner'
+  | 'map'
+
+interface MapPosition {
+  x: number
+  y: number
+}
+
+interface RoutePoint {
+  id: string
+  title: string
+  description: string
+  map: MapPosition
+}
+
+interface OnboardingSlide {
+  title: string
+  body: string
+}
+
+interface AppState {
+  screen: AppScreen
+  slideIndex: number
+  currentPointIndex: number
+  mapPosition: MapPosition
+}
+
+type RenderCleanup = () => void
+
+type RenderResult = HTMLElement | { element: HTMLElement; cleanup?: RenderCleanup }
+
+// BarcodeDetector is still an experimental API, so declare minimal typings for it
+
+type BarcodeFormat = 'qr_code'
+
+interface BarcodeDetectorResult {
+  rawValue: string
+}
+
+interface BarcodeDetectorConstructor {
+  new (options: { formats: BarcodeFormat[] }): BarcodeDetectorInstance
+  getSupportedFormats?: () => Promise<BarcodeFormat[]>
+}
+
+interface BarcodeDetectorInstance {
+  detect: (source: HTMLVideoElement) => Promise<BarcodeDetectorResult[]>
+}
+
+// Constants and initial state
 
 const STORAGE_KEY = 'gallery-viewed-points'
+const app = document.querySelector<HTMLDivElement>('#app')
 
-const points = [
+if (!app) {
+  throw new Error('Root container #app was not found')
+}
+
+const points: RoutePoint[] = [
   {
     id: 'history',
     title: 'Создание и история галереи',
@@ -44,11 +106,10 @@ const points = [
   },
 ]
 
-const onboardingSlides = [
+const onboardingSlides: OnboardingSlide[] = [
   {
     title: 'История места',
-    body:
-      'Открывайте исторические «сторис» — видео, панорамы, артефакты и аудиогида.',
+    body: 'Открывайте исторические «сторис» — видео, панорамы, артефакты и аудиогида.',
   },
   {
     title: 'Голос времени',
@@ -62,7 +123,7 @@ const onboardingSlides = [
   },
 ]
 
-const loadViewed = () => {
+const loadViewed = (): Set<string> => {
   const stored = localStorage.getItem(STORAGE_KEY)
   if (!stored) return new Set()
   try {
@@ -74,20 +135,22 @@ const loadViewed = () => {
   }
 }
 
-const saveViewed = (set) => {
+const saveViewed = (set: Set<string>) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set)))
 }
 
 let viewedPoints = loadViewed()
 
-const state = {
+const state: AppState = {
   screen: 'onboardingSlide',
   slideIndex: 0,
   currentPointIndex: 0,
   mapPosition: { x: -140, y: -110 },
 }
 
-let teardown = null
+let teardown: RenderCleanup | null = null
+
+// Shared UI helpers
 
 const render = () => {
   if (typeof teardown === 'function') {
@@ -95,7 +158,7 @@ const render = () => {
     teardown = null
   }
 
-  const screen = {
+  const screenRenderers: Record<AppScreen, () => RenderResult> = {
     onboardingPrompt: renderHeadphonesPrompt,
     onboardingSlide: renderOnboardingSlide,
     pointInfo: renderPointInfo,
@@ -104,7 +167,9 @@ const render = () => {
     routeList: renderRouteList,
     scanner: renderScanner,
     map: renderMap,
-  }[state.screen]
+  }
+
+  const screen = screenRenderers[state.screen]
 
   if (screen) {
     app.innerHTML = ''
@@ -120,14 +185,22 @@ const render = () => {
   }
 }
 
-const createButton = (label, variant = 'primary') => {
+const createButton = (label: string, variant: 'primary' | 'secondary' = 'primary') => {
   const button = document.createElement('button')
   button.textContent = label
   button.className = `button ${variant}`
   return button
 }
 
-const renderCard = ({ title, body, showProgress }) => {
+const renderCard = ({
+  title,
+  body,
+  showProgress,
+}: {
+  title: string
+  body: string
+  showProgress?: boolean
+}) => {
   const container = document.createElement('section')
   container.className = 'card'
 
@@ -137,8 +210,8 @@ const renderCard = ({ title, body, showProgress }) => {
     const progress = document.createElement('div')
     progress.className = 'progress'
     progress.innerHTML = '<span class="progress__bar"></span>'
-    progress.style.setProperty('--step', state.slideIndex + 1)
-    progress.style.setProperty('--total', onboardingSlides.length)
+    progress.style.setProperty('--step', (state.slideIndex + 1).toString())
+    progress.style.setProperty('--total', onboardingSlides.length.toString())
     container.appendChild(progress)
   }
 
@@ -188,6 +261,8 @@ const renderCard = ({ title, body, showProgress }) => {
   return container
 }
 
+// Onboarding screens
+
 const renderOnboardingSlide = () => {
   const slide = onboardingSlides[state.slideIndex]
   return renderCard({
@@ -212,23 +287,24 @@ const renderHeadphonesPrompt = () => {
   description.textContent = 'Рекомендуем слушать гид, но если нет возможности — будут субтитры.'
   modal.appendChild(description)
 
-  const yes = createButton('Да, уже подключил')
-  yes.addEventListener('click', () => {
+  const goNext = () => {
     state.screen = 'pointInfo'
     render()
-  })
+  }
+
+  const yes = createButton('Да, уже подключил')
+  yes.addEventListener('click', goNext)
 
   const no = createButton('Нет, буду читать субтитры', 'secondary')
-  no.addEventListener('click', () => {
-    state.screen = 'pointInfo'
-    render()
-  })
+  no.addEventListener('click', goNext)
 
   modal.appendChild(yes)
   modal.appendChild(no)
   overlay.appendChild(modal)
   return overlay
 }
+
+// Point details flow
 
 const renderPointInfo = () => {
   const point = points[state.currentPointIndex]
@@ -347,8 +423,8 @@ const renderNextPoint = () => {
   mapLink.href = '#'
   mapLink.className = 'link'
   mapLink.textContent = 'Открыть на карте'
-  mapLink.addEventListener('click', (e) => {
-    e.preventDefault()
+  mapLink.addEventListener('click', (event) => {
+    event.preventDefault()
     state.screen = 'map'
     render()
   })
@@ -360,6 +436,8 @@ const renderNextPoint = () => {
 
   return card
 }
+
+// Route list and map
 
 const renderRouteList = () => {
   const container = document.createElement('div')
@@ -482,16 +560,20 @@ const renderMap = () => {
     inner.appendChild(marker)
   })
 
-  const dragState = { active: false, start: { x: 0, y: 0 }, origin: { x: 0, y: 0 } }
+  const dragState: { active: boolean; start: MapPosition; origin: MapPosition } = {
+    active: false,
+    start: { x: 0, y: 0 },
+    origin: { x: 0, y: 0 },
+  }
 
-  const startDrag = (event) => {
+  const startDrag = (event: PointerEvent) => {
     dragState.active = true
     dragState.start = { x: event.clientX, y: event.clientY }
     dragState.origin = { ...state.mapPosition }
     viewport.setPointerCapture(event.pointerId)
   }
 
-  const moveDrag = (event) => {
+  const moveDrag = (event: PointerEvent) => {
     if (!dragState.active) return
     const deltaX = event.clientX - dragState.start.x
     const deltaY = event.clientY - dragState.start.y
@@ -499,7 +581,7 @@ const renderMap = () => {
     applyTransform()
   }
 
-  const endDrag = (event) => {
+  const endDrag = (event: PointerEvent) => {
     if (!dragState.active) return
     dragState.active = false
     viewport.releasePointerCapture(event.pointerId)
@@ -545,7 +627,9 @@ const renderMap = () => {
   return container
 }
 
-const renderScanner = () => {
+// QR scanner
+
+const renderScanner = (): RenderResult => {
   const wrapper = document.createElement('div')
   wrapper.className = 'scanner'
 
@@ -596,10 +680,10 @@ const renderScanner = () => {
   wrapper.appendChild(actions)
 
   let active = true
-  let stream = null
-  let rafId = null
+  let stream: MediaStream | null = null
+  let rafId: number | null = null
 
-  const stopScanner = () => {
+  const stopScanner: RenderCleanup = () => {
     active = false
     if (rafId) cancelAnimationFrame(rafId)
     rafId = null
@@ -609,11 +693,11 @@ const renderScanner = () => {
     }
   }
 
-  const showStatus = (message) => {
+  const showStatus = (message: string) => {
     status.textContent = message
   }
 
-  const handleScan = (payload) => {
+  const handleScan = (payload: string) => {
     const matchedIndex = points.findIndex((point) => point.id === payload)
     stopScanner()
 
@@ -630,10 +714,11 @@ const renderScanner = () => {
 
   const startScan = async () => {
     try {
-      const detectorFormats = (await window?.BarcodeDetector?.getSupportedFormats?.()) || []
+      const detectorClass = (window as Window & { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector
+      const detectorFormats = (await detectorClass?.getSupportedFormats?.()) || []
       const supportsQr = detectorFormats.includes('qr_code')
 
-      if (!supportsQr) {
+      if (!detectorClass || !supportsQr) {
         showStatus('Распознавание QR-кодов не поддерживается в этом браузере')
         return
       }
@@ -644,7 +729,7 @@ const renderScanner = () => {
       })
       video.srcObject = stream
 
-      const detector = new BarcodeDetector({ formats: ['qr_code'] })
+      const detector = new detectorClass({ formats: ['qr_code'] })
 
       const scanFrame = async () => {
         if (!active) return
@@ -673,9 +758,7 @@ const renderScanner = () => {
       scanFrame()
     } catch (error) {
       console.error('Не удалось запустить сканер', error)
-      showStatus(
-        'Не удалось открыть камеру. Проверьте разрешения браузера и попробуйте ещё раз.',
-      )
+      showStatus('Не удалось открыть камеру. Проверьте разрешения браузера и попробуйте ещё раз.')
     }
   }
 
