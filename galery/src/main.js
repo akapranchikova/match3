@@ -116,25 +116,9 @@ const renderCard = ({ title, body, showProgress }) => {
   const container = document.createElement('section')
   container.className = 'card'
 
-  const header = document.createElement('header')
-  header.className = 'card__header'
-  header.innerHTML = '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
-  container.appendChild(header)
-
-  const h1 = document.createElement('h1')
-  h1.textContent = title
-  container.appendChild(h1)
-
-  const p = document.createElement('p')
-  p.textContent = body
-  container.appendChild(p)
-
-  const preview = document.createElement('div')
-  preview.className = 'card__preview'
-  preview.innerHTML = '<div class="preview__placeholder"></div>'
-  container.appendChild(preview)
-
   if (showProgress) {
+    container.classList.add('card--onboarding')
+
     const progress = document.createElement('div')
     progress.className = 'progress'
     progress.innerHTML = '<span class="progress__bar"></span>'
@@ -142,6 +126,29 @@ const renderCard = ({ title, body, showProgress }) => {
     progress.style.setProperty('--total', onboardingSlides.length)
     container.appendChild(progress)
   }
+
+  const content = document.createElement('div')
+  content.className = 'card__content'
+
+  const header = document.createElement('header')
+  header.className = 'card__header'
+  header.innerHTML = '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
+  content.appendChild(header)
+
+  const h1 = document.createElement('h1')
+  h1.textContent = title
+  content.appendChild(h1)
+
+  const p = document.createElement('p')
+  p.textContent = body
+  content.appendChild(p)
+
+  const preview = document.createElement('div')
+  preview.className = 'card__preview'
+  preview.innerHTML = '<div class="preview__placeholder"></div>'
+  content.appendChild(preview)
+
+  container.appendChild(content)
 
   const action = createButton('Далее')
   action.addEventListener('click', () => {
@@ -157,7 +164,11 @@ const renderCard = ({ title, body, showProgress }) => {
     }
     render()
   })
-  container.appendChild(action)
+
+  const footer = document.createElement('div')
+  footer.className = 'card__footer'
+  footer.appendChild(action)
+  container.appendChild(footer)
 
   return container
 }
