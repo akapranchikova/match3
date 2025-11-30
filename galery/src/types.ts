@@ -1,6 +1,8 @@
 export type AppScreen =
   | 'onboardingPrompt'
   | 'onboardingSlide'
+  | 'routeModePrompt'
+  | 'guideIntro'
   | 'pointInfo'
   | 'infoComplete'
   | 'nextPoint'
