@@ -88,29 +88,40 @@ export const renderInfoComplete = (): HTMLElement => {
 export const renderNextPoint = (): HTMLElement => {
   const point = points[state.currentPointIndex]
   const card = document.createElement('section')
-  card.className = 'card card--with-image'
+  card.className = 'card card--point'
 
-  const location = document.createElement('p')
-  location.className = 'accent'
-  location.textContent = `Где находится точка ${state.currentPointIndex + 1}?`
-  card.appendChild(location)
+  const progress = document.createElement('p')
+  progress.className = 'caption'
+  progress.textContent = `Пройдено ${viewedPoints.size} из ${points.length} точек`
+  card.appendChild(progress)
 
   const h1 = document.createElement('h1')
-  h1.textContent = point.title
+  h1.textContent = `Где находится точка ${state.currentPointIndex + 1}?`
   card.appendChild(h1)
 
   const desc = document.createElement('p')
+  desc.className = 'point__description'
   desc.textContent = point.description
   card.appendChild(desc)
 
-  const image = document.createElement('div')
-  image.className = 'photo'
+  const mapLink = document.createElement('a')
+  mapLink.href = '#'
+  mapLink.className = 'link point__map'
+  mapLink.textContent = 'Показать на карте'
+  mapLink.addEventListener('click', (event) => {
+    event.preventDefault()
+    state.screen = 'map'
+    rerender()
+  })
+  card.appendChild(mapLink)
 
-  const photoImage = document.createElement('img')
-  photoImage.src = routePreview
-  photoImage.alt = `Маршрутная точка: ${point.title}`
-  photoImage.className = 'photo__image'
-  image.appendChild(photoImage)
+  const image = document.createElement('div')
+  image.className = 'photo photo--placeholder'
+
+  const photoIcon = document.createElement('span')
+  photoIcon.className = 'photo__placeholder-icon'
+  photoIcon.setAttribute('aria-hidden', 'true')
+  image.appendChild(photoIcon)
   card.appendChild(image)
 
   const actions = document.createElement('div')
@@ -127,18 +138,6 @@ export const renderNextPoint = (): HTMLElement => {
     state.screen = 'routeList'
     rerender()
   })
-
-  const mapLink = document.createElement('a')
-  mapLink.href = '#'
-  mapLink.className = 'link'
-  mapLink.textContent = 'Открыть на карте'
-  mapLink.addEventListener('click', (event) => {
-    event.preventDefault()
-    state.screen = 'map'
-    rerender()
-  })
-
-  card.appendChild(mapLink)
   actions.appendChild(scan)
   actions.appendChild(routeButton)
   card.appendChild(actions)
