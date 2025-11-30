@@ -105,7 +105,7 @@ main,
 
 .card__preview {
   border: none;
-  border-radius: 14px;
+  border-radius: 6px;
   padding: 0;
   display: flex;
   justify-content: center;
@@ -230,8 +230,12 @@ main,
 
 .overlay {
   background: rgba(15, 23, 42, 0.75);
-  border-radius: 20px;
   padding: 24px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
