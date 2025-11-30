@@ -104,16 +104,31 @@ main,
 }
 
 .card__preview {
-  border: 1px dashed #d1d5db;
-  border-radius: 12px;
-  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  padding: 0;
   display: flex;
   justify-content: center;
+  align-items: center;
+  background: transparent;
+  overflow: hidden;
 }
 
 .card__preview.large {
   height: 180px;
   align-items: center;
+}
+
+.card__image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card__preview.large .card__image {
+  height: 100%;
+  object-fit: cover;
 }
 
 .card--guide {
@@ -166,17 +181,8 @@ main,
 .preview__placeholder {
   width: 120px;
   height: 80px;
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-  border-radius: 10px;
-  position: relative;
-}
-
-.preview__placeholder::after {
-  content: '';
-  position: absolute;
-  inset: 16px;
-  border: 1px dashed rgba(15, 23, 42, 0.4);
-  border-radius: 6px;
+  background: #e2e8f0;
+  border-radius: 12px;
 }
 
 .button {
@@ -285,6 +291,14 @@ main,
   justify-content: center;
 }
 
+.route__image {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+}
+
 .route__info h3 {
   font-size: 15px;
   margin-bottom: 6px;
@@ -336,15 +350,16 @@ main,
   border-radius: 16px;
   overflow: hidden;
   height: 240px;
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  background: transparent;
   position: relative;
+  display: flex;
+  align-items: stretch;
 }
 
-.photo__highlight {
-  position: absolute;
-  inset: 40px;
-  border: 2px solid rgba(37, 99, 235, 0.6);
-  border-radius: 12px;
+.photo__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .link {

@@ -2,6 +2,7 @@ import { points } from '../data'
 import { rerender } from '../navigation'
 import { state, viewedPoints } from '../state'
 import { createButton } from '../ui'
+import routePreview from '../assets/onboarding-photo.svg'
 
 export const renderRouteList = (): HTMLElement => {
   const container = document.createElement('div')
@@ -25,7 +26,12 @@ export const renderRouteList = (): HTMLElement => {
 
     const thumb = document.createElement('div')
     thumb.className = 'route__thumb'
-    thumb.innerHTML = '<div class="preview__placeholder"></div>'
+
+    const image = document.createElement('img')
+    image.src = routePreview
+    image.alt = `Маршрутная точка ${index + 1}`
+    image.className = 'route__image'
+    thumb.appendChild(image)
 
     const info = document.createElement('div')
     info.className = 'route__info'
