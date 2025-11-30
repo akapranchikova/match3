@@ -116,6 +116,53 @@ main,
   align-items: center;
 }
 
+.card--guide {
+  min-height: 100%;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.guide__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.guide__avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #22c55e, #16a34a 30%, #2563eb 80%);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12), inset 0 0 0 6px rgba(255, 255, 255, 0.65);
+}
+
+.guide__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guide__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.guide__label {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.guide__intro {
+  color: #0f172a;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
 .preview__placeholder {
   width: 120px;
   height: 80px;

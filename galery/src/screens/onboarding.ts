@@ -95,7 +95,7 @@ export const renderHeadphonesPrompt = (): RenderResult => {
   modal.appendChild(description)
 
   const goNext = () => {
-    state.screen = 'pointInfo'
+    state.screen = 'routeModePrompt'
     rerender()
   }
 
@@ -109,4 +109,77 @@ export const renderHeadphonesPrompt = (): RenderResult => {
   modal.appendChild(no)
   overlay.appendChild(modal)
   return overlay
+}
+
+export const renderRouteModePrompt = (): RenderResult => {
+  const overlay = document.createElement('div')
+  overlay.className = 'overlay'
+
+  const modal = document.createElement('div')
+  modal.className = 'modal'
+
+  const title = document.createElement('h2')
+  title.textContent = 'Выберите режим просмотра маршрута'
+  modal.appendChild(title)
+
+  const description = document.createElement('p')
+  description.textContent =
+    'Вы можете пройти маршрут вместе с виртуальным гидом или изучать материалы самостоятельно'
+  modal.appendChild(description)
+
+  const withGuide = createButton('С гидом Голос времени')
+  withGuide.addEventListener('click', () => {
+    state.screen = 'guideIntro'
+    rerender()
+  })
+
+  const selfGuided = createButton('Самостоятельно', 'secondary')
+  selfGuided.addEventListener('click', () => {
+    state.screen = 'map'
+    rerender()
+  })
+
+  modal.appendChild(withGuide)
+  modal.appendChild(selfGuided)
+  overlay.appendChild(modal)
+  return overlay
+}
+
+export const renderGuideIntro = (): HTMLElement => {
+  const container = document.createElement('section')
+  container.className = 'card card--guide'
+
+  const topBar = document.createElement('div')
+  topBar.className = 'guide__top'
+
+  const avatar = document.createElement('div')
+  avatar.className = 'guide__avatar'
+  topBar.appendChild(avatar)
+
+  const controls = document.createElement('div')
+  controls.className = 'guide__controls'
+  controls.innerHTML = '<button class="guide__icon" aria-label="mute">🔇</button>'
+  topBar.appendChild(controls)
+
+  container.appendChild(topBar)
+
+  const label = document.createElement('p')
+  label.className = 'guide__label'
+  label.textContent = 'Голос времени'
+  container.appendChild(label)
+
+  const intro = document.createElement('p')
+  intro.className = 'guide__intro'
+  intro.textContent = 'Это начало моего вступительного слова...'
+  container.appendChild(intro)
+
+  const start = createButton('Начать маршрут')
+  start.addEventListener('click', () => {
+    state.currentPointIndex = 0
+    state.screen = 'nextPoint'
+    rerender()
+  })
+
+  container.appendChild(start)
+  return container
 }
