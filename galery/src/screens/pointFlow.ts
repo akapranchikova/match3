@@ -3,6 +3,7 @@ import { rerender } from '../navigation'
 import { saveViewed } from '../storage'
 import { state, viewedPoints } from '../state'
 import { createButton } from '../ui'
+import routePreview from '../assets/onboarding-photo.svg'
 
 export const handleFinishPoint = () => {
   viewedPoints.add(points[state.currentPointIndex].id)
@@ -30,7 +31,12 @@ export const renderPointInfo = (): HTMLElement => {
 
   const preview = document.createElement('div')
   preview.className = 'card__preview large'
-  preview.innerHTML = '<div class="preview__placeholder"></div>'
+
+  const image = document.createElement('img')
+  image.src = routePreview
+  image.alt = `Превью точки «${point.title}»`
+  image.className = 'card__image'
+  preview.appendChild(image)
   section.appendChild(preview)
 
   const finish = createButton('Закончить точку')
@@ -99,7 +105,12 @@ export const renderNextPoint = (): HTMLElement => {
 
   const image = document.createElement('div')
   image.className = 'photo'
-  image.innerHTML = '<div class="photo__highlight"></div>'
+
+  const photoImage = document.createElement('img')
+  photoImage.src = routePreview
+  photoImage.alt = `Маршрутная точка: ${point.title}`
+  photoImage.className = 'photo__image'
+  image.appendChild(photoImage)
   card.appendChild(image)
 
   const actions = document.createElement('div')

@@ -3,6 +3,7 @@ import { rerender } from '../navigation'
 import { state } from '../state'
 import { createButton } from '../ui'
 import { RenderResult } from '../types'
+import onboardingPhoto from '../assets/onboarding-photo.svg'
 
 // Card shared between onboarding steps to keep layout consistent
 const renderCard = ({
@@ -46,7 +47,12 @@ const renderCard = ({
 
   const preview = document.createElement('div')
   preview.className = 'card__preview'
-  preview.innerHTML = '<div class="preview__placeholder"></div>'
+
+  const image = document.createElement('img')
+  image.src = onboardingPhoto
+  image.alt = 'Превью экспозиции галереи'
+  image.className = 'card__image'
+  preview.appendChild(image)
   content.appendChild(preview)
 
   container.appendChild(content)
