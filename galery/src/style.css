@@ -467,10 +467,17 @@ main,
   color: #0f172a;
 }
 
+
 .map {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  min-height: 100%;
 }
 
 .map > .stack {
@@ -586,7 +593,8 @@ main,
 
   .card,
   .route,
-  .scanner {
+  .scanner,
+  .map {
     padding: 16px;
   }
 }
@@ -607,7 +615,8 @@ main,
   main,
   .card,
   .route,
-  .scanner {
+  .scanner,
+  .map {
     border-radius: 0;
     box-shadow: none;
     width: 100%;
@@ -616,7 +625,8 @@ main,
   main,
   .card,
   .route,
-  .scanner {
+  .scanner,
+  .map {
     min-height: 100vh;
     padding: 20px 16px;
   }
