@@ -546,3 +546,46 @@ main,
     padding: 16px;
   }
 }
+
+@media (max-width: 520px) {
+  body {
+    padding: 0;
+    background: #fff;
+    min-height: 100vh;
+  }
+
+  #app {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+  }
+
+  main,
+  .card,
+  .route,
+  .scanner,
+  .overlay,
+  .modal {
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+  }
+
+  main,
+  .card,
+  .route,
+  .scanner {
+    min-height: 100vh;
+    padding: 20px 16px;
+  }
+
+  .modal {
+    max-width: none;
+    padding: 20px 16px;
+  }
+
+  .overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+}
