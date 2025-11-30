@@ -99,6 +99,28 @@ main,
   letter-spacing: 0.2px;
 }
 
+.card--point {
+  gap: 10px;
+}
+
+.card--point h1 {
+  line-height: 1.15;
+}
+
+.card--point .point__description {
+  margin-bottom: 4px;
+}
+
+.card--point .point__map {
+  display: inline-block;
+}
+
+.caption {
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .card__meta--inline {
   margin-bottom: -4px;
 }
@@ -364,10 +386,30 @@ main,
   align-items: stretch;
 }
 
+.card--point .photo {
+  margin-top: 4px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, #f9fafb 0%, #eef2f6 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
 .photo__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.photo__placeholder-icon {
+  width: 68px;
+  height: 60px;
+  background-image: url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2254%22%20viewBox%3D%220%200%2060%2054%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20x%3D%221.5%22%20y%3D%221.5%22%20width%3D%2257%22%20height%3D%2251%22%20rx%3D%226.5%22%20stroke%3D%22%23C7CED9%22%20stroke-width%3D%223%22/%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2219%22%20r%3D%226%22%20stroke%3D%22%23C7CED9%22%20stroke-width%3D%223%22/%3E%3Cpath%20d%3D%22M10%2044L23%2031L34%2042L44%2032L50%2038%22%20stroke%3D%22%23C7CED9%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.7;
 }
 
 .link {
