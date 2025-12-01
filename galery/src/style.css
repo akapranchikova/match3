@@ -198,6 +198,71 @@ main,
   color: #0f172a;
   font-size: 18px;
   line-height: 1.5;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.guide__media {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.guide__audio {
+  width: 100%;
+  display: none;
+}
+
+.guide__subtitle {
+  margin: 0 0 8px 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.guide__subtitle--current {
+  min-height: 0;
+}
+
+.guide__subtitle--visible {
+  opacity: 1;
+}
+
+.guide__subtitle:not(.guide__subtitle--visible) {
+  opacity: 0.6;
+}
+
+.guide__subtitle-fill {
+  position: absolute;
+  inset: 0;
+  width: var(--progress);
+  max-width: 100%;
+  background: linear-gradient(90deg, #a5f3fc 0%, #38bdf8 100%);
+  opacity: 0.35;
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+.guide__subtitle-text {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.guide__subtitle-word {
+  opacity: 0.35;
+  transition: opacity 0.2s ease;
+}
+
+.guide__subtitle-word--visible {
+  opacity: 1;
 }
 
 .preview__placeholder {
