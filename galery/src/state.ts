@@ -1,4 +1,4 @@
-import { initialMapPosition } from './data'
+import { initialMapPositions } from './data'
 import { loadViewed } from './storage'
 import { AppState, RenderCleanup } from './types'
 
@@ -7,7 +7,8 @@ export const state: AppState = {
   screen: 'onboardingSlide',
   slideIndex: 0,
   currentPointIndex: 0,
-  mapPosition: initialMapPosition,
+  currentFloor: 1,
+  mapPositions: { ...initialMapPositions },
 }
 
 export let viewedPoints = loadViewed()

@@ -7,37 +7,37 @@ export const points: RoutePoint[] = [
     id: 'history',
     title: 'Создание и история галереи',
     description: 'Коротко рассказываем, как появилось здание и почему оно стало домом новой галереи.',
-    map: { x: 18, y: 30 },
+    map: { floor: 1, x: 28, y: 80 },
   },
   {
     id: 'perm-period',
     title: 'Пермский период, пермское море и геология',
     description: 'История пермского периода и артефакты, которые нашли неподалёку.',
-    map: { x: 45, y: 18 },
+    map: { floor: 1, x: 56, y: 62 },
   },
   {
     id: 'metal-plant',
     title: 'Медеплавильный завод и история посёлка',
     description: 'Как промышленность повлияла на развитие территории и людей.',
-    map: { x: 72, y: 22 },
+    map: { floor: 2, x: 74, y: 34 },
   },
   {
     id: 'excavation',
     title: 'История археологических раскопок',
     description: 'Находки и открытия, которые легли в основу экспозиции.',
-    map: { x: 65, y: 54 },
+    map: { floor: 1, x: 68, y: 38 },
   },
   {
     id: 'railway',
     title: 'Железная дорога — будущий завод Шпагина',
     description: 'Как железная дорога изменила экономику места и городскую ткань.',
-    map: { x: 36, y: 60 },
+    map: { floor: 1, x: 38, y: 54 },
   },
   {
     id: 'final',
     title: 'Финальная точка',
     description: 'Завершение маршрута и приглашение поделиться впечатлениями.',
-    map: { x: 50, y: 78 },
+    map: { floor: 2, x: 46, y: 72 },
   },
 ]
 
@@ -58,4 +58,7 @@ export const onboardingSlides: OnboardingSlide[] = [
   },
 ]
 
-export const initialMapPosition: MapPosition = { x: -140, y: -110 }
+export const initialMapPositions: Record<number, MapPosition> = {
+  1: { x: -120, y: -90 },
+  2: { x: -100, y: -120 },
+}
