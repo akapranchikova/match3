@@ -110,6 +110,7 @@ export const renderNextPoint = (): HTMLElement => {
   mapLink.textContent = 'Показать на карте'
   mapLink.addEventListener('click', (event) => {
     event.preventDefault()
+    state.currentFloor = point.map.floor
     state.screen = 'map'
     rerender()
   })

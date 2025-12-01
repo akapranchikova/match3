@@ -219,6 +219,8 @@ const state = {
 };
 
 const stackEl = document.getElementById('cardStack') as HTMLDivElement;
+const onboardingOverlay = document.getElementById('onboardingOverlay') as HTMLDivElement;
+const onboardingCloseBtn = document.getElementById('onboardingClose') as HTMLButtonElement;
 const resultsOverlay = document.getElementById('resultsOverlay') as HTMLDivElement;
 const mainResult = document.getElementById('mainResult') as HTMLParagraphElement;
 const mainDescription = document.getElementById('mainDescription') as HTMLParagraphElement;
@@ -227,6 +229,22 @@ const profileList = document.getElementById('profileList') as HTMLDivElement;
 const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
 const dislikeBtn = document.getElementById('dislikeBtn') as HTMLButtonElement;
 const restartBtn = document.getElementById('restart') as HTMLButtonElement;
+
+const ONBOARDING_KEY = 'archetypeOnboardingSeen';
+
+function hideOnboarding() {
+    onboardingOverlay.classList.add('hidden');
+    localStorage.setItem(ONBOARDING_KEY, 'true');
+}
+
+function initOnboarding() {
+    onboardingCloseBtn.addEventListener('click', hideOnboarding);
+
+    const hasSeen = localStorage.getItem(ONBOARDING_KEY) === 'true';
+    if (!hasSeen) {
+        onboardingOverlay.classList.remove('hidden');
+    }
+}
 
 function resetState() {
     state.index = 0;
@@ -460,5 +478,6 @@ function bindControls() {
     restartBtn.addEventListener('click', () => resetState());
 }
 
+initOnboarding();
 bindControls();
 renderStack();

@@ -15,11 +15,15 @@ export interface MapPosition {
   y: number
 }
 
+export interface MapPoint extends MapPosition {
+  floor: number
+}
+
 export interface RoutePoint {
   id: string
   title: string
   description: string
-  map: MapPosition
+  map: MapPoint
 }
 
 export interface OnboardingSlide {
@@ -31,7 +35,8 @@ export interface AppState {
   screen: AppScreen
   slideIndex: number
   currentPointIndex: number
-  mapPosition: MapPosition
+  currentFloor: number
+  mapPositions: Record<number, MapPosition>
 }
 
 export type RenderCleanup = () => void
