@@ -29,6 +29,36 @@ export const renderPointInfo = (): HTMLElement => {
   p.textContent = point.description
   section.appendChild(p)
 
+  if (point.longDescription || point.highlights?.length) {
+    const richText = document.createElement('div')
+    richText.className = 'text-block'
+
+    if (point.longDescription) {
+      const lead = document.createElement('p')
+      lead.className = 'text-block__lead'
+      lead.textContent = point.longDescription
+      richText.appendChild(lead)
+    }
+
+    if (point.highlights?.length) {
+      const listTitle = document.createElement('p')
+      listTitle.className = 'text-block__title'
+      listTitle.textContent = 'Обратите внимание'
+      richText.appendChild(listTitle)
+
+      const list = document.createElement('ul')
+      list.className = 'text-block__list'
+      point.highlights.forEach((item) => {
+        const li = document.createElement('li')
+        li.textContent = item
+        list.appendChild(li)
+      })
+      richText.appendChild(list)
+    }
+
+    section.appendChild(richText)
+  }
+
   const preview = document.createElement('div')
   preview.className = 'card__preview large'
 
