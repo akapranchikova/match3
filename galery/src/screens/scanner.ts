@@ -2,7 +2,6 @@ import { points } from '../data'
 import { rerender } from '../navigation'
 import { saveViewed } from '../storage'
 import { state, viewedPoints } from '../state'
-import { createButton } from '../ui'
 import {
   BarcodeDetectorConstructor,
   BarcodeDetectorResult,
@@ -12,19 +11,10 @@ import {
 
 export const renderScanner = (): RenderResult => {
   const wrapper = document.createElement('div')
-  wrapper.className = 'scanner'
-
-  const title = document.createElement('h1')
-  title.textContent = 'Сканер QR-кода'
-  wrapper.appendChild(title)
-
-  const text = document.createElement('p')
-  text.textContent =
-    'Откройте камеру и наведите её на QR-код точки маршрута. Распознавание запустится автоматически.'
-  wrapper.appendChild(text)
+  wrapper.className = 'scanner scanner--fullscreen'
 
   const preview = document.createElement('div')
-  preview.className = 'scanner__preview'
+  preview.className = 'scanner__preview scanner__preview--fullscreen'
 
   const video = document.createElement('video')
   video.className = 'scanner__video'
@@ -37,28 +27,23 @@ export const renderScanner = (): RenderResult => {
   overlay.className = 'scanner__frame'
   preview.appendChild(overlay)
 
+  const close = document.createElement('button')
+  close.type = 'button'
+  close.className = 'scanner__close'
+  close.setAttribute('aria-label', 'Закрыть сканер')
+  close.textContent = '×'
+  close.addEventListener('click', () => {
+    state.screen = 'nextPoint'
+    rerender()
+  })
+
+  preview.appendChild(close)
   wrapper.appendChild(preview)
 
   const status = document.createElement('p')
-  status.className = 'scanner__status'
+  status.className = 'scanner__status visually-hidden'
   status.textContent = 'Запрашиваем доступ к камере…'
   wrapper.appendChild(status)
-
-  const tip = document.createElement('p')
-  tip.className = 'muted'
-  tip.textContent = 'Если распознавание не начинается, включите освещение и подержите камеру неподвижно.'
-  wrapper.appendChild(tip)
-
-  const actions = document.createElement('div')
-  actions.className = 'stack'
-
-  const back = createButton('Вернуться к маршруту', 'secondary')
-  back.addEventListener('click', () => {
-    state.screen = 'routeList'
-    rerender()
-  })
-  actions.appendChild(back)
-  wrapper.appendChild(actions)
 
   let active = true
   let stream: MediaStream | null = null
