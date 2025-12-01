@@ -1,68 +1,138 @@
 import { initialMapPositions, points } from '../data'
 import { rerender } from '../navigation'
 import { state, viewedPoints } from '../state'
-import { createButton } from '../ui'
 
 export const renderMap = (): HTMLElement => {
   const point = points[state.currentPointIndex]
-  const activeFloor = point.map.floor
-  state.currentFloor = state.currentFloor || activeFloor
+  const previousPoint = state.currentPointIndex > 0 ? points[state.currentPointIndex - 1] : null
+  const shouldShowFloors = previousPoint ? previousPoint.map.floor !== point.map.floor : false
+  const activeFloor = shouldShowFloors ? state.currentFloor || point.map.floor : point.map.floor
+  state.currentFloor = activeFloor
 
   if (!state.mapPositions[state.currentFloor]) {
     state.mapPositions[state.currentFloor] = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
   }
 
+  const page = document.createElement('div')
+  page.className = 'map-screen'
+
   const container = document.createElement('section')
-  container.className = 'map'
+  container.className = 'map map--sheet'
+
+  let dragStartY = 0
+  let dragOffsetY = 0
+  let isDragging = false
+
+  const resetDragStyles = () => {
+    container.style.transition = ''
+    container.style.transform = ''
+    container.style.opacity = ''
+  }
+
+  const closeMap = () => {
+    state.screen = 'nextPoint'
+    rerender()
+  }
+
+  const endDrag = () => {
+    if (!isDragging) return
+
+    if (dragOffsetY > 120) {
+      closeMap()
+    } else {
+      container.style.transition = 'transform 0.18s ease, opacity 0.18s ease'
+      container.style.transform = 'translateY(0)'
+      container.style.opacity = '1'
+      setTimeout(resetDragStyles, 200)
+    }
+
+    dragStartY = 0
+    dragOffsetY = 0
+    isDragging = false
+  }
+
+  const moveDrag = (clientY: number) => {
+    if (!isDragging) return
+
+    dragOffsetY = Math.max(0, clientY - dragStartY)
+    container.style.transform = `translateY(${dragOffsetY}px)`
+    container.style.opacity = `${Math.max(0.6, 1 - dragOffsetY / 260)}`
+  }
+
+  const startDrag = (clientY: number) => {
+    isDragging = true
+    dragStartY = clientY
+  }
+
+  const handle = document.createElement('div')
+  handle.className = 'map__handle'
+  container.appendChild(handle)
+
+  const onPointerDown = (event: PointerEvent) => {
+    startDrag(event.clientY)
+  }
+
+  const onPointerMove = (event: PointerEvent) => {
+    moveDrag(event.clientY)
+  }
+
+  handle.addEventListener('pointerdown', onPointerDown)
+  container.addEventListener('pointermove', onPointerMove)
+  container.addEventListener('pointerup', endDrag)
+  container.addEventListener('pointercancel', endDrag)
+  handle.addEventListener('pointerup', endDrag)
+  handle.addEventListener('pointercancel', endDrag)
+
+  handle.addEventListener('touchstart', (event) => startDrag(event.touches[0].clientY))
+  handle.addEventListener('touchmove', (event) => moveDrag(event.touches[0].clientY))
+  handle.addEventListener('touchend', endDrag)
+  handle.addEventListener('touchcancel', endDrag)
 
   const header = document.createElement('div')
   header.className = 'map__header'
 
   const title = document.createElement('h1')
-  title.textContent = 'Карта музея'
+  title.textContent = 'Карта'
   header.appendChild(title)
 
-  const floorSwitcher = document.createElement('div')
-  floorSwitcher.className = 'map__floors'
+  if (shouldShowFloors) {
+    const floorSwitcher = document.createElement('div')
+    floorSwitcher.className = 'map__floors'
 
-  ;[1, 2].forEach((floor) => {
-    const floorButton = document.createElement('button')
-    floorButton.type = 'button'
-    floorButton.className = 'map__floor'
-    if (floor === state.currentFloor) floorButton.classList.add('is-active')
-    floorButton.textContent = `Этаж ${floor}`
-    floorButton.addEventListener('click', () => {
-      state.currentFloor = floor
-      if (!state.mapPositions[floor]) {
-        state.mapPositions[floor] = initialMapPositions[floor] || { x: 0, y: 0 }
-      }
-      rerender()
+    ;[1, 2].forEach((floor) => {
+      const floorButton = document.createElement('button')
+      floorButton.type = 'button'
+      floorButton.className = 'map__floor'
+      if (floor === state.currentFloor) floorButton.classList.add('is-active')
+      floorButton.textContent = `Этаж ${floor}`
+      floorButton.addEventListener('click', () => {
+        state.currentFloor = floor
+        if (!state.mapPositions[floor]) {
+          state.mapPositions[floor] = initialMapPositions[floor] || { x: 0, y: 0 }
+        }
+        rerender()
+      })
+      floorSwitcher.appendChild(floorButton)
     })
-    floorSwitcher.appendChild(floorButton)
-  })
 
-  header.appendChild(floorSwitcher)
+    header.appendChild(floorSwitcher)
+  } else {
+    const floorLabel = document.createElement('span')
+    floorLabel.className = 'map__floor-label'
+    floorLabel.textContent = `Этаж ${state.currentFloor}`
+    header.appendChild(floorLabel)
+  }
   container.appendChild(header)
-
-  const subtitle = document.createElement('p')
-  subtitle.className = 'muted'
-  subtitle.textContent = 'Передвигайте карту, чтобы найти нужную точку и нажмите на неё.'
-  container.appendChild(subtitle)
 
   const viewport = document.createElement('div')
   viewport.className = 'map__viewport'
 
   const inner = document.createElement('div')
   inner.className = 'map__inner'
-  const applyTransform = () => {
-    const position = state.mapPositions[state.currentFloor] || { x: 0, y: 0 }
-    inner.style.transform = `translate(${position.x}px, ${position.y}px)`
-  }
-  applyTransform()
-
-  const grid = document.createElement('div')
-  grid.className = 'map__grid'
-  inner.appendChild(grid)
+  const defaultPosition = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
+  inner.style.left = '50%'
+  inner.style.top = '50%'
+  inner.style.transform = `translate(calc(-50% + ${defaultPosition.x}px), calc(-50% + ${defaultPosition.y}px))`
 
   const createPlan = (floor: number) => {
     const plan = document.createElement('div')
@@ -137,69 +207,10 @@ export const renderMap = (): HTMLElement => {
       inner.appendChild(marker)
     })
 
-  const dragState: { active: boolean; start: { x: number; y: number }; origin: { x: number; y: number } } = {
-    active: false,
-    start: { x: 0, y: 0 },
-    origin: { x: 0, y: 0 },
-  }
-
-  const startDrag = (event: PointerEvent) => {
-    dragState.active = true
-    dragState.start = { x: event.clientX, y: event.clientY }
-    dragState.origin = { ...(state.mapPositions[state.currentFloor] || { x: 0, y: 0 }) }
-    viewport.setPointerCapture(event.pointerId)
-  }
-
-  const moveDrag = (event: PointerEvent) => {
-    if (!dragState.active) return
-    const deltaX = event.clientX - dragState.start.x
-    const deltaY = event.clientY - dragState.start.y
-    state.mapPositions[state.currentFloor] = { x: dragState.origin.x + deltaX, y: dragState.origin.y + deltaY }
-    applyTransform()
-  }
-
-  const endDrag = (event: PointerEvent) => {
-    if (!dragState.active) return
-    dragState.active = false
-    viewport.releasePointerCapture(event.pointerId)
-  }
-
-  viewport.addEventListener('pointerdown', startDrag)
-  viewport.addEventListener('pointermove', moveDrag)
-  viewport.addEventListener('pointerup', endDrag)
-  viewport.addEventListener('pointercancel', endDrag)
-
   viewport.appendChild(inner)
   container.appendChild(viewport)
 
-  const hint = document.createElement('div')
-  hint.className = 'map__hint'
-  hint.innerHTML = '<span class="hint__icon">👆</span> Передвигайте карту и нажмите на точку маршрута'
-  container.appendChild(hint)
+  page.appendChild(container)
 
-  const actions = document.createElement('div')
-  actions.className = 'stack'
-
-  const focusButton = createButton(`Перейти к точке ${state.currentPointIndex + 1}`, 'primary')
-  focusButton.addEventListener('click', () => {
-    state.screen = 'nextPoint'
-    rerender()
-  })
-
-  const routeButton = createButton('Открыть весь маршрут', 'secondary')
-  routeButton.addEventListener('click', () => {
-    state.screen = 'routeList'
-    rerender()
-  })
-
-  actions.appendChild(focusButton)
-  actions.appendChild(routeButton)
-  container.appendChild(actions)
-
-  const caption = document.createElement('p')
-  caption.className = 'muted'
-  caption.textContent = `Текущая точка: ${point.title}`
-  container.appendChild(caption)
-
-  return container
+  return page
 }
