@@ -1,16 +1,48 @@
-import { points } from '../data'
+import { initialMapPositions, points } from '../data'
 import { rerender } from '../navigation'
-import { state } from '../state'
+import { state, viewedPoints } from '../state'
 import { createButton } from '../ui'
 
 export const renderMap = (): HTMLElement => {
   const point = points[state.currentPointIndex]
+  const activeFloor = point.map.floor
+  state.currentFloor = state.currentFloor || activeFloor
+
+  if (!state.mapPositions[state.currentFloor]) {
+    state.mapPositions[state.currentFloor] = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
+  }
+
   const container = document.createElement('section')
   container.className = 'map'
 
+  const header = document.createElement('div')
+  header.className = 'map__header'
+
   const title = document.createElement('h1')
   title.textContent = 'Карта музея'
-  container.appendChild(title)
+  header.appendChild(title)
+
+  const floorSwitcher = document.createElement('div')
+  floorSwitcher.className = 'map__floors'
+
+  ;[1, 2].forEach((floor) => {
+    const floorButton = document.createElement('button')
+    floorButton.type = 'button'
+    floorButton.className = 'map__floor'
+    if (floor === state.currentFloor) floorButton.classList.add('is-active')
+    floorButton.textContent = `Этаж ${floor}`
+    floorButton.addEventListener('click', () => {
+      state.currentFloor = floor
+      if (!state.mapPositions[floor]) {
+        state.mapPositions[floor] = initialMapPositions[floor] || { x: 0, y: 0 }
+      }
+      rerender()
+    })
+    floorSwitcher.appendChild(floorButton)
+  })
+
+  header.appendChild(floorSwitcher)
+  container.appendChild(header)
 
   const subtitle = document.createElement('p')
   subtitle.className = 'muted'
@@ -23,7 +55,8 @@ export const renderMap = (): HTMLElement => {
   const inner = document.createElement('div')
   inner.className = 'map__inner'
   const applyTransform = () => {
-    inner.style.transform = `translate(${state.mapPosition.x}px, ${state.mapPosition.y}px)`
+    const position = state.mapPositions[state.currentFloor] || { x: 0, y: 0 }
+    inner.style.transform = `translate(${position.x}px, ${position.y}px)`
   }
   applyTransform()
 
@@ -31,31 +64,78 @@ export const renderMap = (): HTMLElement => {
   grid.className = 'map__grid'
   inner.appendChild(grid)
 
-  const mapImage = document.createElement('div')
-  mapImage.className = 'map__image'
-  inner.appendChild(mapImage)
+  const createPlan = (floor: number) => {
+    const plan = document.createElement('div')
+    plan.className = `map__plan map__plan--${floor}`
+    if (floor === state.currentFloor) plan.classList.add('is-active')
 
-  points.forEach((item, index) => {
-    const marker = document.createElement('button')
-    marker.className = 'map__marker'
-    marker.style.left = `${item.map.x}%`
-    marker.style.top = `${item.map.y}%`
-    marker.title = item.title
-    marker.innerHTML = `<span class="map__marker-dot"></span><span class="map__marker-label">${index + 1}</span>`
+    const outline = document.createElement('div')
+    outline.className = 'map__outline'
+    plan.appendChild(outline)
 
-    marker.addEventListener('click', (event) => {
-      event.stopPropagation()
-      state.currentPointIndex = index
-      state.screen = 'nextPoint'
-      rerender()
+    const segments: Array<{ className: string; style: Partial<CSSStyleDeclaration> }> =
+      floor === 1
+        ? [
+            { className: 'map__segment', style: { top: '6%', left: '32%', width: '22%', height: '34%' } },
+            { className: 'map__segment', style: { top: '34%', left: '10%', width: '48%', height: '26%' } },
+            { className: 'map__segment', style: { top: '48%', left: '30%', width: '30%', height: '36%' } },
+            { className: 'map__segment', style: { top: '62%', left: '8%', width: '30%', height: '26%' } },
+          ]
+        : [
+            { className: 'map__segment', style: { top: '10%', left: '38%', width: '22%', height: '28%' } },
+            { className: 'map__segment', style: { top: '34%', left: '30%', width: '26%', height: '26%' } },
+            { className: 'map__segment', style: { top: '52%', left: '14%', width: '42%', height: '24%' } },
+          ]
+
+    segments.forEach(({ className, style }) => {
+      const segment = document.createElement('div')
+      segment.className = className
+      Object.assign(segment.style, style)
+      plan.appendChild(segment)
     })
 
-    if (index === state.currentPointIndex) {
-      marker.classList.add('is-active')
-    }
+    const path = document.createElement('div')
+    path.className = 'map__path'
+    plan.appendChild(path)
 
-    inner.appendChild(marker)
-  })
+    return plan
+  }
+
+  const plans = [createPlan(1), createPlan(2)]
+  plans.forEach((plan) => inner.appendChild(plan))
+
+  points
+    .filter((item) => item.map.floor === state.currentFloor)
+    .forEach((item) => {
+      const marker = document.createElement('button')
+      marker.className = 'map__marker'
+      marker.style.left = `${item.map.x}%`
+      marker.style.top = `${item.map.y}%`
+      marker.title = item.title
+      const originalIndex = points.findIndex((original) => original.id === item.id)
+      marker.innerHTML = `<span class="map__marker-dot"></span><span class="map__marker-label">${originalIndex + 1}</span>`
+
+      marker.addEventListener('click', (event) => {
+        event.stopPropagation()
+        state.currentPointIndex = originalIndex
+        state.screen = 'nextPoint'
+        rerender()
+      })
+
+      if (item.id === point.id) {
+        marker.classList.add('is-active')
+      }
+
+      if (viewedPoints.has(item.id)) {
+        marker.classList.add('is-complete')
+        const status = document.createElement('span')
+        status.className = 'map__marker-status'
+        status.textContent = 'Пройдена'
+        marker.appendChild(status)
+      }
+
+      inner.appendChild(marker)
+    })
 
   const dragState: { active: boolean; start: { x: number; y: number }; origin: { x: number; y: number } } = {
     active: false,
@@ -66,7 +146,7 @@ export const renderMap = (): HTMLElement => {
   const startDrag = (event: PointerEvent) => {
     dragState.active = true
     dragState.start = { x: event.clientX, y: event.clientY }
-    dragState.origin = { ...state.mapPosition }
+    dragState.origin = { ...(state.mapPositions[state.currentFloor] || { x: 0, y: 0 }) }
     viewport.setPointerCapture(event.pointerId)
   }
 
@@ -74,7 +154,7 @@ export const renderMap = (): HTMLElement => {
     if (!dragState.active) return
     const deltaX = event.clientX - dragState.start.x
     const deltaY = event.clientY - dragState.start.y
-    state.mapPosition = { x: dragState.origin.x + deltaX, y: dragState.origin.y + deltaY }
+    state.mapPositions[state.currentFloor] = { x: dragState.origin.x + deltaX, y: dragState.origin.y + deltaY }
     applyTransform()
   }
 
