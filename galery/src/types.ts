@@ -23,6 +23,8 @@ export interface RoutePoint {
   id: string
   title: string
   description: string
+  longDescription?: string
+  highlights?: string[]
   map: MapPoint
 }
 
