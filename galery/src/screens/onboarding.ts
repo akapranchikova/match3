@@ -4,6 +4,7 @@ import { state } from '../state'
 import { createButton } from '../ui'
 import { RenderResult } from '../types'
 import headphonesIllustration from '../assets/onboarding-headphones.svg'
+import logoList from '../assets/logo-list.svg'
 import guideIntroAudio from '../assets/guide-intro.wav'
 
 const introSubtitles = [
@@ -90,24 +91,14 @@ const renderCard = ({
   if (showProgress) {
     header.classList.add('card__header--onboarding')
     header.innerHTML =
-      '<span class="logo-chip">Пермская государственная художественная галерея</span>' +
-      '<span class="logo-chip__divider">×</span>' +
-      '<span class="logo-chip">Сбер</span>' +
-      '<span class="logo-chip__divider">×</span>' +
-      '<span class="logo-chip">GigaChat</span>'
+      `<img src="${logoList}" alt="Лого" class="logo-list">`
   } else {
     header.innerHTML = '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
   }
 
   content.appendChild(header)
 
-  const h1 = document.createElement('h1')
-  h1.textContent = title
-  content.appendChild(h1)
 
-  const p = document.createElement('p')
-  p.textContent = body
-  content.appendChild(p)
 
   const preview = document.createElement('div')
   preview.className = 'card__preview'
@@ -118,6 +109,14 @@ const renderCard = ({
   illustration.className = 'card__image'
   preview.appendChild(illustration)
   content.appendChild(preview)
+
+    const h1 = document.createElement('h1')
+    h1.textContent = title
+    content.appendChild(h1)
+
+    const p = document.createElement('p')
+    p.textContent = body
+    content.appendChild(p)
 
   container.appendChild(content)
 

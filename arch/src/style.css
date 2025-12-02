@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "TT Fors";
+    src: url("/assets/TT Fors Trial Regular") format("ttf");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     --bg: radial-gradient(circle at 15% 20%, #c4573c 0%, #621d1b 26%, #0d111a 60%);
     --card: #1b1f30;
@@ -7,11 +15,12 @@
     --like: #1f7c43;
     --dislike: #c1462c;
     --shadow: 0 26px 52px rgba(0, 0, 0, 0.45);
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'TT Fors', sans-serif;
 }
 
 * {
     box-sizing: border-box;
+    font-family: 'TT Fors', sans-serif;
 }
 
 body {
