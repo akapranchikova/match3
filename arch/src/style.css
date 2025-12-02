@@ -16,8 +16,7 @@
 
 body {
     margin: 0;
-    min-height: 100svh;
-    max-height: 100lvh;
+    min-height: 100dvh;
     overflow: hidden;
     background: linear-gradient(
             to bottom,
@@ -35,7 +34,7 @@ body {
     height: min(820px, 100vh);
     display: flex;
     flex-direction: column;
-    padding: 18px 16px 20px;
+    padding: 16px;
     position: relative;
 }
 
@@ -202,13 +201,13 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 18px;
-    padding: 4px 4px 10px;
+    padding: 0 4px;
 }
 
 .action {
     border: none;
     border-radius: 122px;
-    height: 96px;
+    height: 70px;
     font-size: 32px;
     cursor: pointer;
     transition: transform 0.15s ease, filter 0.15s ease;
@@ -260,34 +259,6 @@ body {
 
 .overlay-content p {
     color: #f1e7e7;
-}
-
-.overlay-content.onboarding {
-    background: linear-gradient(160deg, #1c0f27, #2b163d 50%, #4b2d72 100%);
-}
-
-.onboarding-steps {
-    list-style: none;
-    padding: 0;
-    margin: 16px 0;
-    display: grid;
-    gap: 10px;
-    text-align: left;
-}
-
-.onboarding-steps li {
-    display: grid;
-    grid-template-columns: 32px 1fr;
-    gap: 10px;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.22);
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.step-icon {
-    font-size: 18px;
 }
 
 .primary {
@@ -351,6 +322,21 @@ body {
     }
 
     .app {
-        height: 100vh;
+        height: 100dvh;
+        padding: 12px;
+    }
+
+    .content {
+        gap: 12px;
+    }
+
+    .controls {
+        gap: 12px;
+        padding: 8px;
+    }
+
+    .action {
+        height: 80px;
+        font-size: 28px;
     }
 }
