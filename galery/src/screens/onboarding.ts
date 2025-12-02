@@ -63,62 +63,44 @@ const renderCard = ({
 }): HTMLElement => {
   const container = document.createElement('section')
   container.className = 'card'
-
-  let progress: HTMLElement | null = null
-
   if (showProgress) {
     container.classList.add('card--onboarding')
-
-    progress = document.createElement('div')
-    progress.className = 'progress progress--segments'
-
-    onboardingSlides.forEach((_, index) => {
-      const segment = document.createElement('span')
-      segment.className = 'progress__segment'
-      if (index === state.slideIndex) {
-        segment.classList.add('is-active')
-      }
-      progress?.appendChild(segment)
-    })
   }
 
-  const content = document.createElement('div')
-  content.className = 'card__content'
+  const progressSegments = showProgress
+    ? onboardingSlides
+        .map(
+          (_, index) =>
+            `<span class="progress__segment${index === state.slideIndex ? ' is-active' : ''}"></span>`,
+        )
+        .join('')
+    : ''
 
-  const header = document.createElement('header')
-  header.className = 'card__header'
+  const headerClasses = ['card__header']
+  const footerClasses = ['card__footer']
 
   if (showProgress) {
-    header.classList.add('card__header--onboarding')
-    header.innerHTML =
-      `<img src="${logoList}" alt="Лого" class="logo-list">`
-  } else {
-    header.innerHTML = '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
+    headerClasses.push('card__header--onboarding')
+    footerClasses.push('card__footer--onboarding')
   }
 
-  content.appendChild(header)
+  const headerContent = showProgress
+    ? `<img src="${logoList}" alt="Лого" class="logo-list">`
+    : '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
 
-
-
-  const preview = document.createElement('div')
-  preview.className = 'card__preview'
-
-  const illustration = document.createElement('img')
-  illustration.src = imageSrc
-  illustration.alt = imageAlt ?? 'Превью экспозиции галереи'
-  illustration.className = 'card__image'
-  preview.appendChild(illustration)
-  content.appendChild(preview)
-
-    const h1 = document.createElement('h1')
-    h1.textContent = title
-    content.appendChild(h1)
-
-    const p = document.createElement('p')
-    p.textContent = body
-    content.appendChild(p)
-
-  container.appendChild(content)
+  container.innerHTML = `
+    <div class="card__content">
+      <header class="${headerClasses.join(' ')}">${headerContent}</header>
+      <div class="card__preview">
+        <img src="${imageSrc}" alt="${imageAlt ?? 'Превью экспозиции галереи'}" class="card__image">
+      </div>
+      <h1>${title}</h1>
+      <p>${body}</p>
+    </div>
+    <div class="${footerClasses.join(' ')}">
+      ${progressSegments ? `<div class="progress progress--segments">${progressSegments}</div>` : ''}
+    </div>
+  `
 
   const action = createButton('Далее')
   action.addEventListener('click', () => {
@@ -131,19 +113,7 @@ const renderCard = ({
     rerender()
   })
 
-  const footer = document.createElement('div')
-  footer.className = 'card__footer'
-
-  if (showProgress) {
-    footer.classList.add('card__footer--onboarding')
-  }
-
-  if (progress) {
-    footer.appendChild(progress)
-  }
-
-  footer.appendChild(action)
-  container.appendChild(footer)
+  container.querySelector('.card__footer')?.appendChild(action)
 
   return container
 }
@@ -163,64 +133,38 @@ export const renderHeadphonesPrompt = (): RenderResult => {
   const container = document.createElement('section')
   container.className = 'card card--headphones'
 
-  const header = document.createElement('header')
-  header.className = 'card__header'
-  header.innerHTML = '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
-  container.appendChild(header)
-
-  const title = document.createElement('h1')
-  title.textContent = 'Будете ли использовать наушники?'
-  container.appendChild(title)
-
-  const description = document.createElement('p')
-  description.textContent = 'Вы сможете поменять выбор позже'
-  container.appendChild(description)
+  container.innerHTML = `
+    <header class="card__header">
+      <span class="card__meta">Пермская галерея × Сбер × GigaChat</span>
+    </header>
+    <h1>Будете ли использовать наушники?</h1>
+    <p>Вы сможете поменять выбор позже</p>
+    <div class="choice-grid">
+      <button class="option-card option-card--primary" type="button">
+        <img src="${headphonesIllustration}" alt="Наушники" class="option-card__image">
+        <div class="option-card__text">
+          <span class="option-card__title">Да, уже подключил</span>
+          <span class="option-card__subtitle">Перейти к маршруту с аудиогидом</span>
+        </div>
+      </button>
+      <button class="option-card option-card--secondary" type="button">
+        <img src="${headphonesIllustration}" alt="Наушники" class="option-card__image">
+        <div class="option-card__text">
+          <span class="option-card__title">Нет, буду читать субтитры</span>
+          <span class="option-card__subtitle">Можно включить звук позже</span>
+        </div>
+      </button>
+    </div>
+  `
 
   const goNext = () => {
     state.screen = 'routeModePrompt'
     rerender()
   }
 
-  const grid = document.createElement('div')
-  grid.className = 'choice-grid'
-
-  const makeOption = (label: string, subtitle: string, variant: 'primary' | 'secondary') => {
-    const button = document.createElement('button')
-    button.className = `option-card option-card--${variant}`
-    button.type = 'button'
-
-    const image = document.createElement('img')
-    image.src = headphonesIllustration
-    image.alt = 'Наушники'
-    image.className = 'option-card__image'
-    button.appendChild(image)
-
-    const textWrap = document.createElement('div')
-    textWrap.className = 'option-card__text'
-
-    const labelEl = document.createElement('span')
-    labelEl.className = 'option-card__title'
-    labelEl.textContent = label
-    textWrap.appendChild(labelEl)
-
-    const subtitleEl = document.createElement('span')
-    subtitleEl.className = 'option-card__subtitle'
-    subtitleEl.textContent = subtitle
-    textWrap.appendChild(subtitleEl)
-
-    button.appendChild(textWrap)
+  container.querySelectorAll<HTMLButtonElement>('.choice-grid .option-card').forEach((button) => {
     button.addEventListener('click', goNext)
-    return button
-  }
-
-  grid.appendChild(
-    makeOption('Да, уже подключил', 'Перейти к маршруту с аудиогидом', 'primary'),
-  )
-  grid.appendChild(
-    makeOption('Нет, буду читать субтитры', 'Можно включить звук позже', 'secondary'),
-  )
-
-  container.appendChild(grid)
+  })
 
   return container
 }
@@ -228,18 +172,14 @@ export const renderHeadphonesPrompt = (): RenderResult => {
 export const renderRouteModePrompt = (): RenderResult => {
   const overlay = document.createElement('div')
   overlay.className = 'overlay'
+  overlay.innerHTML = `
+    <div class="modal">
+      <h2>Выберите режим просмотра маршрута</h2>
+      <p>Вы можете пройти маршрут вместе с виртуальным гидом или изучать материалы самостоятельно</p>
+    </div>
+  `
 
-  const modal = document.createElement('div')
-  modal.className = 'modal'
-
-  const title = document.createElement('h2')
-  title.textContent = 'Выберите режим просмотра маршрута'
-  modal.appendChild(title)
-
-  const description = document.createElement('p')
-  description.textContent =
-    'Вы можете пройти маршрут вместе с виртуальным гидом или изучать материалы самостоятельно'
-  modal.appendChild(description)
+  const modal = overlay.querySelector<HTMLDivElement>('.modal')
 
   const withGuide = createButton('С гидом Голос времени')
   withGuide.addEventListener('click', () => {
@@ -253,9 +193,8 @@ export const renderRouteModePrompt = (): RenderResult => {
     rerender()
   })
 
-  modal.appendChild(withGuide)
-  modal.appendChild(selfGuided)
-  overlay.appendChild(modal)
+  modal?.appendChild(withGuide)
+  modal?.appendChild(selfGuided)
   return overlay
 }
 
