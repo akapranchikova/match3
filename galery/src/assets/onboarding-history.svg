@@ -1,0 +1,30 @@
+<svg width="360" height="220" viewBox="0 0 360 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgHistory" x1="40" y1="0" x2="320" y2="240" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827" />
+      <stop offset="1" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="accentHistory" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#22d3ee" />
+      <stop offset="1" stop-color="#22c55e" />
+    </linearGradient>
+  </defs>
+  <rect width="360" height="220" rx="18" fill="url(#bgHistory)" />
+  <rect x="30" y="70" width="72" height="110" rx="12" fill="#1f2937" stroke="#475569" stroke-width="2" />
+  <rect x="118" y="46" width="84" height="134" rx="14" fill="#111827" stroke="#475569" stroke-width="2" />
+  <rect x="214" y="58" width="96" height="122" rx="16" fill="#0b1221" stroke="#3b4254" stroke-width="2" />
+  <rect x="78" y="90" width="24" height="68" rx="6" fill="url(#accentHistory)" opacity="0.9" />
+  <rect x="146" y="72" width="28" height="86" rx="7" fill="url(#accentHistory)" opacity="0.9" />
+  <rect x="242" y="84" width="32" height="74" rx="8" fill="url(#accentHistory)" opacity="0.9" />
+  <rect x="62" y="106" width="18" height="52" rx="5" fill="#d1d5db" opacity="0.3" />
+  <rect x="130" y="94" width="18" height="64" rx="5" fill="#d1d5db" opacity="0.3" />
+  <rect x="228" y="100" width="18" height="58" rx="5" fill="#d1d5db" opacity="0.3" />
+  <rect x="42" y="142" width="16" height="26" rx="4" fill="#22d3ee" opacity="0.85" />
+  <rect x="182" y="118" width="14" height="50" rx="4" fill="#22d3ee" opacity="0.85" />
+  <rect x="292" y="130" width="18" height="38" rx="4" fill="#22d3ee" opacity="0.85" />
+  <rect x="24" y="170" width="312" height="14" rx="7" fill="#0ea5e9" opacity="0.6" />
+  <rect x="24" y="188" width="312" height="10" rx="5" fill="#0ea5e9" opacity="0.4" />
+  <circle cx="64" cy="54" r="10" fill="#22c55e" opacity="0.85" />
+  <circle cx="190" cy="36" r="12" fill="#22d3ee" opacity="0.85" />
+  <circle cx="284" cy="46" r="9" fill="#0ea5e9" opacity="0.8" />
+</svg>
