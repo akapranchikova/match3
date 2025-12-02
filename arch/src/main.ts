@@ -294,8 +294,11 @@ function renderStack() {
         el.dataset.state = idx === 0 ? 'front' : 'behind';
         el.dataset.id = card.id.toString();
         el.style.zIndex = (cards.length - state.index - idx).toString();
-        const cardNumber = state.index + idx + 1;
-        const percent = (state.index / cards.length) * 100;
+        const isTutorialCard = Boolean(card.tutorial);
+        const totalQuestions = cards.length - tutorialLength;
+        const answeredQuestions = Math.max(0, state.index - tutorialLength);
+        const cardNumber = isTutorialCard ? null : answeredQuestions + idx + 1;
+        const percent = (answeredQuestions / totalQuestions) * 100;
         el.style.setProperty('--card-art', card.art);
         const labelMarkup = card.tutorialLabel ? `<div class="card-label">${card.tutorialLabel}</div>` : '';
         const bodyClass = card.tutorial ? 'card-text tutorial-body' : 'card-text';
@@ -346,7 +349,11 @@ function renderStack() {
 
             
        </div>
-      <div class="card-counter">${cardNumber}/${cards.length}</div>
+      ${
+          isTutorialCard
+              ? ''
+              : `<div class="card-counter">${cardNumber}/${totalQuestions}</div>`
+      }
        <div class="progress-bar">
                     <div class="progress-fill" id="progressFill" style="width:${percent}%"></div>
                 </div>
