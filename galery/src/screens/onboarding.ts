@@ -3,7 +3,7 @@ import { rerender } from '../navigation'
 import { state } from '../state'
 import { createButton } from '../ui'
 import { RenderResult } from '../types'
-import onboardingPhoto from '../assets/onboarding-photo.svg'
+import headphonesIllustration from '../assets/onboarding-headphones.svg'
 import guideIntroAudio from '../assets/guide-intro.wav'
 
 const introSubtitles = [
@@ -51,10 +51,14 @@ const renderCard = ({
   title,
   body,
   showProgress,
+  imageSrc,
+  imageAlt,
 }: {
   title: string
   body: string
   showProgress?: boolean
+  imageSrc: string
+  imageAlt?: string
 }): HTMLElement => {
   const container = document.createElement('section')
   container.className = 'card'
@@ -89,11 +93,11 @@ const renderCard = ({
   const preview = document.createElement('div')
   preview.className = 'card__preview'
 
-  const image = document.createElement('img')
-  image.src = onboardingPhoto
-  image.alt = 'Превью экспозиции галереи'
-  image.className = 'card__image'
-  preview.appendChild(image)
+  const illustration = document.createElement('img')
+  illustration.src = imageSrc
+  illustration.alt = imageAlt ?? 'Превью экспозиции галереи'
+  illustration.className = 'card__image'
+  preview.appendChild(illustration)
   content.appendChild(preview)
 
   container.appendChild(content)
@@ -122,40 +126,76 @@ export const renderOnboardingSlide = (): HTMLElement => {
   return renderCard({
     title: slide.title,
     body: slide.body,
+    imageSrc: slide.image,
+    imageAlt: slide.imageAlt,
     showProgress: true,
   })
 }
 
 export const renderHeadphonesPrompt = (): RenderResult => {
-  const overlay = document.createElement('div')
-  overlay.className = 'overlay'
+  const container = document.createElement('section')
+  container.className = 'card card--headphones'
 
-  const modal = document.createElement('div')
-  modal.className = 'modal'
+  const header = document.createElement('header')
+  header.className = 'card__header'
+  header.innerHTML = '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
+  container.appendChild(header)
 
-  const title = document.createElement('h2')
+  const title = document.createElement('h1')
   title.textContent = 'Будете ли использовать наушники?'
-  modal.appendChild(title)
+  container.appendChild(title)
 
   const description = document.createElement('p')
-  description.textContent = 'Рекомендуем слушать гид, но если нет возможности — будут субтитры.'
-  modal.appendChild(description)
+  description.textContent = 'Вы сможете поменять выбор позже'
+  container.appendChild(description)
 
   const goNext = () => {
     state.screen = 'routeModePrompt'
     rerender()
   }
 
-  const yes = createButton('Да, уже подключил')
-  yes.addEventListener('click', goNext)
+  const grid = document.createElement('div')
+  grid.className = 'choice-grid'
 
-  const no = createButton('Нет, буду читать субтитры', 'secondary')
-  no.addEventListener('click', goNext)
+  const makeOption = (label: string, subtitle: string, variant: 'primary' | 'secondary') => {
+    const button = document.createElement('button')
+    button.className = `option-card option-card--${variant}`
+    button.type = 'button'
 
-  modal.appendChild(yes)
-  modal.appendChild(no)
-  overlay.appendChild(modal)
-  return overlay
+    const image = document.createElement('img')
+    image.src = headphonesIllustration
+    image.alt = 'Наушники'
+    image.className = 'option-card__image'
+    button.appendChild(image)
+
+    const textWrap = document.createElement('div')
+    textWrap.className = 'option-card__text'
+
+    const labelEl = document.createElement('span')
+    labelEl.className = 'option-card__title'
+    labelEl.textContent = label
+    textWrap.appendChild(labelEl)
+
+    const subtitleEl = document.createElement('span')
+    subtitleEl.className = 'option-card__subtitle'
+    subtitleEl.textContent = subtitle
+    textWrap.appendChild(subtitleEl)
+
+    button.appendChild(textWrap)
+    button.addEventListener('click', goNext)
+    return button
+  }
+
+  grid.appendChild(
+    makeOption('Да, уже подключил', 'Перейти к маршруту с аудиогидом', 'primary'),
+  )
+  grid.appendChild(
+    makeOption('Нет, буду читать субтитры', 'Можно включить звук позже', 'secondary'),
+  )
+
+  container.appendChild(grid)
+
+  return container
 }
 
 export const renderRouteModePrompt = (): RenderResult => {

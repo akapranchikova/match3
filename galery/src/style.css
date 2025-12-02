@@ -193,6 +193,11 @@ main,
   overflow: hidden;
 }
 
+.card__preview img {
+  display: block;
+  width: 100%;
+}
+
 .card__preview.large {
   height: 180px;
   align-items: center;
@@ -214,6 +219,78 @@ main,
   min-height: 100%;
   justify-content: flex-start;
   gap: 16px;
+}
+
+.card--headphones {
+  gap: 16px;
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.option-card {
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 10px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.1s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.option-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+  border-color: #cbd5e1;
+}
+
+.option-card--primary {
+  background: linear-gradient(135deg, #0ea5e9, #22d3ee);
+  color: #0f172a;
+  box-shadow: 0 18px 30px rgba(14, 165, 233, 0.28);
+}
+
+.option-card--secondary {
+  background: #fff;
+}
+
+.option-card__image {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #0f172a;
+}
+
+.option-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.option-card__title {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.option-card--primary .option-card__title {
+  color: #fff;
+}
+
+.option-card__subtitle {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.option-card--primary .option-card__subtitle {
+  color: #e0f2fe;
 }
 
 .guide__top {

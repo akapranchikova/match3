@@ -1,4 +1,8 @@
 import { MapPosition, OnboardingSlide, RoutePoint } from './types'
+import historyIllustration from './assets/onboarding-history.svg'
+import voiceIllustration from './assets/onboarding-voice.svg'
+import headphonesIllustration from './assets/onboarding-headphones.svg'
+import qrIllustration from './assets/onboarding-qr.svg'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 
@@ -87,16 +91,29 @@ export const onboardingSlides: OnboardingSlide[] = [
   {
     title: 'История места',
     body: 'Открывайте исторические «сторис» — видео, панорамы, артефакты и аудиогида.',
+    image: historyIllustration,
+    imageAlt: 'Фотографии исторических зданий и экспозиции',
   },
   {
     title: 'Голос времени',
     body:
       'Гид — это не человек, а дух самого места. «Голос времени» будет главным проводником в историю Перми и новой галереи. Голос отражает философию места от древнего пермского периода до современного времени.',
+    image: voiceIllustration,
+    imageAlt: 'Абстрактный шар Голоса времени',
   },
   {
     title: 'Используйте наушники',
     body:
       'Большая часть маршрута сопровождается аудио-историями. Чтобы ничего не пропустить — наденьте наушники. Если наушников нет, то всегда будут субтитры.',
+    image: headphonesIllustration,
+    imageAlt: 'Наушники для прослушивания аудиогида',
+  },
+  {
+    title: 'Ищите QR-коды для активации',
+    body:
+      'Ищите такие таблички в галерее — сканируйте их, чтобы открывать новые части маршрута.',
+    image: qrIllustration,
+    imageAlt: 'QR-код для активации маршрута',
   },
 ]
 
