@@ -63,15 +63,22 @@ const renderCard = ({
   const container = document.createElement('section')
   container.className = 'card'
 
+  let progress: HTMLElement | null = null
+
   if (showProgress) {
     container.classList.add('card--onboarding')
 
-    const progress = document.createElement('div')
-    progress.className = 'progress'
-    progress.innerHTML = '<span class="progress__bar"></span>'
-    progress.style.setProperty('--step', (state.slideIndex + 1).toString())
-    progress.style.setProperty('--total', onboardingSlides.length.toString())
-    container.appendChild(progress)
+    progress = document.createElement('div')
+    progress.className = 'progress progress--segments'
+
+    onboardingSlides.forEach((_, index) => {
+      const segment = document.createElement('span')
+      segment.className = 'progress__segment'
+      if (index === state.slideIndex) {
+        segment.classList.add('is-active')
+      }
+      progress?.appendChild(segment)
+    })
   }
 
   const content = document.createElement('div')
@@ -79,7 +86,19 @@ const renderCard = ({
 
   const header = document.createElement('header')
   header.className = 'card__header'
-  header.innerHTML = '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
+
+  if (showProgress) {
+    header.classList.add('card__header--onboarding')
+    header.innerHTML =
+      '<span class="logo-chip">Пермская государственная художественная галерея</span>' +
+      '<span class="logo-chip__divider">×</span>' +
+      '<span class="logo-chip">Сбер</span>' +
+      '<span class="logo-chip__divider">×</span>' +
+      '<span class="logo-chip">GigaChat</span>'
+  } else {
+    header.innerHTML = '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
+  }
+
   content.appendChild(header)
 
   const h1 = document.createElement('h1')
@@ -115,6 +134,15 @@ const renderCard = ({
 
   const footer = document.createElement('div')
   footer.className = 'card__footer'
+
+  if (showProgress) {
+    footer.classList.add('card__footer--onboarding')
+  }
+
+  if (progress) {
+    footer.appendChild(progress)
+  }
+
   footer.appendChild(action)
   container.appendChild(footer)
 
