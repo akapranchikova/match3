@@ -31,16 +31,7 @@ const archetypeDescriptions: Record<string, string> = {
     Шут: 'Твой архетип — Шут. Ты умеешь разряжать напряжение и смотреть на ситуацию с юмором. Помогаешь людям не застревать в серьёзности.'
 };
 
-const artPalettes = [
-    'linear-gradient(145deg, #8b1c1c 0%, #e2602d 45%, #f7c87c 100%)',
-    'linear-gradient(150deg, #10314f 0%, #165d63 45%, #a3d9c9 100%)',
-    'linear-gradient(140deg, #241b3d 0%, #683a6e 45%, #f4d8b4 100%)',
-    'linear-gradient(150deg, #2b1f27 0%, #7a2d2f 45%, #e26d47 100%)',
-    'linear-gradient(140deg, #0f2f3a 0%, #1f5b5a 40%, #c5e6c7 100%)',
-    'linear-gradient(145deg, #30213a 0%, #63466a 40%, #d8b6c7 100%)',
-    'linear-gradient(150deg, #1c2a3f 0%, #1f4e73 50%, #f0c27b 100%)',
-    'linear-gradient(140deg, #341a27 0%, #ba4840 50%, #f7dba7 100%)'
-];
+const cardImages = Array.from({ length: 24 }, (_, idx) => `/assets/cards/card-${String(idx + 1).padStart(2, '0')}.svg`);
 
 const baseCards: ArchetypeCard[] = [
     {
@@ -48,168 +39,168 @@ const baseCards: ArchetypeCard[] = [
         title: 'Дитя 100%',
         description: 'Тебе нравится действовать по первому импульсу и радоваться простым вещам.',
         composition: {Дитя: 1},
-        art: artPalettes[0]
+        art: cardImages[0]
     },
     {
         id: 2,
         title: 'Славный малый 100%',
         description: 'В любой компании тебе близко ощущение “свой человек”.',
         composition: {'Славный малый': 1},
-        art: artPalettes[1]
+        art: cardImages[1]
     },
     {
         id: 3,
         title: 'Воин 100%',
         description: 'Тебе по духу собраться, поставить цель и идти к результату.',
         composition: {Воин: 1},
-        art: artPalettes[2]
+        art: cardImages[2]
     },
     {
         id: 4,
         title: 'Опекун 100%',
         description: 'Тебе важно, чтобы рядом было спокойно, надёжно и с заботой о людях.',
         composition: {Опекун: 1},
-        art: artPalettes[3]
+        art: cardImages[3]
     },
     {
         id: 5,
         title: 'Искатель 100%',
         description: 'Тебя тянет пробовать новое и выходить за привычные рамки.',
         composition: {Искатель: 1},
-        art: artPalettes[4]
+        art: cardImages[4]
     },
     {
         id: 6,
         title: 'Бунтарь 100%',
         description: 'Тебе откликается ломать устоявшиеся правила и делать всё по-своему.',
         composition: {Бунтарь: 1},
-        art: artPalettes[5]
+        art: cardImages[5]
     },
     {
         id: 7,
         title: 'Эстет 100%',
         description: 'Тебе нравится аккуратность, ясная форма и порядок деталей.',
         composition: {Эстет: 1},
-        art: artPalettes[6]
+        art: cardImages[6]
     },
     {
         id: 8,
         title: 'Творец 100%',
         description: 'Тебе интересно придумывать нестандартные решения и соединять разное.',
         composition: {Творец: 1},
-        art: artPalettes[7]
+        art: cardImages[7]
     },
     {
         id: 9,
         title: 'Правитель 100%',
         description: 'Тебе важно, чтобы всё было организованно и работало как чёткая система.',
         composition: {Правитель: 1},
-        art: artPalettes[0]
+        art: cardImages[8]
     },
     {
         id: 10,
         title: 'Маг 100%',
         description: 'Тебе нравится удивлять, когда привычные вещи вдруг работают по-новому.',
         composition: {Маг: 1},
-        art: artPalettes[1]
+        art: cardImages[9]
     },
     {
         id: 11,
         title: 'Мудрец 100%',
         description: 'Тебе нужно понимать причины и уметь все просто объяснять.',
         composition: {Мудрец: 1},
-        art: artPalettes[2]
+        art: cardImages[10]
     },
     {
         id: 12,
         title: 'Шут 100%',
         description: 'Тебе хочется разряжать напряжение и смотреть на вещи с юмором.',
         composition: {Шут: 1},
-        art: artPalettes[3]
+        art: cardImages[11]
     },
     {
         id: 13,
         title: 'Дитя/Шут 60/40',
         description: 'Тебе свойственны искренность и живой отклик, потом игра и ирония.',
         composition: {Дитя: 0.6, Шут: 0.4},
-        art: artPalettes[4]
+        art: cardImages[12]
     },
     {
         id: 14,
         title: 'Творец/Эстет 60/40',
         description: 'Сначала в тебе рождается смелая идея, потом аккуратная её подача.',
         composition: {Творец: 0.6, Эстет: 0.4},
-        art: artPalettes[5]
+        art: cardImages[13]
     },
     {
         id: 15,
         title: 'Воин/Бунтарь 60/40',
         description: 'Тебе важнее дисциплина и цель, дерзость во втором плане.',
         composition: {Воин: 0.6, Бунтарь: 0.4},
-        art: artPalettes[6]
+        art: cardImages[14]
     },
     {
         id: 16,
         title: 'Опекун/Славный 60/40',
         description: 'В первую очередь поддержка и забота, затем простота общения.',
         composition: {Опекун: 0.6, 'Славный малый': 0.4},
-        art: artPalettes[7]
+        art: cardImages[15]
     },
     {
         id: 17,
         title: 'Искатель/Мудрец 60/40',
         description: 'Сначала опыт и эксперименты, затем глубокое осмысление.',
         composition: {Искатель: 0.6, Мудрец: 0.4},
-        art: artPalettes[0]
+        art: cardImages[16]
     },
     {
         id: 18,
         title: 'Правитель/Творец 60/40',
         description: 'В тебе преобладает порядок и структура, затем творческая энергия.',
         composition: {Правитель: 0.6, Творец: 0.4},
-        art: artPalettes[1]
+        art: cardImages[17]
     },
     {
         id: 19,
         title: 'Дитя/Шут 40/60',
         description: 'Тебе ближе игра и ирония: сначала смотришь на вещь с юмором, но фоном остается прямой детский взгляд.',
         composition: {Дитя: 0.4, Шут: 0.6},
-        art: artPalettes[2]
+        art: cardImages[18]
     },
     {
         id: 20,
         title: 'Творец/Эстет 40/60',
         description: 'На первом месте аккуратная форма и чистый вид. Смелые идеи тебе не чужды, но они поддерживают, а не ведут.',
         composition: {Творец: 0.4, Эстет: 0.6},
-        art: artPalettes[3]
+        art: cardImages[19]
     },
     {
         id: 21,
         title: 'Воин/Бунтарь 40/60',
         description: 'Сначала дерзкий ход и вызов обычному и привычному, при этом цель остаётся четкой и ясной.',
         composition: {Воин: 0.4, Бунтарь: 0.6},
-        art: artPalettes[4]
+        art: cardImages[20]
     },
     {
         id: 22,
         title: 'Правитель/Бунтарь 70/30',
         description: 'В тебе преобладает порядок: тебе важно, чтобы всё было организовано, но иногда ты допускаешь немного свободы для эксперимента.',
         composition: {Правитель: 0.7, Бунтарь: 0.3},
-        art: artPalettes[5]
+        art: cardImages[21]
     },
     {
         id: 23,
         title: 'Правитель/Бунтарь 30/70',
         description: 'На первом плане разрыв шаблонов и смелые решения, но при этом минимальные рамки ты всё же сохраняешь.',
         composition: {Правитель: 0.3, Бунтарь: 0.7},
-        art: artPalettes[6]
+        art: cardImages[22]
     },
     {
         id: 24,
         title: 'Эстет/Воин 70/30',
         description: 'Тебе ближе чёткая, аккуратная форма, а для выразительности можешь добавить немного движения.',
         composition: {Эстет: 0.7, Воин: 0.3},
-        art: artPalettes[7]
+        art: cardImages[23]
     }
 ];
 
