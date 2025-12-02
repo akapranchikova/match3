@@ -4,6 +4,10 @@ interface ArchetypeCard {
     description: string;
     composition: Record<string, number>;
     art: string;
+    tutorial?: boolean;
+    tutorialLabel?: string;
+    tutorialSubtext?: string;
+    requiredDirection?: 'right' | 'left';
 }
 
 interface ArchetypeResult {
@@ -38,7 +42,7 @@ const artPalettes = [
     'linear-gradient(140deg, #341a27 0%, #ba4840 50%, #f7dba7 100%)'
 ];
 
-const cards: ArchetypeCard[] = [
+const baseCards: ArchetypeCard[] = [
     {
         id: 1,
         title: 'Дитя 100%',
@@ -209,6 +213,39 @@ const cards: ArchetypeCard[] = [
     }
 ];
 
+const tutorialStorageKey = 'archetypeTutorialSeen';
+const hasSeenTutorial = localStorage.getItem(tutorialStorageKey) === 'true';
+
+const tutorialCards: ArchetypeCard[] = [
+    {
+        id: -1,
+        title: 'Правила — свайп вправо',
+        description:
+            'Смахните вправо – если утверждение откликается вам.',
+        tutorialSubtext: 'Оно частично или полностью отражает Вас и ваши действия в жизни.',
+        composition: {},
+        art: 'linear-gradient(145deg, #1a1f2d 0%, #0f2f3a 50%, #3c6d7c 100%)',
+        tutorial: true,
+        tutorialLabel: 'КАК ПОЛЬЗОВАТЬСЯ',
+        requiredDirection: 'right'
+    },
+    {
+        id: -2,
+        title: 'Правила — свайп влево',
+        description:
+            'Смахните влево – если утверждение вам не подходит.',
+        tutorialSubtext: 'Оно частично или полностью противоположно описанию Вас и ваших действий в жизни.',
+        composition: {},
+        art: 'linear-gradient(145deg, #2b1f27 0%, #621d1b 45%, #b3473f 100%)',
+        tutorial: true,
+        tutorialLabel: 'КАК ПОЛЬЗОВАТЬСЯ',
+        requiredDirection: 'left'
+    }
+];
+
+let tutorialLength = hasSeenTutorial ? 0 : tutorialCards.length;
+let cards: ArchetypeCard[] = hasSeenTutorial ? baseCards : [...tutorialCards, ...baseCards];
+
 const archetypes = Object.keys(archetypeDescriptions);
 
 const state = {
@@ -218,11 +255,18 @@ const state = {
     locked: false
 };
 
+function refreshDeckFromStorage() {
+    const seenTutorial = localStorage.getItem(tutorialStorageKey) === 'true';
+    tutorialLength = seenTutorial ? 0 : tutorialCards.length;
+    cards = seenTutorial ? baseCards : [...tutorialCards, ...baseCards];
+}
+
 const stackEl = document.getElementById('cardStack') as HTMLDivElement;
 const resultsOverlay = document.getElementById('resultsOverlay') as HTMLDivElement;
 const mainResult = document.getElementById('mainResult') as HTMLParagraphElement;
 const mainDescription = document.getElementById('mainDescription') as HTMLParagraphElement;
 const profileList = document.getElementById('profileList') as HTMLDivElement;
+const appEl = document.querySelector('.app') as HTMLDivElement;
 
 const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
 const dislikeBtn = document.getElementById('dislikeBtn') as HTMLButtonElement;
@@ -235,21 +279,31 @@ function resetState() {
         state.exposure[a] = 0;
     });
     resultsOverlay.classList.add('hidden');
+    refreshDeckFromStorage();
     renderStack();
 }
 
 function renderStack() {
     stackEl.innerHTML = '';
+    const isTutorial = Boolean(cards[state.index]?.tutorial);
+    appEl.classList.toggle('tutorial-mode', isTutorial);
     const activeCards = cards.slice(state.index, state.index + 2);
     activeCards.forEach((card, idx) => {
         const el = document.createElement('div');
-        el.className = 'card';
+        el.className = card.tutorial ? 'card tutorial-card' : 'card archetype-card';
         el.dataset.state = idx === 0 ? 'front' : 'behind';
         el.dataset.id = card.id.toString();
         el.style.zIndex = (cards.length - state.index - idx).toString();
         const cardNumber = state.index + idx + 1;
         const percent = (state.index / cards.length) * 100;
         el.style.setProperty('--card-art', card.art);
+        const labelMarkup = card.tutorialLabel ? `<div class="card-label">${card.tutorialLabel}</div>` : '';
+        const bodyClass = card.tutorial ? 'card-text tutorial-body' : 'card-text';
+        const bodyMarkup = card.tutorial
+            ? `<div class="${bodyClass}">${card.description}${
+                  card.tutorialSubtext ? `<div class="tutorial-subtext">${card.tutorialSubtext}</div>` : ''
+              }</div>`
+            : `<div class="${bodyClass}">${card.description}</div>`;
         el.innerHTML = `
       <div class="indicator like">
       <svg width="228" height="228" viewBox="0 0 228 228" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -297,7 +351,8 @@ function renderStack() {
                     <div class="progress-fill" id="progressFill" style="width:${percent}%"></div>
                 </div>
       <div class="card-content">
-        <div class="card-text">${card.description}</div>
+        ${labelMarkup}
+        ${bodyMarkup}
       </div>
     `;
         attachDrag(el, card);
@@ -350,13 +405,26 @@ function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
 
 function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -1) {
     if (state.locked) return;
+    const isRightDirection = direction > 0;
+    if (card.requiredDirection) {
+        const matches =
+            (card.requiredDirection === 'right' && isRightDirection) ||
+            (card.requiredDirection === 'left' && !isRightDirection);
+
+        if (!matches) {
+            cardEl.style.transform = '';
+            cardEl.classList.remove('like', 'dislike');
+            return;
+        }
+    }
+
     state.locked = true;
     const offset = direction * 650;
     cardEl.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
     cardEl.style.transform = `translate(${offset}px, -40px) rotate(${direction * 15}deg)`;
     cardEl.style.opacity = '0';
     cardEl.classList.add(direction > 0 ? 'like' : 'dislike');
-    handleVote(card, direction > 0);
+    handleVote(card, isRightDirection);
     setTimeout(() => {
         state.locked = false;
         renderStack();
@@ -364,6 +432,19 @@ function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -
 }
 
 function handleVote(card: ArchetypeCard, liked: boolean) {
+    if (card.tutorial) {
+        state.index += 1;
+        if (!hasSeenTutorial && state.index >= tutorialLength) {
+            localStorage.setItem(tutorialStorageKey, 'true');
+        }
+
+        if (state.index >= cards.length) {
+            showResults();
+        }
+
+        return;
+    }
+
     const factor = liked ? 1 : -0.7;
     Object.entries(card.composition).forEach(([name, weight]) => {
         state.exposure[name] += weight;
