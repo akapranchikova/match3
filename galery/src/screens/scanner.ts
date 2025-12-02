@@ -12,38 +12,17 @@ import {
 export const renderScanner = (): RenderResult => {
   const wrapper = document.createElement('div')
   wrapper.className = 'scanner scanner--fullscreen'
+  wrapper.innerHTML = `
+    <div class="scanner__preview scanner__preview--fullscreen">
+      <video class="scanner__video" playsinline muted autoplay></video>
+      <div class="scanner__frame"></div>
+      <button class="scanner__close" type="button" aria-label="Закрыть сканер">×</button>
+    </div>
+    <p class="scanner__status visually-hidden">Запрашиваем доступ к камере…</p>
+  `
 
-  const preview = document.createElement('div')
-  preview.className = 'scanner__preview scanner__preview--fullscreen'
-
-  const video = document.createElement('video')
-  video.className = 'scanner__video'
-  video.setAttribute('playsinline', 'true')
-  video.muted = true
-  video.autoplay = true
-  preview.appendChild(video)
-
-  const overlay = document.createElement('div')
-  overlay.className = 'scanner__frame'
-  preview.appendChild(overlay)
-
-  const close = document.createElement('button')
-  close.type = 'button'
-  close.className = 'scanner__close'
-  close.setAttribute('aria-label', 'Закрыть сканер')
-  close.textContent = '×'
-  close.addEventListener('click', () => {
-    state.screen = 'nextPoint'
-    rerender()
-  })
-
-  preview.appendChild(close)
-  wrapper.appendChild(preview)
-
-  const status = document.createElement('p')
-  status.className = 'scanner__status visually-hidden'
-  status.textContent = 'Запрашиваем доступ к камере…'
-  wrapper.appendChild(status)
+  const video = wrapper.querySelector<HTMLVideoElement>('.scanner__video')
+  const status = wrapper.querySelector<HTMLParagraphElement>('.scanner__status')
 
   let active = true
   let stream: MediaStream | null = null
@@ -127,6 +106,11 @@ export const renderScanner = (): RenderResult => {
       showStatus('Не удалось открыть камеру. Проверьте разрешения браузера и попробуйте ещё раз.')
     }
   }
+
+  wrapper.querySelector<HTMLButtonElement>('.scanner__close')?.addEventListener('click', () => {
+    state.screen = 'nextPoint'
+    rerender()
+  })
 
   startScan()
 

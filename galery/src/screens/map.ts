@@ -14,168 +14,121 @@ export const renderMap = (): HTMLElement => {
     state.mapPositions[state.currentFloor] = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
   }
 
+  const defaultPosition = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
+
+  const createSegments = (floor: number) =>
+    (floor === 1
+      ? [
+          { top: '6%', left: '32%', width: '22%', height: '34%' },
+          { top: '34%', left: '10%', width: '48%', height: '26%' },
+          { top: '48%', left: '30%', width: '30%', height: '36%' },
+          { top: '62%', left: '8%', width: '30%', height: '26%' },
+        ]
+      : [
+          { top: '10%', left: '38%', width: '22%', height: '28%' },
+          { top: '34%', left: '30%', width: '26%', height: '26%' },
+          { top: '52%', left: '14%', width: '42%', height: '24%' },
+        ]
+    )
+      .map(
+        (style) =>
+          `<div class="map__segment" style="top:${style.top};left:${style.left};width:${style.width};height:${style.height};"></div>`,
+      )
+      .join('')
+
+  const createPlanMarkup = (floor: number) => `
+    <div class="map__plan map__plan--${floor}${floor === state.currentFloor ? ' is-active' : ''}">
+      <div class="map__outline"></div>
+      ${createSegments(floor)}
+      <div class="map__path"></div>
+    </div>
+  `
+
+  const floorsMarkup = shouldShowFloors
+    ? `<div class="map__floors">${[1, 2]
+        .map(
+          (floor) =>
+            `<button class="map__floor${floor === state.currentFloor ? ' is-active' : ''}" type="button" data-floor="${floor}">Этаж ${floor}</button>`,
+        )
+        .join('')}</div>`
+    : `<span class="map__floor-label">Этаж ${state.currentFloor}</span>`
+
   const page = document.createElement('div')
   page.className = 'map-screen'
+  page.innerHTML = `
+    <section class="map map--sheet">
+      <div class="map__handle"></div>
+      <div class="map__header">
+        <h1>Карта</h1>
+        ${floorsMarkup}
+      </div>
+      <p class="map__subtitle">Фиксированный план этажа с отмеченными точками маршрута.</p>
+      <div class="map__viewport">
+        <div class="map__inner" style="left:50%;top:50%;transform:translate(calc(-50% + ${defaultPosition.x}px), calc(-50% + ${defaultPosition.y}px))">
+          ${[1, 2].map((floor) => createPlanMarkup(floor)).join('')}
+        </div>
+      </div>
+      <div class="stack">
+        <button class="button primary" data-action="focus">Перейти к точке ${state.currentPointIndex + 1}</button>
+        <button class="button secondary" data-action="route">Открыть весь маршрут</button>
+      </div>
+      <p class="muted">Текущая точка: ${point.title}</p>
+    </section>
+  `
 
-  const container = document.createElement('section')
-  container.className = 'map map--sheet'
-
-  const handle = document.createElement('div')
-  handle.className = 'map__handle'
-  container.appendChild(handle)
-
-  const header = document.createElement('div')
-  header.className = 'map__header'
-
-  const title = document.createElement('h1')
-  title.textContent = 'Карта'
-  header.appendChild(title)
-
-  if (shouldShowFloors) {
-    const floorSwitcher = document.createElement('div')
-    floorSwitcher.className = 'map__floors'
-
-    ;[1, 2].forEach((floor) => {
-      const floorButton = document.createElement('button')
-      floorButton.type = 'button'
-      floorButton.className = 'map__floor'
-      if (floor === state.currentFloor) floorButton.classList.add('is-active')
-      floorButton.textContent = `Этаж ${floor}`
-      floorButton.addEventListener('click', () => {
-        state.currentFloor = floor
-        if (!state.mapPositions[floor]) {
-          state.mapPositions[floor] = initialMapPositions[floor] || { x: 0, y: 0 }
-        }
-        rerender()
-      })
-      floorSwitcher.appendChild(floorButton)
-    })
-
-    header.appendChild(floorSwitcher)
-  } else {
-    const floorLabel = document.createElement('span')
-    floorLabel.className = 'map__floor-label'
-    floorLabel.textContent = `Этаж ${state.currentFloor}`
-    header.appendChild(floorLabel)
-  }
-  container.appendChild(header)
-
-  const subtitle = document.createElement('p')
-  subtitle.className = 'map__subtitle'
-  subtitle.textContent = 'Фиксированный план этажа с отмеченными точками маршрута.'
-  container.appendChild(subtitle)
-
-  const viewport = document.createElement('div')
-  viewport.className = 'map__viewport'
-
-  const inner = document.createElement('div')
-  inner.className = 'map__inner'
-  const defaultPosition = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
-  inner.style.left = '50%'
-  inner.style.top = '50%'
-  inner.style.transform = `translate(calc(-50% + ${defaultPosition.x}px), calc(-50% + ${defaultPosition.y}px))`
-
-  const createPlan = (floor: number) => {
-    const plan = document.createElement('div')
-    plan.className = `map__plan map__plan--${floor}`
-    if (floor === state.currentFloor) plan.classList.add('is-active')
-
-    const outline = document.createElement('div')
-    outline.className = 'map__outline'
-    plan.appendChild(outline)
-
-    const segments: Array<{ className: string; style: Partial<CSSStyleDeclaration> }> =
-      floor === 1
-        ? [
-            { className: 'map__segment', style: { top: '6%', left: '32%', width: '22%', height: '34%' } },
-            { className: 'map__segment', style: { top: '34%', left: '10%', width: '48%', height: '26%' } },
-            { className: 'map__segment', style: { top: '48%', left: '30%', width: '30%', height: '36%' } },
-            { className: 'map__segment', style: { top: '62%', left: '8%', width: '30%', height: '26%' } },
-          ]
-        : [
-            { className: 'map__segment', style: { top: '10%', left: '38%', width: '22%', height: '28%' } },
-            { className: 'map__segment', style: { top: '34%', left: '30%', width: '26%', height: '26%' } },
-            { className: 'map__segment', style: { top: '52%', left: '14%', width: '42%', height: '24%' } },
-          ]
-
-    segments.forEach(({ className, style }) => {
-      const segment = document.createElement('div')
-      segment.className = className
-      Object.assign(segment.style, style)
-      plan.appendChild(segment)
-    })
-
-    const path = document.createElement('div')
-    path.className = 'map__path'
-    plan.appendChild(path)
-
-    return plan
-  }
-
-  const plans = [createPlan(1), createPlan(2)]
-  plans.forEach((plan) => inner.appendChild(plan))
+  const inner = page.querySelector<HTMLDivElement>('.map__inner')
 
   points
     .filter((item) => item.map.floor === state.currentFloor)
     .forEach((item) => {
-      const marker = document.createElement('button')
-      marker.className = 'map__marker'
-      marker.style.left = `${item.map.x}%`
-      marker.style.top = `${item.map.y}%`
-      marker.title = item.title
       const originalIndex = points.findIndex((original) => original.id === item.id)
-      marker.innerHTML = `<span class="map__marker-dot"></span><span class="map__marker-label">${originalIndex + 1}</span>`
+      const isActive = item.id === point.id
+      const isComplete = viewedPoints.has(item.id)
 
-      marker.addEventListener('click', (event) => {
-        event.stopPropagation()
-        state.currentPointIndex = originalIndex
-        state.screen = 'nextPoint'
-        rerender()
-      })
+      const statusMarkup = isComplete ? '<span class="map__marker-status">Пройдена</span>' : ''
 
-      if (item.id === point.id) {
-        marker.classList.add('is-active')
-      }
-
-      if (viewedPoints.has(item.id)) {
-        marker.classList.add('is-complete')
-        const status = document.createElement('span')
-        status.className = 'map__marker-status'
-        status.textContent = 'Пройдена'
-        marker.appendChild(status)
-      }
-
-      inner.appendChild(marker)
+      inner?.insertAdjacentHTML(
+        'beforeend',
+        `
+        <button class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}" style="left:${item.map.x}%;top:${item.map.y}%;" title="${item.title}" data-index="${originalIndex}">
+          <span class="map__marker-dot"></span>
+          <span class="map__marker-label">${originalIndex + 1}</span>
+          ${statusMarkup}
+        </button>
+      `,
+      )
     })
 
-  viewport.appendChild(inner)
-  container.appendChild(viewport)
+  page.querySelectorAll<HTMLButtonElement>('.map__marker').forEach((marker) => {
+    marker.addEventListener('click', (event) => {
+      event.stopPropagation()
+      const originalIndex = Number(marker.dataset.index)
+      state.currentPointIndex = originalIndex
+      state.screen = 'nextPoint'
+      rerender()
+    })
+  })
 
-  const actions = document.createElement('div')
-  actions.className = 'stack'
+  page.querySelectorAll<HTMLButtonElement>('.map__floor').forEach((floorButton) => {
+    floorButton.addEventListener('click', () => {
+      const floor = Number(floorButton.dataset.floor)
+      state.currentFloor = floor
+      if (!state.mapPositions[floor]) {
+        state.mapPositions[floor] = initialMapPositions[floor] || { x: 0, y: 0 }
+      }
+      rerender()
+    })
+  })
 
-  const focusButton = createButton(`Перейти к точке ${state.currentPointIndex + 1}`, 'primary')
-  focusButton.addEventListener('click', () => {
+  page.querySelector<HTMLButtonElement>('[data-action="focus"]')?.addEventListener('click', () => {
     state.screen = 'nextPoint'
     rerender()
   })
 
-  const routeButton = createButton('Открыть весь маршрут', 'secondary')
-  routeButton.addEventListener('click', () => {
+  page.querySelector<HTMLButtonElement>('[data-action="route"]')?.addEventListener('click', () => {
     state.screen = 'routeList'
     rerender()
   })
-
-  actions.appendChild(focusButton)
-  actions.appendChild(routeButton)
-  container.appendChild(actions)
-
-  const caption = document.createElement('p')
-  caption.className = 'muted'
-  caption.textContent = `Текущая точка: ${point.title}`
-  container.appendChild(caption)
-
-  page.appendChild(container)
 
   return page
 }
