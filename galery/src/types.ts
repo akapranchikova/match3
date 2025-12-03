@@ -37,6 +37,7 @@ export interface OnboardingSlide {
   imageAlt?: string
   classStr?: string
   collagePlaceholder?: boolean
+  backgroundImage?: string
 }
 
 export interface AppState {

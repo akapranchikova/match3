@@ -149,6 +149,23 @@ main,
     min-height: 100%;
 }
 
+.card--onboarding .card__background {
+    position: absolute;
+    inset: 0;
+    background: center / cover no-repeat;
+    filter: blur(4.5px);
+    transform: scale(1.06);
+    z-index: 0;
+}
+
+.card--onboarding::before {
+    z-index: 1;
+}
+
+.card--onboarding::after {
+    z-index: 2;
+}
+
 .card__content {
     display: flex;
     flex-direction: column;
@@ -162,7 +179,7 @@ main,
     gap: 16px;
     padding-bottom: 70px;
     justify-content: flex-start;
-    z-index: 1;
+    z-index: 3;
     color: #e2e2e2;
 }
 
@@ -190,7 +207,7 @@ main,
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    z-index: 2;
+    z-index: 4;
     margin-top: 0;
 }
 
@@ -512,9 +529,26 @@ main,
 }
 
 .card--guide {
+    position: relative;
     min-height: 100%;
     justify-content: flex-start;
     gap: 16px;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.card--guide > :not(.guide__background) {
+    position: relative;
+    z-index: 1;
+}
+
+.guide__background {
+    position: absolute;
+    inset: 0;
+    background: center / cover no-repeat;
+    filter: blur(4.5px);
+    transform: scale(1.06);
+    z-index: 0;
 }
 
 .card--headphones {

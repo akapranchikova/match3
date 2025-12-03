@@ -4,6 +4,7 @@ import voiceIllustration from './assets/onboarding-voice.png'
 import headphonesIllustration from './assets/onboarding-headphones.png'
 import qrIllustration from './assets/onboarding-qr.svg'
 import pointPlaceholder from './assets/point-placeholder.svg'
+import guideBackground from './assets/guide-background.png'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 
@@ -113,7 +114,8 @@ export const onboardingSlides: OnboardingSlide[] = [
     body:
       'Гид — это не&nbsp;человек, а&nbsp;дух самого места. «Голос времени» будет главным проводником в&nbsp;историю Перми и&nbsp;новой галереи. Голос отражает философию места от&nbsp;древнего пермского периода до&nbsp;современного времени.',
     image: voiceIllustration,
-      classStr: 'golos',
+    backgroundImage: guideBackground,
+    classStr: 'golos',
     imageAlt: 'Абстрактный шар Голоса времени',
   },
   {
@@ -129,7 +131,7 @@ export const onboardingSlides: OnboardingSlide[] = [
     body:
       'Ищите такие таблички в&nbsp;галерее — сканируйте их, чтобы открывать новые части маршрута.',
     image: qrIllustration,
-      classStr: 'qr',
+    classStr: 'qr',
     imageAlt: 'QR-код для активации маршрута',
   },
 ]

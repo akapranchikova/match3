@@ -7,6 +7,7 @@ import {RenderResult} from '../types'
 import headphonesIllustration from '../assets/onboarding-headphones.png'
 import logoList from '../assets/logo-list.svg'
 import guideIntroAudio from '../assets/guide-intro.wav'
+import guideBackground from '../assets/guide-background.png'
 
 const introSubtitles = [
     {
@@ -57,6 +58,7 @@ const renderCard = ({
                         classStr,
                         imageAlt,
                         collagePlaceholder,
+                        backgroundImage,
                     }: {
     title: string
     body: string
@@ -65,6 +67,7 @@ const renderCard = ({
     classStr?: string
     imageAlt?: string
     collagePlaceholder?: boolean
+    backgroundImage?: string
 }): HTMLElement => {
     const container = document.createElement('section')
     container.className = 'card'
@@ -124,6 +127,13 @@ const renderCard = ({
     </div>
   `
 
+    if (backgroundImage) {
+        const background = document.createElement('div')
+        background.className = 'card__background'
+        background.style.backgroundImage = `url(${backgroundImage})`
+        container.prepend(background)
+    }
+
     const action = createButton('Далее')
     action.addEventListener('click', () => {
         const nextSlide = state.slideIndex + 1
@@ -150,6 +160,7 @@ export const renderOnboardingSlide = (): HTMLElement => {
         classStr: slide.classStr,
         showProgress: true,
         collagePlaceholder: slide.collagePlaceholder,
+        backgroundImage: slide.backgroundImage,
     })
 }
 
