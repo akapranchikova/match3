@@ -83,23 +83,31 @@ export const renderInfoComplete = (): HTMLElement => {
 export const renderNextPoint = (): HTMLElement => {
   const point = points[state.currentPointIndex]
   const card = document.createElement('section')
-  card.className = 'card card--point'
+  card.className = 'card card--point card--next'
   card.innerHTML = `
-    <p class="caption">Пройдено ${viewedPoints.size} из ${points.length} точек</p>
-    <h1>Где находится точка ${state.currentPointIndex + 1}?</h1>
-    <p class="point__description">${point.description}</p>
-    <a href="#" class="link point__map" data-action="map">Показать на карте</a>
-    <div class="photo photo--placeholder">
-      <span class="photo__placeholder-icon" aria-hidden="true"></span>
+    <div class="point-layout__header">
+      <p class="caption">Пройдено ${viewedPoints.size} из ${points.length} точек</p>
+      <p class="point-layout__eyebrow">Маршрут «Голос времени»</p>
+      <h1 class="point-layout__title">Где находится точка ${state.currentPointIndex + 1}?</h1>
     </div>
-    <div class="stack">
+    <article class="point-card">
+      <div class="point-card__image-frame">
+        <img src="${point.photo || routePreview}" alt="${point.photoAlt || `Превью точки «${point.title}»`}" class="point-card__image">
+      </div>
+      <div class="point-card__content">
+        <p class="point-card__subtitle">${point.title}</p>
+        <p class="point-card__description">${point.description}</p>
+        <button class="point-card__map" data-action="map">Показать на карте</button>
+      </div>
+    </article>
+    <p class="point-layout__hint">Отсканируйте QR-код точки, чтобы открыть следующую часть маршрута</p>
+    <div class="stack point-layout__actions">
       <button class="button primary" data-action="scan">Отсканировать точку</button>
       <button class="button secondary" data-action="route">Открыть весь маршрут</button>
     </div>
   `
 
-  card.querySelector<HTMLAnchorElement>('[data-action="map"]')?.addEventListener('click', (event) => {
-    event.preventDefault()
+  card.querySelector<HTMLButtonElement>('[data-action="map"]')?.addEventListener('click', () => {
     state.currentFloor = point.map.floor
     state.screen = 'map'
     rerender()

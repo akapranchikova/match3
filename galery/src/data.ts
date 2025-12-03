@@ -3,6 +3,7 @@ import historyIllustration from './assets/onboarding-history.svg'
 import voiceIllustration from './assets/onboarding-voice.png'
 import headphonesIllustration from './assets/onboarding-headphones.png'
 import qrIllustration from './assets/onboarding-qr.svg'
+import pointPlaceholder from './assets/point-placeholder.svg'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 
@@ -11,6 +12,8 @@ export const points: RoutePoint[] = [
     id: 'history',
     title: 'Создание и история галереи',
     description: 'Коротко рассказываем, как появилось здание и почему оно стало домом новой галереи.',
+    photo: pointPlaceholder,
+    photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Новая галерея выросла на месте, где промышленная история встречается с культурой. Здесь сохранились следы дореволюционного комплекса и его трансформации в современное общественное пространство.',
     highlights: [
@@ -24,6 +27,8 @@ export const points: RoutePoint[] = [
     id: 'perm-period',
     title: 'Пермский период, пермское море и геология',
     description: 'История пермского периода и артефакты, которые нашли неподалёку.',
+    photo: pointPlaceholder,
+    photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Маршрут начинается с древностей: миллионы лет назад на этом месте плескалось море. Экспозиция рассказывает, как оно сформировало ландшафт, а археологи находят здесь следы вымерших существ.',
     highlights: [
@@ -37,6 +42,8 @@ export const points: RoutePoint[] = [
     id: 'metal-plant',
     title: 'Медеплавильный завод и история посёлка',
     description: 'Как промышленность повлияла на развитие территории и людей.',
+    photo: pointPlaceholder,
+    photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Индустриальная линия маршрута посвящена медеплавильному заводу, вокруг которого вырос посёлок. Здесь рассказывают о первых рабочих артели, их быте и том, как производство меняло экономику края.',
     highlights: [
@@ -50,6 +57,8 @@ export const points: RoutePoint[] = [
     id: 'excavation',
     title: 'История археологических раскопок',
     description: 'Находки и открытия, которые легли в основу экспозиции.',
+    photo: pointPlaceholder,
+    photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Экспозиция показывает, как археологи шаг за шагом собирали фрагменты истории. Это и полевые дневники, и инструменты, и редкие находки, которые помогли восстановить картину жизни ранних жителей.',
     highlights: [
@@ -63,6 +72,8 @@ export const points: RoutePoint[] = [
     id: 'railway',
     title: 'Железная дорога — будущий завод Шпагина',
     description: 'Как железная дорога изменила экономику места и городскую ткань.',
+    photo: pointPlaceholder,
+    photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Отдельный зал посвящён железной дороге: она связала город с новыми рынками и задала ритм будущему заводу Шпагина. Истории пассажиров и работников железной дороги создают живое ощущение пути.',
     highlights: [
@@ -76,6 +87,8 @@ export const points: RoutePoint[] = [
     id: 'final',
     title: 'Финальная точка',
     description: 'Завершение маршрута и приглашение поделиться впечатлениями.',
+    photo: pointPlaceholder,
+    photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Финал маршрута — пространство для обратной связи и вдохновения. Здесь можно поделиться впечатлениями, узнать о будущих выставках и почувствовать, что история продолжается уже с вашим участием.',
     highlights: [
