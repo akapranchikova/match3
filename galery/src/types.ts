@@ -35,6 +35,7 @@ export interface OnboardingSlide {
   body: string
   image: string
   imageAlt?: string
+  classStr?: string
   collagePlaceholder?: boolean
 }
 

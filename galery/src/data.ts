@@ -113,6 +113,7 @@ export const onboardingSlides: OnboardingSlide[] = [
     body:
       'Гид — это не&nbsp;человек, а&nbsp;дух самого места. «Голос времени» будет главным проводником в&nbsp;историю Перми и&nbsp;новой галереи. Голос отражает философию места от&nbsp;древнего пермского периода до&nbsp;современного времени.',
     image: voiceIllustration,
+      classStr: 'golos',
     imageAlt: 'Абстрактный шар Голоса времени',
   },
   {
@@ -128,6 +129,7 @@ export const onboardingSlides: OnboardingSlide[] = [
     body:
       'Ищите такие таблички в&nbsp;галерее — сканируйте их, чтобы открывать новые части маршрута.',
     image: qrIllustration,
+      classStr: 'qr',
     imageAlt: 'QR-код для активации маршрута',
   },
 ]
