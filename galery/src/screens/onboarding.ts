@@ -1,6 +1,7 @@
 import { onboardingSlides } from '../data'
 import { rerender } from '../navigation'
 import { state } from '../state'
+import { saveOnboardingCompleted } from '../storage'
 import { createButton } from '../ui'
 import { RenderResult } from '../types'
 import headphonesIllustration from '../assets/onboarding-headphones.png'
@@ -71,10 +72,17 @@ const renderCard = ({
 
   const progressSegments = showProgress
     ? onboardingSlides
-        .map(
-          (_, index) =>
-            `<span class="progress__segment${index === state.slideIndex ? ' is-active' : ''}"></span>`,
-        )
+        .map((_, index) => {
+          const segmentClasses = ['progress__segment']
+          if (index < state.slideIndex) {
+            segmentClasses.push('is-complete')
+          }
+          if (index === state.slideIndex) {
+            segmentClasses.push('is-active')
+          }
+
+          return `<span class="${segmentClasses.join(' ')}"></span>`
+        })
         .join('')
     : ''
 
@@ -171,6 +179,7 @@ export const renderHeadphonesPrompt = (): RenderResult => {
   `
 
   const goNext = () => {
+    saveOnboardingCompleted()
     state.screen = 'routeModePrompt'
     rerender()
   }

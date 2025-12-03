@@ -773,10 +773,11 @@ main,
 .progress--segments .progress__segment {
     flex: 1;
     height: 4px;
-    background: #5f725b;
-    border-radius: 20px;
+    background: #d3dfd0;
+    border-radius: 999px;
     position: relative;
     overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(59, 78, 65, 0.12);
 }
 
 .progress__segment::after {
@@ -789,8 +790,13 @@ main,
     transition: width 0.3s ease;
 }
 
+.progress__segment.is-complete::after,
 .progress__segment.is-active::after {
     width: 100%;
+}
+
+.progress__segment.is-active::after {
+    box-shadow: 0 0 0 1px rgba(33, 204, 161, 0.35), 0 4px 12px rgba(16, 76, 58, 0.35);
 }
 
 .progress__bar {
