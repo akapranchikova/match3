@@ -54,12 +54,14 @@ const renderCard = ({
   showProgress,
   imageSrc,
   imageAlt,
+  collagePlaceholder,
 }: {
   title: string
   body: string
   showProgress?: boolean
   imageSrc: string
   imageAlt?: string
+  collagePlaceholder?: boolean
 }): HTMLElement => {
   const container = document.createElement('section')
   container.className = 'card'
@@ -88,11 +90,21 @@ const renderCard = ({
     ? `<img src="${logoList}" alt="Лого" class="logo-list">`
     : '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
 
+  const previewContent = collagePlaceholder
+    ? `
+        <div class="photo-collage" aria-hidden="true">
+          <div class="photo-collage__card photo-collage__card--back-left"></div>
+          <div class="photo-collage__card photo-collage__card--back-right"></div>
+          <div class="photo-collage__card photo-collage__card--front"></div>
+        </div>
+      `
+    : `<img src="${imageSrc}" alt="${imageAlt ?? 'Превью экспозиции галереи'}" class="card__image">`
+
   container.innerHTML = `
     <div class="card__content">
       <header class="${headerClasses.join(' ')}">${headerContent}</header>
       <div class="card__preview">
-        <img src="${imageSrc}" alt="${imageAlt ?? 'Превью экспозиции галереи'}" class="card__image">
+        ${previewContent}
       </div>
       <h1>${title}</h1>
       <p>${body}</p>
@@ -126,6 +138,7 @@ export const renderOnboardingSlide = (): HTMLElement => {
     imageSrc: slide.image,
     imageAlt: slide.imageAlt,
     showProgress: true,
+    collagePlaceholder: slide.collagePlaceholder,
   })
 }
 

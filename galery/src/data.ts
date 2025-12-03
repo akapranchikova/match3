@@ -106,6 +106,7 @@ export const onboardingSlides: OnboardingSlide[] = [
     body: 'Открывайте исторические «сторис» — видео, панорамы, артефакты и аудиогида.',
     image: historyIllustration,
     imageAlt: 'Фотографии исторических зданий и экспозиции',
+    collagePlaceholder: true,
   },
   {
     title: 'Голос времени',
