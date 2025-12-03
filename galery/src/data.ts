@@ -1,7 +1,7 @@
 import { MapPosition, OnboardingSlide, RoutePoint } from './types'
 import historyIllustration from './assets/onboarding-history.svg'
-import voiceIllustration from './assets/onboarding-voice.svg'
-import headphonesIllustration from './assets/onboarding-headphones.svg'
+import voiceIllustration from './assets/onboarding-voice.png'
+import headphonesIllustration from './assets/onboarding-headphones.png'
 import qrIllustration from './assets/onboarding-qr.svg'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
