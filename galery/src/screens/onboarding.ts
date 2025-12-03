@@ -71,10 +71,17 @@ const renderCard = ({
 
   const progressSegments = showProgress
     ? onboardingSlides
-        .map(
-          (_, index) =>
-            `<span class="progress__segment${index === state.slideIndex ? ' is-active' : ''}"></span>`,
-        )
+        .map((_, index) => {
+          const segmentClasses = ['progress__segment']
+          if (index < state.slideIndex) {
+            segmentClasses.push('is-complete')
+          }
+          if (index === state.slideIndex) {
+            segmentClasses.push('is-active')
+          }
+
+          return `<span class="${segmentClasses.join(' ')}"></span>`
+        })
         .join('')
     : ''
 
