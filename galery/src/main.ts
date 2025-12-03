@@ -12,6 +12,7 @@ import { renderInfoComplete, renderNextPoint, renderPointInfo } from './screens/
 import { renderMap } from './screens/map'
 import { renderRouteList } from './screens/route'
 import { renderScanner } from './screens/scanner'
+import { renderCameraPermission } from './screens/cameraPermission'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
@@ -29,6 +30,7 @@ const screenRenderers: Record<AppScreen, () => RenderResult> = {
   infoComplete: renderInfoComplete,
   nextPoint: renderNextPoint,
   routeList: renderRouteList,
+  cameraPermission: renderCameraPermission,
   scanner: renderScanner,
   map: renderMap,
 }

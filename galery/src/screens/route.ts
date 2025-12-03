@@ -42,7 +42,7 @@ export const renderRouteList = (): HTMLElement => {
 
   const cta = createButton('Сканировать QR-код')
   cta.addEventListener('click', () => {
-    state.screen = 'scanner'
+    state.screen = 'cameraPermission'
     rerender()
   })
   container.appendChild(cta)
