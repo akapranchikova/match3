@@ -106,6 +106,70 @@ main,
     gap: 12px;
 }
 
+.camera-permission {
+    position: relative;
+    gap: 24px;
+    padding: 28px 24px 32px;
+    background: radial-gradient(75% 50% at 20% 18%, rgba(124, 188, 164, 0.16), transparent 70%),
+    radial-gradient(60% 40% at 80% 10%, rgba(33, 204, 161, 0.18), transparent 80%),
+    #0b0c0b;
+    overflow: hidden;
+}
+
+.camera-permission::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(80% 60% at 50% 45%, rgba(0, 0, 0, 0.45), transparent 80%);
+    pointer-events: none;
+}
+
+.camera-permission__hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+    z-index: 1;
+}
+
+.camera-permission__image {
+    width: 277px;
+    height: 264px;
+    object-fit: contain;
+    filter: drop-shadow(0 24px 60px rgba(0, 0, 0, 0.55));
+}
+
+.camera-permission__content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 1;
+}
+
+.camera-permission__text h1 {
+    font-size: 24px;
+    line-height: 110%;
+    margin-bottom: 10px;
+}
+
+.camera-permission__text p,
+.camera-permission__status {
+    color: #e5e7eb;
+    line-height: 140%;
+    margin: 0;
+}
+
+.camera-permission__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.camera-permission__status {
+    min-height: 18px;
+    font-size: 14px;
+}
+
 .card--onboarding {
     position: relative;
     padding: 0;
