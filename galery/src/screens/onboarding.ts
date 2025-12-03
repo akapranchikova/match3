@@ -158,26 +158,24 @@ export const renderHeadphonesPrompt = (): RenderResult => {
     container.className = 'card card--headphones'
 
     container.innerHTML = `
-    <header class="card__header">
-      <span class="card__meta">Пермская галерея × Сбер × GigaChat</span>
-    </header>
-    <h1>Будете ли использовать наушники?</h1>
-    <p>Вы сможете поменять выбор позже</p>
-    <div class="choice-grid">
-      <button class="option-card option-card--primary" type="button">
-        <img src="${headphonesIllustration}" alt="Наушники" class="option-card__image">
-        <div class="option-card__text">
-          <span class="option-card__title">Да, уже подключил</span>
-          <span class="option-card__subtitle">Перейти к маршруту с аудиогидом</span>
-        </div>
-      </button>
-      <button class="option-card option-card--secondary" type="button">
-        <img src="${headphonesIllustration}" alt="Наушники" class="option-card__image">
-        <div class="option-card__text">
+    <div class="card__glow" aria-hidden="true"></div>
+    <div class="card__content card__content--headphones">
+      <h1>Будете ли использовать наушники?</h1>
+      <p>Вы сможете поменять выбор позже</p>
+      <div class="headphones-options">
+        <button class="option-card option-card--primary" type="button">
+          <div class="option-card__image-wrap">
+            <img src="${headphonesIllustration}" alt="Наушники" class="option-card__image">
+          </div>
+          <span class="option-card__title">Заголовок</span>
+        </button>
+        <button class="option-card option-card--secondary" type="button">
+          <div class="option-card__image-wrap">
+            <img src="${headphonesIllustration}" alt="Наушники" class="option-card__image">
+          </div>
           <span class="option-card__title">Нет, буду читать субтитры</span>
-          <span class="option-card__subtitle">Можно включить звук позже</span>
-        </div>
-      </button>
+        </button>
+      </div>
     </div>
   `
 
@@ -187,7 +185,7 @@ export const renderHeadphonesPrompt = (): RenderResult => {
         rerender()
     }
 
-    container.querySelectorAll<HTMLButtonElement>('.choice-grid .option-card').forEach((button) => {
+    container.querySelectorAll<HTMLButtonElement>('.headphones-options .option-card').forEach((button) => {
         button.addEventListener('click', goNext)
     })
 
