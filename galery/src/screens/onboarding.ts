@@ -88,7 +88,7 @@ const renderCard = ({
 
   const headerContent = showProgress
     ? `<img src="${logoList}" alt="Лого" class="logo-list">`
-    : '<span class="card__meta">Пермская галерея × Сбер × GigaChat</span>'
+    : '';
 
   const previewContent = collagePlaceholder
     ? `

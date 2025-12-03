@@ -121,13 +121,13 @@ main,
 .card--onboarding::before {
     content: '';
     position: absolute;
-    width: 528px;
-    height: 166px;
-    left: 102px;
-    top: 85px;
-    background: linear-gradient(229.11deg, #7cbca4 17.48%, #0d1915 81.95%);
-    filter: blur(32px);
-    transform: rotate(-81.14deg);
+    width: 474px;
+    height: 139px;
+    left: -25px;
+    top: 30%;
+    background: linear-gradient(229.11deg, #0d1915 14%, #7cbca4 28.48%, #0d1915 93.95%);
+    filter: blur(28px);
+    transform: rotate(-77.14deg);
     opacity: 0.85;
     z-index: 0;
 }
@@ -152,6 +152,7 @@ main,
 .card__content {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 14px;
     flex: 1;
 }
@@ -159,21 +160,21 @@ main,
 .card--onboarding .card__content {
     position: relative;
     gap: 16px;
-    padding: 16px;
+    padding-bottom: 70px;
     justify-content: flex-start;
     z-index: 1;
     color: #e2e2e2;
 }
 
 .card--onboarding .card__content::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 260px;
-    background: linear-gradient(180deg, rgba(10, 5, 2, 0) 12.54%, rgba(10, 5, 2, 0.6) 59.68%);
-    pointer-events: none;
+    /*content: '';*/
+    /*position: absolute;*/
+    /*left: 0;*/
+    /*right: 0;*/
+    /*bottom: 0;*/
+    /*height: 260px;*/
+    /*background: linear-gradient(180deg, rgba(10, 5, 2, 0) 12.54%, rgba(10, 5, 2, 0.6) 59.68%);*/
+    /*pointer-events: none;*/
 }
 
 .card__footer {
@@ -421,12 +422,12 @@ main,
 }
 
 .card--onboarding .card__preview {
-    height: 260px;
     padding: 0;
     background: transparent;
     margin: 12px auto 0;
     width: 100%;
-    align-items: flex-start;
+    flex: 1;
+    align-items: center;
 }
 
 .card__preview img {
@@ -447,7 +448,7 @@ main,
 }
 
 .card--onboarding .card__image {
-    width: 246px;
+    width: 310px;
     height: auto;
     max-width: 100%;
     border-radius: 12px;
@@ -456,15 +457,15 @@ main,
 
 .photo-collage {
     position: relative;
-    width: min(270px, 100%);
-    height: 230px;
+    width: 100%;
+    height: 360px;
     margin: 0 auto;
 }
 
 .photo-collage__card {
     position: absolute;
-    width: 170px;
-    height: 210px;
+    width: 154px;
+    height: 240px;
     border-radius: 16px;
     border: 6px solid #fff;
     background: linear-gradient(180deg, #e5e7eb 0%, #d1d5db 100%);
@@ -474,38 +475,28 @@ main,
 }
 
 .photo-collage__card--back-left {
-    top: 18px;
-    left: 0;
-    transform: rotate(-12deg) translateX(-12px);
+    left: 37px;
+    bottom: 24px;
+    z-index: 10;
+    transform: rotate(-7deg) translateX(-12px);
 }
 
 .photo-collage__card--back-right {
-    top: 4px;
-    right: 6px;
-    transform: rotate(12deg) translateX(8px);
+    bottom: 13px;
+    right: 27px;
+    z-index: 8;
+    transform: rotate(7deg) translateX(8px);
 }
 
 .photo-collage__card--front {
-    bottom: 0;
     left: 50%;
-    transform: translateX(-50%) rotate(2deg);
-    width: 188px;
-    height: 218px;
+    z-index: 6;
+    transform: translateX(-50%) rotate(0deg);
 }
 
 @media (max-width: 420px) {
     .photo-collage {
-        height: 210px;
-    }
-
-    .photo-collage__card {
-        width: 150px;
-        height: 190px;
-    }
-
-    .photo-collage__card--front {
-        width: 168px;
-        height: 198px;
+        height: 360px;
     }
 }
 
