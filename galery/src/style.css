@@ -552,75 +552,102 @@ main,
 }
 
 .card--headphones {
+    position: relative;
+    gap: 16px;
+    padding: 28px 18px 24px;
+    background: radial-gradient(60% 40% at 24% 16%, rgba(69, 195, 150, 0.35), rgba(15, 16, 15, 0))
+    , radial-gradient(50% 32% at 80% 12%, rgba(30, 93, 69, 0.3), rgba(11, 12, 11, 0))
+    , #0f110f;
+    border: 1px solid #1f2a25;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.card__glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(40% 40% at 50% 30%, rgba(76, 191, 144, 0.18), transparent),
+    radial-gradient(55% 55% at 70% 0%, rgba(63, 145, 114, 0.24), transparent);
+    filter: blur(20px);
+    z-index: 0;
+}
+
+.card__content--headphones {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
     gap: 16px;
 }
 
-.choice-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
+.card--headphones h1 {
+    font-size: 26px;
+    line-height: 1.1;
+    color: #ffffff;
+    margin: 0;
 }
 
-.option-card {
-    appearance: none;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 10px;
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+.card--headphones p {
+    color: #96afa5;
+    font-size: 15px;
+    margin: 0;
+}
+
+.headphones-options {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
+}
+
+.card--headphones .option-card {
+    appearance: none;
+    border: 1px solid #1f2a25;
+    border-radius: 16px;
+    padding: 18px;
+    background: linear-gradient(170deg, rgba(26, 36, 31, 0.92), rgba(14, 17, 14, 0.95));
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     cursor: pointer;
     text-align: left;
-    transition: transform 0.1s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.1s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
-.option-card:hover {
+.card--headphones .option-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
-    border-color: #cbd5e1;
+    border-color: #2d3c34;
+    box-shadow: 0 22px 36px rgba(0, 0, 0, 0.45);
+    background: linear-gradient(170deg, rgba(32, 44, 38, 0.98), rgba(15, 17, 15, 0.98));
 }
 
-.option-card--primary {
-    background: linear-gradient(135deg, #0ea5e9, #22d3ee);
-    color: #0f172a;
-    box-shadow: 0 18px 30px rgba(14, 165, 233, 0.28);
+.card--headphones .option-card--primary {
+    background: linear-gradient(150deg, rgba(18, 26, 22, 0.95), rgba(12, 17, 14, 0.96));
+    border-color: #243128;
 }
 
-.option-card--secondary {
-    background: #fff;
+.card--headphones .option-card--secondary {
+    background: linear-gradient(150deg, rgba(16, 18, 16, 0.92), rgba(12, 14, 12, 0.94));
 }
 
-.option-card__image {
+.option-card__image-wrap {
+    position: relative;
+    border-radius: 14px;
+    background: radial-gradient(60% 60% at 50% 38%, rgba(76, 191, 144, 0.28), rgba(8, 10, 8, 0.6));
+    overflow: hidden;
+    padding: 16px;
+}
+
+.card--headphones .option-card__image {
     width: 100%;
-    border-radius: 12px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: #0f172a;
+    display: block;
+    filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.35));
 }
 
-.option-card__text {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.option-card__title {
+.card--headphones .option-card__title {
     font-weight: 800;
-    color: #0f172a;
-}
-
-.option-card--primary .option-card__title {
-    color: #fff;
-}
-
-.option-card__subtitle {
-    color: #4b5563;
-    font-size: 14px;
-}
-
-.option-card--primary .option-card__subtitle {
-    color: #e0f2fe;
+    color: #ffffff;
+    font-size: 16px;
 }
 
 .guide__top {
