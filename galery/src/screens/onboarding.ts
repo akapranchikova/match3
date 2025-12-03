@@ -3,7 +3,7 @@ import { rerender } from '../navigation'
 import { state } from '../state'
 import { createButton } from '../ui'
 import { RenderResult } from '../types'
-import headphonesIllustration from '../assets/onboarding-headphones.svg'
+import headphonesIllustration from '../assets/onboarding-headphones.png'
 import logoList from '../assets/logo-list.svg'
 import guideIntroAudio from '../assets/guide-intro.wav'
 
