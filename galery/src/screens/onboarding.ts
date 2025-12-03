@@ -1,6 +1,7 @@
 import { onboardingSlides } from '../data'
 import { rerender } from '../navigation'
 import { state } from '../state'
+import { saveOnboardingCompleted } from '../storage'
 import { createButton } from '../ui'
 import { RenderResult } from '../types'
 import headphonesIllustration from '../assets/onboarding-headphones.png'
@@ -171,6 +172,7 @@ export const renderHeadphonesPrompt = (): RenderResult => {
   `
 
   const goNext = () => {
+    saveOnboardingCompleted()
     state.screen = 'routeModePrompt'
     rerender()
   }

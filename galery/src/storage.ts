@@ -1,5 +1,7 @@
 import { STORAGE_KEY } from './data'
 
+const ONBOARDING_KEY = 'gallery-onboarding-complete'
+
 // Responsible for persisting which points were already viewed by the visitor
 export const loadViewed = (): Set<string> => {
   const stored = localStorage.getItem(STORAGE_KEY)
@@ -15,4 +17,12 @@ export const loadViewed = (): Set<string> => {
 
 export const saveViewed = (set: Set<string>) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set)))
+}
+
+export const loadOnboardingCompleted = (): boolean => {
+  return localStorage.getItem(ONBOARDING_KEY) === 'true'
+}
+
+export const saveOnboardingCompleted = () => {
+  localStorage.setItem(ONBOARDING_KEY, 'true')
 }
