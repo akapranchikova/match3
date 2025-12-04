@@ -4,6 +4,7 @@ export type AppScreen =
   | 'routeModePrompt'
   | 'guideIntro'
   | 'pointInfo'
+  | 'pointContent'
   | 'infoComplete'
   | 'nextPoint'
   | 'routeList'
@@ -48,6 +49,42 @@ export interface AppState {
   currentPointIndex: number
   currentFloor: number
   mapPositions: Record<number, MapPosition>
+  currentContentIndex: number
+}
+
+export type PointContentKind = 'video' | 'cards' | 'audio'
+
+export interface VideoContent {
+  type: 'video'
+  src: string
+  poster?: string
+  subtitles?: string[]
+}
+
+export interface CardsContent {
+  type: 'cards'
+  cards: {
+    title: string
+    text: string
+    image: string
+    alt?: string
+  }[]
+}
+
+export interface AudioContent {
+  type: 'audio'
+  src: string
+  artwork: string
+  background: string
+  subtitles?: string[]
+}
+
+export type PointContentSection = VideoContent | CardsContent | AudioContent
+
+export interface PointContentConfig {
+  heading: string
+  body: string
+  sections: PointContentSection[]
 }
 
 export type RenderCleanup = () => void

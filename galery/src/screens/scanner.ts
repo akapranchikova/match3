@@ -50,7 +50,8 @@ export const renderScanner = (): RenderResult => {
       viewedPoints.add(points[matchedIndex].id)
       saveViewed(viewedPoints)
       state.currentPointIndex = matchedIndex
-      state.screen = 'pointInfo'
+      state.screen = 'pointContent'
+      state.currentContentIndex = 0
       rerender()
     } else {
       showStatus('QR-код считан, но точка маршрута не найдена. Попробуйте другой код.')

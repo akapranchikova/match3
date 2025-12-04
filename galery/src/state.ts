@@ -11,6 +11,7 @@ export const state: AppState = {
   currentPointIndex: 0,
   currentFloor: 1,
   mapPositions: { ...initialMapPositions },
+  currentContentIndex: 0,
 }
 
 export let viewedPoints = loadViewed()

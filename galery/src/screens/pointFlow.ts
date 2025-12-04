@@ -37,8 +37,17 @@ export const renderPointInfo = (): HTMLElement => {
     <div class="card__preview large">
       <img src="${routePreview}" alt="Превью точки «${point.title}»" class="card__image">
     </div>
+    <div class="point-layout__actions">
+      <button class="button secondary" data-action="intro">Вводный контент точки</button>
+    </div>
     <button class="button primary" data-action="finish">Закончить точку</button>
   `
+
+  section.querySelector<HTMLButtonElement>('[data-action="intro"]')?.addEventListener('click', () => {
+    state.screen = 'pointContent'
+    state.currentContentIndex = 0
+    rerender()
+  })
 
   section.querySelector<HTMLButtonElement>('[data-action="finish"]')?.addEventListener('click', () => {
     handleFinishPoint()

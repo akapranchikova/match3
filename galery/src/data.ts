@@ -1,10 +1,11 @@
-import { MapPosition, OnboardingSlide, RoutePoint } from './types'
+import { MapPosition, OnboardingSlide, PointContentConfig, RoutePoint } from './types'
 import historyIllustration from './assets/onboarding-history.png'
 import voiceIllustration from './assets/onboarding-voice.png'
 import headphonesIllustration from './assets/onboarding-headphones.png'
 import qrIllustration from './assets/onboarding-qr.svg'
 import pointPlaceholder from './assets/point-placeholder.svg'
 import guideBackground from './assets/guide-background.png'
+import guideIntroAudio from './assets/guide-intro.wav'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 
@@ -106,6 +107,105 @@ export const points: RoutePoint[] = [
     map: { floor: 2, x: 46, y: 72 },
   },
 ]
+
+const sampleVideoSrc = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'
+const sampleSubtitle = [
+  'Это место для субтитров, где будет текст Голоса.',
+  'Листайте снизу вверх, чтобы перейти к следующему сюжету.',
+]
+
+export const pointContentConfigs: Record<string, PointContentConfig> = {
+  history: {
+    heading: 'Заголовок',
+    body: 'Текст',
+    sections: [
+      {
+        type: 'video',
+        src: sampleVideoSrc,
+        poster: pointPlaceholder,
+        subtitles: sampleSubtitle,
+      },
+      {
+        type: 'cards',
+        cards: [
+          {
+            title: 'Скалистый берег',
+            text: 'История места и кадры экспедиции — перелистывайте карточки, чтобы узнать детали.',
+            image:
+              'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
+            alt: 'Скала у берега моря',
+          },
+          {
+            title: 'Вид на море',
+            text: 'Маршрут продолжается вдоль воды, где легко представить древнее море Перми.',
+            image:
+              'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
+            alt: 'Закат над морем',
+          },
+          {
+            title: 'Артефакты',
+            text: 'Редкие находки, которые формируют основу коллекции новой галереи.',
+            image:
+              'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80',
+            alt: 'Человек держит артефакт',
+          },
+        ],
+      },
+      {
+        type: 'audio',
+        src: guideIntroAudio,
+        artwork: voiceIllustration,
+        background: guideBackground,
+        subtitles: sampleSubtitle,
+      },
+    ],
+  },
+  'perm-period': {
+    heading: 'Заголовок',
+    body: 'Текст',
+    sections: [
+      {
+        type: 'video',
+        src: sampleVideoSrc,
+        poster: pointPlaceholder,
+        subtitles: sampleSubtitle,
+      },
+      {
+        type: 'cards',
+        cards: [
+          {
+            title: 'Пермское море',
+            text: 'История древнего моря и рельефов, которые сформировали ландшафт.',
+            image:
+              'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
+            alt: 'Скалы у воды',
+          },
+          {
+            title: 'Следы эпохи',
+            text: 'Кадры находок археологов и интерпретации научной группы.',
+            image:
+              'https://images.unsplash.com/photo-1517824748781-84db05733291?auto=format&fit=crop&w=1200&q=80',
+            alt: 'Каменные слои',
+          },
+          {
+            title: 'Современность',
+            text: 'Как образ моря стал метафорой всей экспозиции и визуального кода.',
+            image:
+              'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80',
+            alt: 'Береговая линия',
+          },
+        ],
+      },
+      {
+        type: 'audio',
+        src: guideIntroAudio,
+        artwork: voiceIllustration,
+        background: guideBackground,
+        subtitles: sampleSubtitle,
+      },
+    ],
+  },
+}
 
 export const onboardingSlides: OnboardingSlide[] = [
   {

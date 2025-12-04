@@ -71,7 +71,8 @@ export const renderRouteList = (): HTMLElement => {
     item.addEventListener('click', () => {
       const index = Number(item.dataset.index)
       state.currentPointIndex = index
-      state.screen = 'pointInfo'
+      state.screen = 'pointContent'
+      state.currentContentIndex = 0
       rerender()
     })
   })
