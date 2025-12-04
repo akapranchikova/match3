@@ -9,6 +9,7 @@ import logoList from '../assets/logo-list.svg'
 import guideIntroAudio from '../assets/guide-intro.wav'
 import guideBackground from '../assets/guide-background.png'
 import onboardingVoice from '../assets/onboarding-voice.png'
+import onboardingHistory from '../assets/onboarding-history.svg'
 
 const introSubtitles = [
     {
@@ -49,6 +50,65 @@ const introSubtitles = [
         ],
     },
 ]
+
+type OptionVariant = 'primary' | 'secondary'
+
+interface OptionCardConfig {
+    title: string
+    image: string
+    imageAlt?: string
+    variant?: OptionVariant
+    onSelect: () => void
+}
+
+const renderOptionPrompt = ({
+                               title,
+                               subtitle,
+                               options,
+                               className,
+                           }: {
+    title: string
+    subtitle: string
+    options: OptionCardConfig[]
+    className?: string
+}) => {
+    const container = document.createElement('section')
+    container.className = ['card', 'card--options', className].filter(Boolean).join(' ')
+
+    container.innerHTML = `
+    <div class="card__glow" aria-hidden="true"></div>
+    <div class="card__content card__content--options">
+    <div class="header">
+     <h1>${title}</h1>
+      <p>${subtitle}</p>
+    </div>
+
+      <div class="option-grid">
+        ${options
+            .map(
+                (option, index) => `
+        <button class="option-card ${option.variant ? `option-card--${option.variant}` : ''}" type="button" data-index="${index}">
+          <div class="option-card__image-wrap">
+            <img src="${option.image}" alt="${option.imageAlt ?? option.title}" class="option-card__image">
+          </div>
+          <span class="option-card__title">${option.title}</span>
+        </button>
+      `,
+            )
+            .join('')}
+      </div>
+    </div>
+  `
+
+    container.querySelectorAll<HTMLButtonElement>('.option-card').forEach((button) => {
+        button.addEventListener('click', () => {
+            const index = Number(button.dataset.index)
+            options[index]?.onSelect()
+        })
+    })
+
+    return container
+}
 
 // Card shared between onboarding steps to keep layout consistent
 const renderCard = ({
@@ -166,74 +226,63 @@ export const renderOnboardingSlide = (): HTMLElement => {
 }
 
 export const renderHeadphonesPrompt = (): RenderResult => {
-    const container = document.createElement('section')
-    container.className = 'card card--headphones'
-
-    container.innerHTML = `
-    <div class="card__glow" aria-hidden="true"></div>
-    <div class="card__content card__content--headphones">
-    <div class="header">
-     <h1>Будете ли использовать наушники?</h1>
-      <p>Вы сможете поменять выбор позже</p>
-    </div>
-     
-      <div class="headphones-options">
-        <button class="option-card option-card--primary" type="button">
-          <div class="option-card__image-wrap">
-            <img src="${headphonesIllustration}" alt="Наушники" class="option-card__image">
-          </div>
-          <span class="option-card__title">Заголовок</span>
-        </button>
-        <button class="option-card option-card--secondary" type="button">
-          <div class="option-card__image-wrap">
-            <img src="${headphonesIllustration}" alt="Наушники" class="option-card__image">
-          </div>
-          <span class="option-card__title">Нет, буду читать субтитры</span>
-        </button>
-      </div>
-    </div>
-  `
-
     const goNext = () => {
         saveOnboardingCompleted()
         state.screen = 'routeModePrompt'
         rerender()
     }
 
-    container.querySelectorAll<HTMLButtonElement>('.headphones-options .option-card').forEach((button) => {
-        button.addEventListener('click', goNext)
+    return renderOptionPrompt({
+        title: 'Будете ли использовать наушники?',
+        subtitle: 'Вы сможете поменять выбор позже',
+        className: 'card--headphones',
+        options: [
+            {
+                title: 'Да, буду слушать в наушниках',
+                image: headphonesIllustration,
+                imageAlt: 'Наушники',
+                variant: 'primary',
+                onSelect: goNext,
+            },
+            {
+                title: 'Нет, буду читать субтитры',
+                image: headphonesIllustration,
+                imageAlt: 'Наушники',
+                variant: 'secondary',
+                onSelect: goNext,
+            },
+        ],
     })
-
-    return container
 }
 
 export const renderRouteModePrompt = (): RenderResult => {
-    const overlay = document.createElement('div')
-    overlay.className = 'overlay'
-    overlay.innerHTML = `
-    <div class="modal">
-      <h2>Выберите режим просмотра маршрута</h2>
-      <p>Вы можете пройти маршрут вместе с виртуальным гидом или изучать материалы самостоятельно</p>
-    </div>
-  `
-
-    const modal = overlay.querySelector<HTMLDivElement>('.modal')
-
-    const withGuide = createButton('С гидом Голос времени')
-    withGuide.addEventListener('click', () => {
-        state.screen = 'guideIntro'
-        rerender()
+    return renderOptionPrompt({
+        title: 'Выберите режим просмотра маршрута',
+        subtitle: 'Пройдите маршрут вместе с виртуальным гидом или изучайте материалы самостоятельно',
+        className: 'card--route-mode',
+        options: [
+            {
+                title: 'С гидом Голос времени',
+                image: onboardingVoice,
+                imageAlt: 'Голос времени',
+                variant: 'primary',
+                onSelect: () => {
+                    state.screen = 'guideIntro'
+                    rerender()
+                },
+            },
+            {
+                title: 'Самостоятельно',
+                image: onboardingHistory,
+                imageAlt: 'Самостоятельное прохождение',
+                variant: 'secondary',
+                onSelect: () => {
+                    state.screen = 'map'
+                    rerender()
+                },
+            },
+        ],
     })
-
-    const selfGuided = createButton('Самостоятельно', 'secondary')
-    selfGuided.addEventListener('click', () => {
-        state.screen = 'map'
-        rerender()
-    })
-
-    modal?.appendChild(withGuide)
-    modal?.appendChild(selfGuided)
-    return overlay
 }
 
 export const renderGuideIntro = (): RenderResult => {
