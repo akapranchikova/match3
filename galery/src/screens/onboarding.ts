@@ -281,7 +281,7 @@ export const renderRouteModePrompt = (): RenderResult => {
                 imageAlt: 'Самостоятельное прохождение',
                 variant: 'secondary',
                 onSelect: () => {
-                    state.screen = 'map'
+                    state.screen = 'routeList'
                     rerender()
                 },
             },
