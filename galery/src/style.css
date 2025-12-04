@@ -245,8 +245,8 @@ main,
     z-index: 0;
 }
 
-.card--onboarding::before {
-    z-index: 1;
+.card--with-background::before {
+    content: none;
 }
 
 .card--onboarding::after {
