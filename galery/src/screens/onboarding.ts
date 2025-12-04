@@ -245,11 +245,6 @@ export const renderGuideIntro = (): RenderResult => {
     const content = document.createElement('div')
     content.className = 'guide__content'
 
-    const label = document.createElement('p')
-    label.className = 'guide__label'
-    label.textContent = 'Голос времени'
-    content.appendChild(label)
-
     const hero = document.createElement('div')
     hero.className = 'guide__hero'
     const heroImage = document.createElement('img')
@@ -405,9 +400,9 @@ export const renderGuideIntro = (): RenderResult => {
 
     controls.appendChild(muteButton)
 
-    container.appendChild(content)
-    container.appendChild(media)
-    container.appendChild(controls)
+    const footer = document.createElement('div')
+    footer.className = 'guide__footer'
+    footer.appendChild(controls)
 
     const start = createButton('Начать маршрут')
     start.addEventListener('click', () => {
@@ -416,7 +411,11 @@ export const renderGuideIntro = (): RenderResult => {
         rerender()
     })
 
-    container.appendChild(start)
+    footer.appendChild(start)
+
+    container.appendChild(content)
+    container.appendChild(media)
+    container.appendChild(footer)
 
     return {
         element: container,
