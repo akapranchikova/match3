@@ -135,7 +135,6 @@ const renderAudioSection = (section: AudioContent) => {
 
   const background = document.createElement('div')
   background.className = 'guide__background'
-  background.style.backgroundImage = `linear-gradient(180deg, rgba(12, 20, 16, 0.86) 0%, rgba(11, 12, 11, 0.94) 100%), url(${section.background})`
   container.appendChild(background)
 
   const content = document.createElement('div')
@@ -257,7 +256,6 @@ export const renderPointContent = () => {
   })
 
   slider.appendChild(stack)
-  slider.appendChild(dots)
 
   updateActive()
 
