@@ -8,6 +8,7 @@ import headphonesIllustration from '../assets/onboarding-headphones.png'
 import logoList from '../assets/logo-list.svg'
 import guideIntroAudio from '../assets/guide-intro.wav'
 import guideBackground from '../assets/guide-background.png'
+import onboardingVoice from '../assets/onboarding-voice.png'
 
 const introSubtitles = [
     {
@@ -236,28 +237,31 @@ export const renderGuideIntro = (): RenderResult => {
     const container = document.createElement('section')
     container.className = 'card card--guide'
 
-    const topBar = document.createElement('div')
-    topBar.className = 'guide__top'
+    const background = document.createElement('div')
+    background.className = 'guide__background'
+    background.style.backgroundImage = `linear-gradient(180deg, rgba(12, 20, 16, 0.86) 0%, rgba(11, 12, 11, 0.94) 100%), url(${guideBackground})`
+    container.appendChild(background)
 
-    const avatar = document.createElement('div')
-    avatar.className = 'guide__avatar'
-    topBar.appendChild(avatar)
-
-    const controls = document.createElement('div')
-    controls.className = 'guide__controls'
-    controls.innerHTML = '<button class="guide__icon" aria-label="mute">🔇</button>'
-    topBar.appendChild(controls)
-
-    container.appendChild(topBar)
+    const content = document.createElement('div')
+    content.className = 'guide__content'
 
     const label = document.createElement('p')
     label.className = 'guide__label'
     label.textContent = 'Голос времени'
-    container.appendChild(label)
+    content.appendChild(label)
+
+    const hero = document.createElement('div')
+    hero.className = 'guide__hero'
+    const heroImage = document.createElement('img')
+    heroImage.src = onboardingVoice
+    heroImage.alt = 'Голос времени'
+    heroImage.className = 'guide__hero-image'
+    hero.appendChild(heroImage)
+    content.appendChild(hero)
 
     const intro = document.createElement('p')
     intro.className = 'guide__intro guide__subtitle guide__subtitle--current'
-    container.appendChild(intro)
+    content.appendChild(intro)
 
     const media = document.createElement('div')
     media.className = 'guide__media'
@@ -382,12 +386,28 @@ export const renderGuideIntro = (): RenderResult => {
 
     requestAnimationFrame(tryPlay)
 
-    controls.querySelector('.guide__icon')?.addEventListener('click', () => {
+    const controls = document.createElement('div')
+    controls.className = 'guide__controls'
+
+    const muteButton = document.createElement('button')
+    muteButton.className = 'guide__icon'
+    muteButton.type = 'button'
+    muteButton.innerHTML = `
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <path d="M15.4 16L14 14.6L16.6 12L14 9.4L15.4 8L18 10.6L20.6 8L22 9.4L19.4 12L22 14.6L20.6 16L18 13.4L15.4 16ZM3 15L3 9H7L12 4L12 20L7 15H3ZM10 8.85L7.85 11H5L5 13H7.85L10 15.15L10 8.85Z" fill="#E2E2E2"/>
+      </svg>
+    `
+
+    muteButton.addEventListener('click', () => {
         audio.muted = !audio.muted
-        controls.querySelector('.guide__icon')!.textContent = audio.muted ? '🔇' : '🔊'
+        muteButton.classList.toggle('is-muted', audio.muted)
     })
 
+    controls.appendChild(muteButton)
+
+    container.appendChild(content)
     container.appendChild(media)
+    container.appendChild(controls)
 
     const start = createButton('Начать маршрут')
     start.addEventListener('click', () => {
