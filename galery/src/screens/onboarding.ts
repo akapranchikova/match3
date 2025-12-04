@@ -172,8 +172,11 @@ export const renderHeadphonesPrompt = (): RenderResult => {
     container.innerHTML = `
     <div class="card__glow" aria-hidden="true"></div>
     <div class="card__content card__content--headphones">
-      <h1>Будете ли использовать наушники?</h1>
+    <div class="header">
+     <h1>Будете ли использовать наушники?</h1>
       <p>Вы сможете поменять выбор позже</p>
+    </div>
+     
       <div class="headphones-options">
         <button class="option-card option-card--primary" type="button">
           <div class="option-card__image-wrap">
