@@ -24,6 +24,7 @@ export interface RoutePoint {
   id: string
   title: string
   description: string
+  period?: string
   photo?: string
   photoAlt?: string
   longDescription?: string

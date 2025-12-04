@@ -13,6 +13,7 @@ export const points: RoutePoint[] = [
     id: 'history',
     title: 'Создание и история галереи',
     description: 'Коротко рассказываем, как появилось здание и почему оно стало домом новой галереи.',
+    period: '21 век',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
@@ -28,6 +29,7 @@ export const points: RoutePoint[] = [
     id: 'perm-period',
     title: 'Пермский период, пермское море и геология',
     description: 'История пермского периода и артефакты, которые нашли неподалёку.',
+    period: '21 век',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
@@ -43,6 +45,7 @@ export const points: RoutePoint[] = [
     id: 'metal-plant',
     title: 'Медеплавильный завод и история посёлка',
     description: 'Как промышленность повлияла на развитие территории и людей.',
+    period: '21 век',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
@@ -58,6 +61,7 @@ export const points: RoutePoint[] = [
     id: 'excavation',
     title: 'История археологических раскопок',
     description: 'Находки и открытия, которые легли в основу экспозиции.',
+    period: '21 век',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
@@ -73,6 +77,7 @@ export const points: RoutePoint[] = [
     id: 'railway',
     title: 'Железная дорога — будущий завод Шпагина',
     description: 'Как железная дорога изменила экономику места и городскую ткань.',
+    period: '21 век',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
@@ -88,6 +93,7 @@ export const points: RoutePoint[] = [
     id: 'final',
     title: 'Финальная точка',
     description: 'Завершение маршрута и приглашение поделиться впечатлениями.',
+    period: '21 век',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
