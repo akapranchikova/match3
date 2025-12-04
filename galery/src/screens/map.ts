@@ -64,15 +64,8 @@ export const renderMap = (): HTMLElement => {
       </div>
       <p class="map__subtitle">Фиксированный план этажа с отмеченными точками маршрута.</p>
       <div class="map__viewport">
-        <div class="map__inner" style="left:50%;top:50%;transform:translate(calc(-50% + ${defaultPosition.x}px), calc(-50% + ${defaultPosition.y}px))">
-          ${[1, 2].map((floor) => createPlanMarkup(floor)).join('')}
-        </div>
+  
       </div>
-      <div class="stack">
-        <button class="button primary" data-action="focus">Перейти к точке ${state.currentPointIndex + 1}</button>
-        <button class="button secondary" data-action="route">Открыть весь маршрут</button>
-      </div>
-      <p class="muted">Текущая точка: ${point.title}</p>
     </section>
   `
 
