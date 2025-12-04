@@ -13,11 +13,10 @@ export const renderCameraPermission = (): RenderResult => {
     </div>
     <div class="camera-permission__content">
       <div class="camera-permission__text">
-        <h1>Разрешите доступ к камере</h1>
-        <p>Камера нужна, чтобы сканировать QR-коды в галерее и открывать точки маршрута</p>
+        <h1>Разрешите доступ к&nbsp;камере</h1>
+        <p>Камера нужна, чтобы сканировать QR-коды в галерее и переходить к следующей истории маршрута</p>
       </div>
       <div class="camera-permission__actions">
-        <p class="camera-permission__status" aria-live="polite"></p>
       </div>
     </div>
   `
@@ -27,7 +26,7 @@ export const renderCameraPermission = (): RenderResult => {
 
   if (!actions) return section
 
-  const button = createButton('Разрешить доступ', 'primary')
+  const button = createButton('Разрешить', 'primary')
   actions.prepend(button)
 
   const showStatus = (message: string) => {

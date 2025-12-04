@@ -186,7 +186,6 @@ export const renderPointContent = () => {
   header.innerHTML = `
     <p class="content-header__eyebrow">${config.body}</p>
     <h1 class="content-header__title">${config.heading}</h1>
-    <p class="content-header__lead">${point.title}</p>
   `
 
   const slider = document.createElement('div')
