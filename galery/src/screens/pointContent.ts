@@ -215,18 +215,6 @@ export const renderPointContent = () => {
     stack.appendChild(panel)
   })
 
-  const dots = document.createElement('div')
-  dots.className = 'content-dots'
-  config.sections.forEach((_, index) => {
-    const dot = document.createElement('span')
-    dot.className = 'content-dots__dot'
-    dot.dataset.dot = index.toString()
-    dot.addEventListener('click', () => {
-      state.currentContentIndex = index
-      rerender()
-    })
-    dots.appendChild(dot)
-  })
 
   const hint = document.createElement('div')
   hint.className = 'content-hint'

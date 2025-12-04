@@ -1421,26 +1421,6 @@ main,
     margin: 0 auto;
 }
 
-.content-dots {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 4px;
-}
-
-.content-dots__dot {
-    width: 22px;
-    height: 4px;
-    background: rgba(226, 226, 226, 0.16);
-    border-radius: 999px;
-    transition: background 0.2s ease;
-    cursor: pointer;
-}
-
-.content-dots__dot.is-active {
-    background: linear-gradient(90deg, #21cca1, #7cbca4);
-}
-
 .content-hint {
     display: grid;
     grid-template-columns: auto 1fr;
