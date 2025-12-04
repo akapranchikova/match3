@@ -1,8 +1,7 @@
-import mapFloor1 from '../assets/map-floor-1.svg'
-import mapPhotoPlaceholder from '../assets/map-photo-placeholder.svg'
-import { points } from '../data'
+import { initialMapPositions, points } from '../data'
 import { rerender } from '../navigation'
 import { state, viewedPoints } from '../state'
+import { createButton } from '../ui'
 
 export const renderMap = (): HTMLElement => {
   const point = points[state.currentPointIndex]
@@ -10,6 +9,40 @@ export const renderMap = (): HTMLElement => {
   const shouldShowFloors = previousPoint ? previousPoint.map.floor !== point.map.floor : false
   const activeFloor = shouldShowFloors ? state.currentFloor || point.map.floor : point.map.floor
   state.currentFloor = activeFloor
+
+  if (!state.mapPositions[state.currentFloor]) {
+    state.mapPositions[state.currentFloor] = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
+  }
+
+  const defaultPosition = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
+
+  const createSegments = (floor: number) =>
+    (floor === 1
+      ? [
+          { top: '6%', left: '32%', width: '22%', height: '34%' },
+          { top: '34%', left: '10%', width: '48%', height: '26%' },
+          { top: '48%', left: '30%', width: '30%', height: '36%' },
+          { top: '62%', left: '8%', width: '30%', height: '26%' },
+        ]
+      : [
+          { top: '10%', left: '38%', width: '22%', height: '28%' },
+          { top: '34%', left: '30%', width: '26%', height: '26%' },
+          { top: '52%', left: '14%', width: '42%', height: '24%' },
+        ]
+    )
+      .map(
+        (style) =>
+          `<div class="map__segment" style="top:${style.top};left:${style.left};width:${style.width};height:${style.height};"></div>`,
+      )
+      .join('')
+
+  const createPlanMarkup = (floor: number) => `
+    <div class="map__plan map__plan--${floor}${floor === state.currentFloor ? ' is-active' : ''}">
+      <div class="map__outline"></div>
+      ${createSegments(floor)}
+      <div class="map__path"></div>
+    </div>
+  `
 
   const floorsMarkup = shouldShowFloors
     ? `<div class="map__floors">${[1, 2]
@@ -20,51 +53,30 @@ export const renderMap = (): HTMLElement => {
         .join('')}</div>`
     : `<span class="map__floor-label">Этаж ${state.currentFloor}</span>`
 
-  const planImages: Record<number, string | null> = {
-    1: mapFloor1,
-    2: null,
-  }
-
   const page = document.createElement('div')
-  page.className = 'map-sheet'
+  page.className = 'map-screen'
   page.innerHTML = `
-    <div class="map-sheet__backdrop"></div>
-    <section class="map map--sheet" data-drag-sheet>
-      <div class="map__handle" data-drag-handle></div>
+    <section class="map map--sheet">
+      <div class="map__handle"></div>
       <div class="map__header">
-        <div>
-          <p class="map__eyebrow">Карта</p>
-          <h1>Этаж ${state.currentFloor}</h1>
-        </div>
+        <h1>Карта</h1>
         ${floorsMarkup}
       </div>
-      <p class="map__subtitle">План галереи с отмеченными точками маршрута.</p>
-      <div class="map__content">
-        <article class="map__info-card">
-          <div class="map__photo">
-            <img src="${mapPhotoPlaceholder}" alt="Фотография точки маршрута" />
-          </div>
-          <p class="map__point-label">Точка ${state.currentPointIndex + 1}</p>
-          <h2 class="map__info-title">${point.title}</h2>
-          <p class="map__info-desc">${point.description}</p>
-          <div class="map__actions">
-            <button class="button primary" data-action="focus">Перейти к точке</button>
-            <button class="button secondary" data-action="route">Весь маршрут</button>
-          </div>
-        </article>
-        <div class="map__viewport map__viewport--sheet">
-          <div class="map__plan-image">
-            ${planImages[activeFloor]
-              ? `<img src="${planImages[activeFloor]}" alt="План ${activeFloor} этажа" />`
-              : '<div class="map__plan-placeholder">План этажа скоро будет</div>'}
-            <div class="map__marker-layer"></div>
-          </div>
+      <p class="map__subtitle">Фиксированный план этажа с отмеченными точками маршрута.</p>
+      <div class="map__viewport">
+        <div class="map__inner" style="left:50%;top:50%;transform:translate(calc(-50% + ${defaultPosition.x}px), calc(-50% + ${defaultPosition.y}px))">
+          ${[1, 2].map((floor) => createPlanMarkup(floor)).join('')}
         </div>
       </div>
+      <div class="stack">
+        <button class="button primary" data-action="focus">Перейти к точке ${state.currentPointIndex + 1}</button>
+        <button class="button secondary" data-action="route">Открыть весь маршрут</button>
+      </div>
+      <p class="muted">Текущая точка: ${point.title}</p>
     </section>
   `
 
-  const markerLayer = page.querySelector<HTMLDivElement>('.map__marker-layer')
+  const inner = page.querySelector<HTMLDivElement>('.map__inner')
 
   points
     .filter((item) => item.map.floor === state.currentFloor)
@@ -75,7 +87,7 @@ export const renderMap = (): HTMLElement => {
 
       const statusMarkup = isComplete ? '<span class="map__marker-status">Пройдена</span>' : ''
 
-      markerLayer?.insertAdjacentHTML(
+      inner?.insertAdjacentHTML(
         'beforeend',
         `
         <button class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}" style="left:${item.map.x}%;top:${item.map.y}%;" title="${item.title}" data-index="${originalIndex}">
@@ -101,68 +113,12 @@ export const renderMap = (): HTMLElement => {
     floorButton.addEventListener('click', () => {
       const floor = Number(floorButton.dataset.floor)
       state.currentFloor = floor
+      if (!state.mapPositions[floor]) {
+        state.mapPositions[floor] = initialMapPositions[floor] || { x: 0, y: 0 }
+      }
       rerender()
     })
   })
-
-  const closeMap = () => {
-    state.screen = 'nextPoint'
-    rerender()
-  }
-
-  const sheet = page.querySelector<HTMLElement>('[data-drag-sheet]')
-  const handle = page.querySelector<HTMLElement>('[data-drag-handle]')
-
-  let startY = 0
-  let currentDelta = 0
-  let isDragging = false
-
-  const resetPosition = () => {
-    if (sheet) {
-      sheet.style.transition = 'transform 0.22s ease'
-      sheet.style.transform = 'translateY(0)'
-      window.setTimeout(() => {
-        if (sheet) {
-          sheet.style.transition = ''
-        }
-      }, 220)
-    }
-  }
-
-  const handlePointerMove = (event: PointerEvent) => {
-    if (!isDragging || !sheet) return
-    currentDelta = event.clientY - startY
-    if (currentDelta < 0) {
-      currentDelta = 0
-    }
-    sheet.style.transform = `translateY(${Math.min(currentDelta, 140)}px)`
-  }
-
-  const stopDragging = () => {
-    if (!isDragging) return
-    isDragging = false
-    window.removeEventListener('pointermove', handlePointerMove)
-    window.removeEventListener('pointerup', stopDragging)
-
-    if (currentDelta > 100) {
-      closeMap()
-    } else {
-      resetPosition()
-    }
-  }
-
-  const startDragging = (event: PointerEvent) => {
-    if (!sheet) return
-    isDragging = true
-    startY = event.clientY
-    currentDelta = 0
-    sheet.style.transition = ''
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerup', stopDragging)
-  }
-
-  handle?.addEventListener('pointerdown', startDragging)
-  page.querySelector<HTMLDivElement>('.map-sheet__backdrop')?.addEventListener('click', closeMap)
 
   page.querySelector<HTMLButtonElement>('[data-action="focus"]')?.addEventListener('click', () => {
     state.screen = 'nextPoint'
