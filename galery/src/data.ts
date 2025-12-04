@@ -12,7 +12,7 @@ export const points: RoutePoint[] = [
   {
     id: 'history',
     title: 'Создание и история галереи',
-    description: 'Коротко рассказываем, как появилось здание и почему оно стало домом новой галереи.',
+    description: 'На 1 этаже около гардероба',
     period: '21 век',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',

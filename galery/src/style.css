@@ -8,6 +8,16 @@
     url("https://db.onlinewebfonts.com/t/d6db505cea521f0fa51267e1b00c8791.svg#SB Sans Display") format("svg");
 }
 
+@font-face {
+    font-family: "SB Sans Display Semibold";
+    src: url("https://db.onlinewebfonts.com/t/2d130488c7306881cf236b40ea2a1020.eot");
+    src: url("https://db.onlinewebfonts.com/t/2d130488c7306881cf236b40ea2a1020.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/2d130488c7306881cf236b40ea2a1020.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/2d130488c7306881cf236b40ea2a1020.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/2d130488c7306881cf236b40ea2a1020.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/2d130488c7306881cf236b40ea2a1020.svg#SB Sans Display Semibold")format("svg");
+}
+
 :root {
     font-family: 'SB Sans Display', sans-serif;
     color: #f4f4f4;
@@ -366,22 +376,17 @@ main,
     display: flex;
     flex-direction: column;
     gap: 6px;
-    align-items: center;
 }
 
 .point-layout__eyebrow {
-    color: #d1d5db;
     font-size: 14px;
-    letter-spacing: 0.2px;
+    margin-bottom: 0;
 }
 
 .point-layout__title {
     color: #ffffff;
     font-size: 20px;
-    font-weight: 700;
-    line-height: 1.2;
-    margin: 0;
-    text-align: center;
+    font-family: "SB Sans Display Semibold", serif;
 }
 
 .card--point .point__description {
@@ -432,27 +437,28 @@ main,
 
 .point-visual {
     width: 100%;
+    z-index: 10;
     display: flex;
     justify-content: center;
 }
 
 .point-visual__frame {
-    width: 100%;
+    width: 256px;
     max-width: 320px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     background: #f4f4f5;
-    border-radius: 16px;
-    padding: 12px;
+    border-radius: 12px;
+    padding: 7px;
     border: 1px solid #e5e7eb;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
 .point-visual__placeholder {
-    width: 100%;
-    height: 240px;
-    border-radius: 12px;
+    width: 240px;
+    height: 270px;
+    border-radius: 8px;
     background: linear-gradient(135deg, #d6d6d8, #bfc1c4);
     border: 1px solid #e5e7eb;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
@@ -467,10 +473,13 @@ main,
 
 .point-layout__hint {
     color: #d1d5db;
+    font-family: 'SB Sans Display Semibold';
     font-size: 14px;
     line-height: 1.4;
     text-align: center;
+    font-weight: bold;
     margin: 0;
+    z-index: 10;
     max-width: 320px;
     margin-bottom: -6px;
 }
@@ -483,6 +492,9 @@ main,
 
 .point-layout__actions--inline {
     display: flex;
+    align-self: center;
+    justify-content: center;
+    z-index: 10;
     gap: 12px;
 }
 
@@ -890,16 +902,14 @@ main,
     cursor: pointer;
     box-sizing: border-box;
     padding: 13px 20px 12px;
-    font-family: "SB Sans Display";
+    font-family: "SB Sans Display Semibold", sans-serif;
     border: 1px solid rgba(226, 226, 226, 0.35);
     border-radius: 12px;
     font-style: normal;
-    font-weight: 600;
     font-size: 16px;
     line-height: 108%;
     font-feature-settings: 'pnum' on, 'lnum' on;
     color: #E2E2E2;
-    background: rgba(255, 255, 255, 0.04);
     transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
@@ -927,9 +937,12 @@ main,
 }
 
 .button.secondary {
-    background: rgba(255, 255, 255, 0.06);
-    color: #e2e2e2;
-    border-color: rgba(226, 226, 226, 0.3);
+    background: #E2E2E2;
+    color: #1B1C1D;
+    border-color: #E2E2E2;
+}
+.icon-button {
+    padding: 13px;
 }
 
 .button:hover {

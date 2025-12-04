@@ -1,4 +1,4 @@
-import cameraImage from '../assets/camera-permission.svg'
+import cameraImage from '../assets/camera-permission.png'
 import { rerender } from '../navigation'
 import { state } from '../state'
 import { createButton } from '../ui'
