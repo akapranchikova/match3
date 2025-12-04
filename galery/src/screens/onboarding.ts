@@ -136,6 +136,10 @@ const renderCard = ({
         container.classList.add('card--onboarding')
     }
 
+    if (backgroundImage) {
+        container.classList.add('card--with-background')
+    }
+
     const progressSegments = showProgress
         ? onboardingSlides
             .map((_, index) => {
