@@ -9,7 +9,7 @@ import logoList from '../assets/logo-list.svg'
 import guideIntroAudio from '../assets/guide-intro.wav'
 import guideBackground from '../assets/guide-background.png'
 import onboardingVoice from '../assets/onboarding-voice.png'
-import onboardingHistory from '../assets/onboarding-history.svg'
+import onboardingHistory from '../assets/onboarding-history.png'
 
 const introSubtitles = [
     {

@@ -1,5 +1,5 @@
 import { MapPosition, OnboardingSlide, RoutePoint } from './types'
-import historyIllustration from './assets/onboarding-history.svg'
+import historyIllustration from './assets/onboarding-history.png'
 import voiceIllustration from './assets/onboarding-voice.png'
 import headphonesIllustration from './assets/onboarding-headphones.png'
 import qrIllustration from './assets/onboarding-qr.svg'

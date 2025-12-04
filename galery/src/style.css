@@ -681,15 +681,16 @@ main,
 }
 
 .card--options h1 {
-    font-size: 26px;
+    font-size: 28px;
     line-height: 1.1;
     color: #ffffff;
     margin: 0;
+    margin-bottom: 16px;
 }
 
 .card--options p {
-    color: #96afa5;
-    font-size: 15px;
+    color: #ffffff;
+    font-size: 16px;
     margin: 0;
 }
 
@@ -727,8 +728,10 @@ main,
 
 .guide__content {
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     gap: 14px;
 }
@@ -815,12 +818,11 @@ main,
 }
 
 .guide__subtitle {
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
+    margin-top: 40px;
+    text-align: center;
+    font-size: 18px;
     background: transparent;
-    border: none;
-    color: inherit;
+    font-weight: bold;
     transition: opacity 0.2s ease;
     position: relative;
     overflow: hidden;
@@ -843,7 +845,7 @@ main,
     inset: 0;
     width: var(--progress);
     max-width: 100%;
-    background: linear-gradient(90deg, rgba(69, 195, 150, 0.65) 0%, rgba(109, 181, 146, 0.85) 100%);
+    background: transparent;
     opacity: 0.45;
     transition: width 0.1s linear;
     pointer-events: none;
@@ -872,10 +874,6 @@ main,
     gap: 12px;
     margin-top: auto;
     width: 100%;
-}
-
-.guide__footer .button {
-    flex: 1;
 }
 
 .preview__placeholder {
@@ -917,22 +915,15 @@ main,
     line-height: 108%;
 }
 
-.card--onboarding .button.primary {
-    background: transparent;
-    color: #e2e2e2;
-    border-color: #e2e2e2;
-    box-shadow: none;
-}
-
 .card--onboarding .button:hover {
     background: rgba(255, 255, 255, 0.06);
 }
 
 .button.primary {
-    background: linear-gradient(90deg, rgba(33, 204, 161, 0.24), rgba(33, 204, 161, 0.18));
-    color: #E2E2E2;
-    border-color: rgba(124, 188, 164, 0.55);
-    box-shadow: 0 10px 28px rgba(33, 204, 161, 0.22);
+    background: transparent;
+    color: #e2e2e2;
+    border-color: #e2e2e2;
+    box-shadow: none;
 }
 
 .button.secondary {
