@@ -3,9 +3,9 @@ import { rerender } from '../navigation'
 import { state, viewedPoints } from '../state'
 import { createButton } from '../ui'
 import timelineImage1 from '../assets/timeline-01.svg'
-import timelineImage2 from '../assets/timeline-02.svg'
-import timelineImage3 from '../assets/timeline-03.svg'
-import timelineImage4 from '../assets/timeline-04.svg'
+import timelineImage2 from '../assets/timeline-01.svg'
+import timelineImage3 from '../assets/timeline-01.svg'
+import timelineImage4 from '../assets/timeline-01.svg'
 
 export const renderRouteList = (): HTMLElement => {
   const timelineImages = [timelineImage1, timelineImage2, timelineImage3, timelineImage4]
@@ -31,7 +31,6 @@ export const renderRouteList = (): HTMLElement => {
               <article class="route-card" data-index="${index}">
                 <div class="route-card__indicator">
                   <span class="route-card__period">${point.period || '21 век'}</span>
-                  <span class="route-card__dot"></span>
                      <div class="route-card__info">
                     <h3 class="route-card__title">${point.title}</h3>
                     ${viewed ? '<span class="route-card__status">Просмотрено</span>' : ''}
@@ -50,8 +49,8 @@ export const renderRouteList = (): HTMLElement => {
     </div>
     <div class="route__footer">
       <div class="route__footer-text">
-        <h3>Создайте фото в историческом стиле!</h3>
-        <p>В ИИ-фотозоне на 1 этаже, рядом с гардеробом</p>
+        <h3>Создайте фото в историческом стиле!</h3>
+        <p>В ИИ-фотозоне на 1 этаже, рядом с гардеробом</p>
       </div>
       <div class="route__footer-gallery">
         ${collageImages
@@ -63,7 +62,6 @@ export const renderRouteList = (): HTMLElement => {
           )
           .join('')}
       </div>
-      <button class="route__text-button" type="button">Текст</button>
     </div>
   `
 
@@ -77,7 +75,7 @@ export const renderRouteList = (): HTMLElement => {
     })
   })
 
-  const cta = createButton('Сканировать QR-код')
+  const cta = createButton('Пройти маршрут с Гидом')
   cta.addEventListener('click', () => {
     state.screen = 'cameraPermission'
     rerender()

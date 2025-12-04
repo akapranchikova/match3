@@ -1,35 +1,4 @@
 <svg width="175" height="200" viewBox="0 0 175 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="paint0" x1="0" y1="0" x2="175" y2="200" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#4B7A63" />
-      <stop offset="1" stop-color="#0D1915" />
-    </linearGradient>
-    <linearGradient id="paint1" x1="30" y1="18" x2="150" y2="180" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#CBE8D9" stop-opacity="0.82" />
-      <stop offset="1" stop-color="#7CBCA4" stop-opacity="0.05" />
-    </linearGradient>
-  </defs>
-  <rect x="2" y="2" width="171" height="196" rx="18" fill="url(#paint0)" stroke="#CBE8D9" stroke-opacity="0.24" stroke-width="4" />
-  <g filter="url(#shadow)">
-    <path d="M32 148C48 130 84 100 120 106C146 110 156 132 164 146" stroke="#DCEBE2" stroke-width="7" stroke-linecap="round" stroke-opacity="0.72" />
-  </g>
-  <path d="M24 84C40 70 68 54 86 58C102 62 108 78 122 82C132 85 146 80 156 74" stroke="#E6F4EC" stroke-width="6" stroke-linecap="round" stroke-opacity="0.65" />
-  <path d="M30 64C34 42 58 26 86 30C108 34 124 52 132 64C146 86 148 108 138 112C118 120 102 94 80 94C58 94 44 118 34 112C26 108 26 88 30 64Z" fill="url(#paint1)" />
-  <circle cx="48" cy="116" r="14" fill="#161716" stroke="#E6F4EC" stroke-width="4" />
-  <rect x="82" y="120" width="54" height="36" rx="8" fill="#F1F5F9" fill-opacity="0.9" />
-  <rect x="90" y="126" width="22" height="24" rx="4" fill="#CBD5E1" />
-  <rect x="116" y="126" width="14" height="24" rx="3" fill="#94A3B8" />
-  <g filter="url(#grain)">
-    <rect x="12" y="14" width="151" height="172" rx="16" fill="#000" fill-opacity="0.12" />
-  </g>
-  <filter id="shadow" x="10" y="82" width="170" height="84" color-interpolation-filters="sRGB">
-    <feDropShadow dx="0" dy="10" stdDeviation="10" flood-opacity="0.35" flood-color="#0A0C0B" />
-  </filter>
-  <filter id="grain" x="0" y="0" width="175" height="200" color-interpolation-filters="sRGB">
-    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" result="noise" />
-    <feColorMatrix in="noise" type="saturate" values="0" result="mono" />
-    <feComponentTransfer in="mono">
-      <feFuncA type="discrete" tableValues="0 0.05" />
-    </feComponentTransfer>
-  </filter>
+  <rect x="2" y="2" width="171" height="196" fill="#eee" />
+
 </svg>
