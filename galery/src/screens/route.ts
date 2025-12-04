@@ -32,12 +32,12 @@ export const renderRouteList = (): HTMLElement => {
                 <div class="route-card__indicator">
                   <span class="route-card__period">${point.period || '21 век'}</span>
                   <span class="route-card__dot"></span>
-                </div>
-                <div class="route-card__body">
-                  <div class="route-card__info">
+                     <div class="route-card__info">
                     <h3 class="route-card__title">${point.title}</h3>
                     ${viewed ? '<span class="route-card__status">Просмотрено</span>' : ''}
                   </div>
+                </div>
+                <div class="route-card__body">
                   <div class="route-card__media">
                     <img src="${image}" alt="${point.photoAlt || `Маршрутная точка ${index + 1}`}" class="route-card__image" width="175" height="200">
                   </div>
