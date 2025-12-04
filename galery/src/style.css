@@ -755,9 +755,8 @@ main,
 }
 
 .guide__controls {
-    position: absolute;
-    left: 18px;
-    bottom: 24px;
+    display: flex;
+    align-items: center;
 }
 
 .guide__icon {
@@ -803,8 +802,10 @@ main,
 }
 
 .guide__hero-image {
-    width: min(260px, 100%);
-    height: auto;
+    width: 184px;
+    height: 184px;
+    max-width: 100%;
+    object-fit: cover;
     display: block;
     filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.6));
 }
@@ -883,6 +884,19 @@ main,
 
 .guide__subtitle-word--visible {
     opacity: 1;
+}
+
+.guide__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;
+    width: 100%;
+}
+
+.guide__footer .button {
+    flex: 1;
 }
 
 .preview__placeholder {
