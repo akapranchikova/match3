@@ -243,7 +243,8 @@ export const renderPointContent = () => {
     if (activeVideo) {
       autoplayTimeoutId = window.setTimeout(() => {
         activeVideo.play().catch(() => {})
-      }, 2000)
+          // поменять, если хотим задержу
+      }, 1)
     }
 
     if (activeAudio) {

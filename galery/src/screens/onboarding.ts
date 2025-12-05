@@ -60,6 +60,7 @@ interface OptionCardConfig {
     title: string
     image: string
     imageAlt?: string
+    className?: string
     variant?: OptionVariant
     onSelect: () => void
 }
@@ -335,6 +336,7 @@ export const renderRouteModePrompt = (): RenderResult => {
                 title: 'С гидом Голос времени',
                 image: onboardingVoice,
                 imageAlt: 'Голос времени',
+                className: 'golos-img',
                 variant: 'primary',
                 onSelect: () => {
                     state.screen = 'guideIntro'
