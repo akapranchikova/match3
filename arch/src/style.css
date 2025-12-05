@@ -97,6 +97,42 @@ body {
     color: #0e0e0e;
 }
 
+.sound-toggle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.24);
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    z-index: 6;
+}
+
+.sound-toggle:hover {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.sound-toggle:active {
+    transform: translateY(1px);
+}
+
+.sound-icon {
+    display: none;
+}
+
+.sound-toggle[data-enabled="true"] [data-sound="on"],
+.sound-toggle[data-enabled="false"] [data-sound="off"] {
+    display: block;
+}
+
 .app.tutorial-mode .branding {
     display: flex;
 }
@@ -396,6 +432,31 @@ body {
 
 .action.like {
     background: linear-gradient(135deg, #0C4C1F, #13322E);
+}
+
+.subtitles {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 118px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.52);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: 0.2px;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.subtitles.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .overlay {

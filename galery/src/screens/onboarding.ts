@@ -11,6 +11,8 @@ import guideBackground from '../assets/guide-background.png'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import onboardingHistory from '../assets/onboarding-history.png'
 
+const ONBOARDING_SLIDE_DURATION_MS = 5000
+
 const introSubtitles = [
     {
         start: 0,
@@ -120,6 +122,8 @@ const renderCard = ({
                         imageAlt,
                         collagePlaceholder,
                         backgroundImage,
+                        onAdvance,
+                        progressDurationMs,
                     }: {
     title: string
     body: string
@@ -129,6 +133,8 @@ const renderCard = ({
     imageAlt?: string
     collagePlaceholder?: boolean
     backgroundImage?: string
+    onAdvance?: () => void
+    progressDurationMs?: number
 }): HTMLElement => {
     const container = document.createElement('section')
     container.className = 'card'
@@ -144,6 +150,10 @@ const renderCard = ({
         ? onboardingSlides
             .map((_, index) => {
                 const segmentClasses = ['progress__segment']
+                const segmentStyle =
+                    index === state.slideIndex && progressDurationMs
+                        ? ` style="--progress-duration:${progressDurationMs}ms"`
+                        : ''
                 if (index < state.slideIndex) {
                     segmentClasses.push('is-complete')
                 }
@@ -151,7 +161,7 @@ const renderCard = ({
                     segmentClasses.push('is-active')
                 }
 
-                return `<span class="${segmentClasses.join(' ')}"></span>`
+                return `<span class="${segmentClasses.join(' ')}"${segmentStyle}></span>`
             })
             .join('')
         : ''
@@ -200,7 +210,12 @@ const renderCard = ({
     }
 
     const action = createButton('Далее')
-    action.addEventListener('click', () => {
+    const handleAdvance = () => {
+        if (onAdvance) {
+            onAdvance()
+            return
+        }
+
         const nextSlide = state.slideIndex + 1
         if (nextSlide >= onboardingSlides.length) {
             state.screen = 'onboardingPrompt'
@@ -208,16 +223,28 @@ const renderCard = ({
             state.slideIndex = nextSlide
         }
         rerender()
-    })
+    }
+
+    action.addEventListener('click', handleAdvance)
 
     container.querySelector('.card__footer')?.appendChild(action)
 
     return container
 }
 
-export const renderOnboardingSlide = (): HTMLElement => {
+export const renderOnboardingSlide = (): RenderResult => {
     const slide = onboardingSlides[state.slideIndex]
-    return renderCard({
+    const handleAdvance = () => {
+        const nextSlide = state.slideIndex + 1
+        if (nextSlide >= onboardingSlides.length) {
+            state.screen = 'onboardingPrompt'
+        } else {
+            state.slideIndex = nextSlide
+        }
+        rerender()
+    }
+
+    const element = renderCard({
         title: slide.title,
         body: slide.body,
         imageSrc: slide.image,
@@ -226,7 +253,16 @@ export const renderOnboardingSlide = (): HTMLElement => {
         showProgress: true,
         collagePlaceholder: slide.collagePlaceholder,
         backgroundImage: slide.backgroundImage,
+        onAdvance: handleAdvance,
+        progressDurationMs: ONBOARDING_SLIDE_DURATION_MS,
     })
+
+    const autoAdvanceTimeout = window.setTimeout(handleAdvance, ONBOARDING_SLIDE_DURATION_MS)
+
+    return {
+        element,
+        cleanup: () => window.clearTimeout(autoAdvanceTimeout),
+    }
 }
 
 export const renderHeadphonesPrompt = (): RenderResult => {

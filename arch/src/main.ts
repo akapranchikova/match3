@@ -258,10 +258,84 @@ const mainResult = document.getElementById('mainResult') as HTMLParagraphElement
 const mainDescription = document.getElementById('mainDescription') as HTMLParagraphElement;
 const profileList = document.getElementById('profileList') as HTMLDivElement;
 const appEl = document.querySelector('.app') as HTMLDivElement;
+const subtitlesEl = document.getElementById('subtitles') as HTMLDivElement;
+const soundToggleBtn = document.getElementById('soundToggle') as HTMLButtonElement;
+
+const soundStorageKey = 'archetypeSoundEnabled';
+let soundEnabled = localStorage.getItem(soundStorageKey) !== 'false';
+let currentUtterance: SpeechSynthesisUtterance | null = null;
 
 const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
 const dislikeBtn = document.getElementById('dislikeBtn') as HTMLButtonElement;
 const restartBtn = document.getElementById('restart') as HTMLButtonElement;
+
+function stopNarration() {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
+    currentUtterance = null;
+}
+
+function syncSoundControls(subtitleText: string) {
+    if (soundToggleBtn) {
+        soundToggleBtn.dataset.enabled = soundEnabled ? 'true' : 'false';
+        soundToggleBtn.setAttribute('aria-pressed', soundEnabled.toString());
+        soundToggleBtn.setAttribute('aria-label', soundEnabled ? 'Выключить звук' : 'Включить звук');
+    }
+
+    if (subtitlesEl) {
+        const shouldShow = Boolean(subtitleText) && !soundEnabled;
+        subtitlesEl.classList.toggle('visible', shouldShow);
+    }
+}
+
+function updateSubtitles(text: string) {
+    if (!subtitlesEl) return;
+    subtitlesEl.textContent = text;
+    syncSoundControls(text);
+}
+
+function speakText(text: string) {
+    if (!soundEnabled || !text) return;
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    stopNarration();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ru-RU';
+    currentUtterance = utterance;
+    window.speechSynthesis.speak(utterance);
+}
+
+function setSoundEnabled(enabled: boolean) {
+    soundEnabled = enabled;
+    localStorage.setItem(soundStorageKey, enabled ? 'true' : 'false');
+    if (!enabled) {
+        stopNarration();
+    }
+    const subtitleText = subtitlesEl?.textContent ?? '';
+    syncSoundControls(subtitleText);
+    if (enabled) {
+        speakText(subtitleText);
+    }
+}
+
+function getNarrationText(card?: ArchetypeCard) {
+    if (!card) return '';
+    const parts = [card.description, card.tutorialSubtext].filter(Boolean) as string[];
+    return parts.join(' ');
+}
+
+function narrateCard(card?: ArchetypeCard) {
+    const subtitleText = getNarrationText(card);
+    updateSubtitles(subtitleText);
+    if (soundEnabled) {
+        speakText(subtitleText);
+    } else {
+        stopNarration();
+    }
+}
+
+syncSoundControls('');
 
 function resetState() {
     state.index = 0;
@@ -356,6 +430,8 @@ function renderStack() {
         attachDrag(el, card);
         stackEl.appendChild(el);
     });
+
+    narrateCard(cards[state.index]);
 }
 
 function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
@@ -481,6 +557,8 @@ function computeProfile(): ArchetypeResult[] {
 }
 
 function showResults() {
+    stopNarration();
+    updateSubtitles('');
     const profile = computeProfile();
     const best = profile[0];
     mainResult.textContent = `Вы — ${best.name}`;
@@ -535,6 +613,10 @@ function bindControls() {
         if (!topCard) return;
         swipeAway(topCard, card, -1);
     });
+
+    if (soundToggleBtn) {
+        soundToggleBtn.addEventListener('click', () => setSoundEnabled(!soundEnabled));
+    }
 
     restartBtn.addEventListener('click', () => resetState());
 }
