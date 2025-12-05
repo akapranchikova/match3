@@ -123,6 +123,7 @@ const renderCard = ({
                         imageAlt,
                         collagePlaceholder,
                         backgroundImage,
+                        backgroundConfig,
                         onAdvance,
                         progressDurationMs,
                     }: {
@@ -134,6 +135,14 @@ const renderCard = ({
     imageAlt?: string
     collagePlaceholder?: boolean
     backgroundImage?: string
+    backgroundConfig?: {
+        color?: string
+        position?: string
+        size?: string
+        filter?: string
+        transform?: string
+        opacity?: string
+    }
     onAdvance?: () => void
     progressDurationMs?: number
 }): HTMLElement => {
@@ -207,6 +216,25 @@ const renderCard = ({
         const background = document.createElement('div')
         background.className = 'card__background'
         background.style.backgroundImage = `url(${backgroundImage})`
+
+        if (backgroundConfig?.color) {
+            background.style.backgroundColor = backgroundConfig.color
+        }
+        if (backgroundConfig?.position) {
+            background.style.backgroundPosition = backgroundConfig.position
+        }
+        if (backgroundConfig?.size) {
+            background.style.backgroundSize = backgroundConfig.size
+        }
+        if (backgroundConfig?.filter) {
+            background.style.filter = backgroundConfig.filter
+        }
+        if (backgroundConfig?.transform) {
+            background.style.transform = backgroundConfig.transform
+        }
+        if (backgroundConfig?.opacity) {
+            background.style.opacity = backgroundConfig.opacity
+        }
         container.prepend(background)
     }
 
@@ -254,6 +282,7 @@ export const renderOnboardingSlide = (): RenderResult => {
         showProgress: true,
         collagePlaceholder: slide.collagePlaceholder,
         backgroundImage: slide.backgroundImage,
+        backgroundConfig: slide.backgroundConfig,
         onAdvance: handleAdvance,
         progressDurationMs: ONBOARDING_SLIDE_DURATION_MS,
     })

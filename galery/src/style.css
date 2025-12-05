@@ -262,6 +262,9 @@ main,
 .card--with-background::before {
     content: none;
 }
+.card--with-background::after {
+    backdrop-filter: blur(0);
+}
 
 .card--onboarding::after {
     z-index: 2;

@@ -41,6 +41,14 @@ export interface OnboardingSlide {
   classStr?: string
   collagePlaceholder?: boolean
   backgroundImage?: string
+  backgroundConfig?: {
+    color?: string
+    position?: string
+    size?: string
+    filter?: string
+    transform?: string
+    opacity?: string
+  }
 }
 
 export interface AppState {
