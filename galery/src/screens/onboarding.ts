@@ -12,7 +12,7 @@ import guideBackground from '../assets/guide-background.png'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import onboardingHistory from '../assets/onboarding-history.png'
 
-const ONBOARDING_SLIDE_DURATION_MS = 5000
+const ONBOARDING_SLIDE_DURATION_MS = 6000
 
 const introSubtitles = [
     {
