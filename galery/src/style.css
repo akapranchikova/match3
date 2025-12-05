@@ -736,6 +736,28 @@ main,
     align-self: center;
 }
 
+.card--options .option-card--secondary .option-card__image-wrap {
+    position: relative;
+}
+
+.card--options .option-card--secondary .option-card__image-wrap::before,
+.card--options .option-card--secondary .option-card__image-wrap::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 85%;
+    height: 2px;
+    background: #ffffff;
+    transform: translate(-50%, -50%) rotate(45deg);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+.card--options .option-card--secondary .option-card__image-wrap::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
 .card--options .option-card__image {
     height: 100%;
 }
