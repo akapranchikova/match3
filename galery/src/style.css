@@ -375,6 +375,7 @@ main,
 }
 
 .point-layout__header {
+    z-index: 10;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -502,18 +503,16 @@ main,
     width: 100%;
 }
 
-.icon-button {
+.button.icon-button {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding-inline: 16px 18px;
-    background: rgba(255, 255, 255, 0.04);
+    height: 44px;
+    width: 44px;
+    padding: 0;
+    justify-content: center;
 }
 
 .icon-button__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     width: 24px;
     height: 24px;
 }
@@ -724,7 +723,8 @@ main,
     border: 1px solid #ffffff;
     border-radius: 16px;
     padding: 18px;
-    display: flex;
+    display: grid;
+    grid-template-rows: 160px 1fr;
     flex-direction: column;
     gap: 12px;
     cursor: pointer;
@@ -732,7 +732,7 @@ main,
 }
 
 .option-card__image-wrap {
-    height: 163px;
+    max-height: 100%;
     align-self: center;
 }
 
@@ -947,9 +947,6 @@ main,
     background: #E2E2E2;
     color: #1B1C1D;
     border-color: #E2E2E2;
-}
-.icon-button {
-    padding: 10px;
 }
 
 .button:hover {

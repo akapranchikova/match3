@@ -441,7 +441,7 @@ export const renderGuideIntro = (): RenderResult => {
     controls.className = 'guide__controls'
 
     const muteButton = document.createElement('button')
-    muteButton.className = 'guide__icon'
+    muteButton.className = 'button icon-button primary'
     muteButton.type = 'button'
     muteButton.innerHTML = `
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
