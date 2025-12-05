@@ -128,6 +128,10 @@ body {
     display: none;
 }
 
+.sound-icon.visible {
+    display: block;
+}
+
 .sound-toggle[data-enabled="true"] [data-sound="on"],
 .sound-toggle[data-enabled="false"] [data-sound="off"] {
     display: block;
