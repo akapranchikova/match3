@@ -264,6 +264,8 @@ const soundToggleBtn = document.getElementById('soundToggle') as HTMLButtonEleme
 const soundStorageKey = 'archetypeSoundEnabled';
 let soundEnabled = localStorage.getItem(soundStorageKey) !== 'false';
 let currentUtterance: SpeechSynthesisUtterance | null = null;
+const soundOnIcon = soundToggleBtn?.querySelector('[data-sound="on"]') as HTMLElement | null;
+const soundOffIcon = soundToggleBtn?.querySelector('[data-sound="off"]') as HTMLElement | null;
 
 const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
 const dislikeBtn = document.getElementById('dislikeBtn') as HTMLButtonElement;
@@ -281,6 +283,8 @@ function syncSoundControls(subtitleText: string) {
         soundToggleBtn.dataset.enabled = soundEnabled ? 'true' : 'false';
         soundToggleBtn.setAttribute('aria-pressed', soundEnabled.toString());
         soundToggleBtn.setAttribute('aria-label', soundEnabled ? 'Выключить звук' : 'Включить звук');
+        soundOnIcon?.classList.toggle('visible', soundEnabled);
+        soundOffIcon?.classList.toggle('visible', !soundEnabled);
     }
 
     if (subtitlesEl) {
