@@ -18,7 +18,7 @@ export const renderRouteList = (): HTMLElement => {
   container.innerHTML = `
     <header class="route__hero">
       <h1>Погрузитесь в историю</h1>
-      <p class="route__subtitle">Нажмите на карточку, чтобы начать точку маршрута</p>
+      <p class="route__subtitle">Нажмите на карточку, чтобы погрузиться в эпоху</p>
     </header>
     <div class="route__timeline">
       <div class="route__items">
