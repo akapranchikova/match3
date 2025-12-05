@@ -991,15 +991,24 @@ main,
     width: 0;
     background: linear-gradient(90deg, #21cca1, #7cbca4);
     border-radius: 20px;
-    transition: width 0.3s ease;
 }
 
-.progress__segment.is-complete::after,
-.progress__segment.is-active::after {
+.progress__segment.is-complete::after {
     width: 100%;
 }
 
+@keyframes progress-fill {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
 .progress__segment.is-active::after {
+    animation: progress-fill var(--progress-duration, 5000ms) linear forwards;
     box-shadow: 0 0 0 1px rgba(33, 204, 161, 0.35), 0 4px 12px rgba(16, 76, 58, 0.35);
 }
 

@@ -1,7 +1,6 @@
 import { MapPosition, OnboardingSlide, PointContentConfig, RoutePoint } from './types'
 import historyIllustration from './assets/onboarding-history.png'
 import voiceIllustration from './assets/onboarding-voice.png'
-import headphonesIllustration from './assets/onboarding-headphones.png'
 import qrIllustration from './assets/onboarding-qr.svg'
 import pointPlaceholder from './assets/point-placeholder.svg'
 import guideBackground from './assets/guide-background.png'
@@ -223,14 +222,6 @@ export const onboardingSlides: OnboardingSlide[] = [
     backgroundImage: guideBackground,
     classStr: 'golos',
     imageAlt: 'Абстрактный шар Голоса времени',
-  },
-  {
-    title: 'Используйте наушники',
-    body:
-      'Большая часть маршрута сопровождается аудио-историями. Чтобы ничего не&nbsp;пропустить — наденьте наушники. <br>' +
-        ' Если наушников нет, то&nbsp;всегда будут субтитры.',
-    image: headphonesIllustration,
-    imageAlt: 'Наушники для прослушивания аудиогида',
   },
   {
     title: 'Ищите QR-коды для активации',
