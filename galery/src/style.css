@@ -105,7 +105,6 @@ h2 {
 
 p {
     color: #d1d5db;
-    line-height: 1.5;
     font-size: 15px;
     margin-bottom: 16px;
 }
@@ -113,9 +112,7 @@ p {
 .card--onboarding p {
     color: #ffffff;
     font-size: 16px;
-    line-height: 120%;
     margin: 0;
-    max-width: 343px;
 }
 
 main,
@@ -523,9 +520,9 @@ main,
 .point-layout__actions--inline {
     display: flex;
     align-self: center;
+    margin-top: 16px;
     justify-content: center;
     z-index: 10;
-    gap: 12px;
 }
 
 .point-layout__route {
