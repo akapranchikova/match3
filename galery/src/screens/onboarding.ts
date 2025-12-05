@@ -5,6 +5,7 @@ import {saveOnboardingCompleted} from '../storage'
 import {createButton} from '../ui'
 import {RenderResult} from '../types'
 import headphonesIllustration from '../assets/onboarding-headphones.png'
+import bookIllustration from '../assets/book.png'
 import logoList from '../assets/logo-list.svg'
 import guideIntroAudio from '../assets/guide-intro.wav'
 import guideBackground from '../assets/guide-background.png'
@@ -274,7 +275,7 @@ export const renderHeadphonesPrompt = (): RenderResult => {
 
     return renderOptionPrompt({
         title: 'Будете ли использовать наушники?',
-        subtitle: 'Вы сможете поменять выбор позже',
+        subtitle: 'На маршруте звучат аудио-истории. Наденьте наушники, чтобы ничего не пропустить. Изменить режим можно в любой момент',
         className: 'card--headphones',
         options: [
             {
@@ -286,7 +287,7 @@ export const renderHeadphonesPrompt = (): RenderResult => {
             },
             {
                 title: 'Нет, буду читать субтитры',
-                image: headphonesIllustration,
+                image: bookIllustration,
                 imageAlt: 'Наушники',
                 variant: 'secondary',
                 onSelect: goNext,
