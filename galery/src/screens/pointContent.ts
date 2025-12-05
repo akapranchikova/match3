@@ -133,10 +133,6 @@ const renderAudioSection = (section: AudioContent) => {
   const container = document.createElement('div')
   container.className = 'content-panel content-panel--guide card--guide'
 
-  const background = document.createElement('div')
-  background.className = 'guide__background'
-  container.appendChild(background)
-
   const content = document.createElement('div')
   content.className = 'guide__content'
 
@@ -196,6 +192,65 @@ export const renderPointContent = () => {
 
   const cleanupCallbacks: (() => void)[] = []
 
+  const mediaElements: HTMLMediaElement[] = []
+  let isMuted = true
+  let autoplayTimeoutId: number | undefined
+  let soundToggle: HTMLButtonElement | null = null
+
+  const clearAutoplay = () => {
+    if (autoplayTimeoutId !== undefined) {
+      window.clearTimeout(autoplayTimeoutId)
+      autoplayTimeoutId = undefined
+    }
+  }
+
+  const updateSoundToggle = () => {
+    if (!soundToggle) return
+    soundToggle.innerHTML = isMuted ? `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.4 16L14 14.6L16.6 12L14 9.4L15.4 8L18 10.6L20.6 8L22 9.4L19.4 12L22 14.6L20.6 16L18 13.4L15.4 16ZM3 15L3 9H7L12 4L12 20L7 15H3ZM10 8.85L7.85 11H5L5 13H7.85L10 15.15L10 8.85Z" fill="#E2E2E2"/>
+</svg>
+` : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 20.9141L6.08594 15H2L2 9H6.08594L12 3.08594L12 20.9141ZM14 3.22754C14.4922 3.33984 14.9758 3.49145 15.4443 3.68555C16.5361 4.13784 17.5286 4.8001 18.3643 5.63574C19.1999 6.47139 19.8622 7.46386 20.3145 8.55566C20.7667 9.64759 21 10.8181 21 12L20.9893 12.4424C20.9385 13.4732 20.7102 14.4888 20.3145 15.4443C19.8622 16.5361 19.1999 17.5286 18.3643 18.3643C17.5286 19.1999 16.5361 19.8622 15.4443 20.3145C14.9758 20.5085 14.4921 20.6592 14 20.7715L14 18.7061C14.2296 18.6375 14.4565 18.5588 14.6787 18.4668C15.528 18.115 16.3002 17.6002 16.9502 16.9502C17.6002 16.3002 18.115 15.528 18.4668 14.6787C18.8186 13.8294 19 12.9193 19 12C19 11.0807 18.8186 10.1706 18.4668 9.32129C18.115 8.47204 17.6002 7.6998 16.9502 7.0498C16.3002 6.39981 15.528 5.88499 14.6787 5.5332C14.4564 5.44112 14.2297 5.36151 14 5.29297V3.22754ZM14 7.41895C14.5722 7.66881 15.0932 8.02293 15.5352 8.46484C15.9994 8.92914 16.3679 9.48029 16.6191 10.0869C16.8704 10.6935 17 11.3435 17 12C17 12.6565 16.8704 13.3065 16.6191 13.9131C16.3679 14.5197 15.9994 15.0709 15.5352 15.5352C15.0933 15.977 14.5721 16.3302 14 16.5801V14.2305C14.0405 14.1942 14.0826 14.1596 14.1211 14.1211C14.3996 13.8426 14.6207 13.5123 14.7715 13.1484C14.9222 12.7845 15 12.394 15 12C15 11.606 14.9222 11.2155 14.7715 10.8516C14.6207 10.4877 14.3996 10.1574 14.1211 9.87891C14.0824 9.84023 14.0406 9.80499 14 9.76855L14 7.41895ZM6.91406 11H4L4 13H6.91406L10 16.0859L10 7.91406L6.91406 11Z" fill="#D9D9D9"/>
+</svg>
+`
+    soundToggle.setAttribute('aria-pressed', String(!isMuted))
+  }
+
+  const setMuted = (muted: boolean) => {
+    isMuted = muted
+    mediaElements.forEach((media) => {
+      media.muted = muted
+    })
+    updateSoundToggle()
+  }
+
+  const syncMediaState = () => {
+    clearAutoplay()
+    const activePanel = stack.children[state.currentContentIndex] as HTMLElement | undefined
+
+    mediaElements.forEach((media) => {
+      const isActive = !!activePanel?.contains(media)
+      media.muted = isMuted
+      if (!isActive) {
+        media.pause()
+      }
+    })
+
+    const activeVideo = activePanel?.querySelector('video') as HTMLVideoElement | null
+    const activeAudio = activePanel?.querySelector('audio') as HTMLAudioElement | null
+
+    if (activeVideo) {
+      autoplayTimeoutId = window.setTimeout(() => {
+        activeVideo.play().catch(() => {})
+      }, 2000)
+    }
+
+    if (activeAudio) {
+      activeAudio.play().catch(() => {})
+    }
+  }
+
   const updateActive = () => {
     Array.from(stack.children).forEach((child, index) => {
       const isActive = index === state.currentContentIndex
@@ -205,31 +260,44 @@ export const renderPointContent = () => {
     Array.from(slider.querySelectorAll('[data-dot]')).forEach((dot, index) => {
       dot.classList.toggle('is-active', index === state.currentContentIndex)
     })
+
+    syncMediaState()
   }
 
   config.sections.forEach((section, index) => {
     const panel = renderSection(section)
     panel.classList.add('content-stack__item')
+    mediaElements.push(...Array.from(panel.querySelectorAll('video, audio')))
     stack.appendChild(panel)
   })
 
-
   const hint = document.createElement('div')
   hint.className = 'content-hint'
-  hint.innerHTML = `
-    <span class="content-hint__icon">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M6.125 14C5.275 12.9333 4.625 11.7583 4.175 10.475C3.725 9.19167 3.5 7.86667 3.5 6.5C3.5 6.05 3.525 5.6 3.575 5.15C3.625 4.7 3.7 4.25 3.8 3.8L2.05 5.55L1 4.5L4.5 1L8 4.5L6.95 5.55L5.325 3.95C5.20833 4.36667 5.125 4.7875 5.075 5.2125C5.025 5.6375 5 6.06667 5 6.5C5 7.66667 5.1875 8.79583 5.5625 9.8875C5.9375 10.9792 6.48333 11.9917 7.2 12.925L6.125 14ZM16.45 20.825C16.0667 20.9583 15.6792 21.0208 15.2875 21.0125C14.8958 21.0042 14.5167 20.9083 14.15 20.725L7.6 17.675L8.05 16.675C8.21667 16.3417 8.45 16.0708 8.75 15.8625C9.05 15.6542 9.38333 15.5333 9.75 15.5L11.45 15.375L8.65 7.7C8.55 7.43333 8.55833 7.17917 8.675 6.9375C8.79167 6.69583 8.98333 6.525 9.25 6.425C9.51667 6.325 9.77083 6.33333 10.0125 6.45C10.2542 6.56667 10.425 6.75833 10.525 7.025L14.225 17.2L11.725 17.375L15 18.9C15.1167 18.95 15.2417 18.9792 15.375 18.9875C15.5083 18.9958 15.6333 18.9833 15.75 18.95L19.675 17.525C20.1917 17.3417 20.5667 16.9958 20.8 16.4875C21.0333 15.9792 21.0583 15.4667 20.875 14.95L19.5 11.2C19.4 10.9333 19.4083 10.6792 19.525 10.4375C19.6417 10.1958 19.8333 10.025 20.1 9.925C20.3667 9.825 20.6208 9.83333 20.8625 9.95C21.1042 10.0667 21.275 10.2583 21.375 10.525L22.75 14.275C23.1333 15.325 23.0958 16.3458 22.6375 17.3375C22.1792 18.3292 21.425 19.0167 20.375 19.4L16.45 20.825ZM14.2 14.2L12.85 10.425C12.75 10.1583 12.7583 9.90417 12.875 9.6625C12.9917 9.42083 13.1833 9.25 13.45 9.15C13.7167 9.05 13.9708 9.05833 14.2125 9.175C14.4542 9.29167 14.625 9.48333 14.725 9.75L16.1 13.5L14.2 14.2ZM17.025 13.175L16 10.35C15.9 10.0833 15.9083 9.82917 16.025 9.5875C16.1417 9.34583 16.3333 9.175 16.6 9.075C16.8667 8.975 17.1208 8.98333 17.3625 9.1C17.6042 9.21667 17.775 9.40833 17.875 9.675L18.9 12.475L17.025 13.175Z" fill="#E2E2E2"/>
-</svg>
 
-</span>
-    <div>
-      <p class="content-hint__title">Листайте снизу вверх, чтобы перейти к следующему сюжету</p>
-    </div>
-    <div>
-<!--    добавить сюда кнопку вкл выкл звук-->
-</div>
+  const hintIcon = document.createElement('span')
+  hintIcon.className = 'content-hint__icon'
+  hintIcon.innerHTML = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6.125 14C5.275 12.9333 4.625 11.7583 4.175 10.475C3.725 9.19167 3.5 7.86667 3.5 6.5C3.5 6.05 3.525 5.6 3.575 5.15C3.625 4.7 3.7 4.25 3.8 3.8L2.05 5.55L1 4.5L4.5 1L8 4.5L6.95 5.55L5.325 3.95C5.20833 4.36667 5.125 4.7875 5.075 5.2125C5.025 5.6375 5 6.06667 5 6.5C5 7.66667 5.1875 8.79583 5.5625 9.8875C5.9375 10.9792 6.48333 11.9917 7.2 12.925L6.125 14ZM16.45 20.825C16.0667 20.9583 15.6792 21.0208 15.2875 21.0125C14.8958 21.0042 14.5167 20.9083 14.15 20.725L7.6 17.675L8.05 16.675C8.21667 16.3417 8.45 16.0708 8.75 15.8625C9.05 15.6542 9.38333 15.5333 9.75 15.5L11.45 15.375L8.65 7.7C8.55 7.43333 8.55833 7.17917 8.675 6.9375C8.79167 6.69583 8.98333 6.525 9.25 6.425C9.51667 6.325 9.77083 6.33333 10.0125 6.45C10.2542 6.56667 10.425 6.75833 10.525 7.025L14.225 17.2L11.725 17.375L15 18.9C15.1167 18.95 15.2417 18.9792 15.375 18.9875C15.5083 18.9958 15.6333 18.9833 15.75 18.95L19.675 17.525C20.1917 17.3417 20.5667 16.9958 20.8 16.4875C21.0333 15.9792 21.0583 15.4667 20.875 14.95L19.5 11.2C19.4 10.9333 19.4083 10.6792 19.525 10.4375C19.6417 10.1958 19.8333 10.025 20.1 9.925C20.3667 9.825 20.6208 9.83333 20.8625 9.95C21.1042 10.0667 21.275 10.2583 21.375 10.525L22.75 14.275C23.1333 15.325 23.0958 16.3458 22.6375 17.3375C22.1792 18.3292 21.425 19.0167 20.375 19.4L16.45 20.825ZM14.2 14.2L12.85 10.425C12.75 10.1583 12.7583 9.90417 12.875 9.6625C12.9917 9.42083 13.1833 9.25 13.45 9.15C13.7167 9.05 13.9708 9.05833 14.2125 9.175C14.4542 9.29167 14.625 9.48333 14.725 9.75L16.1 13.5L14.2 14.2ZM17.025 13.175L16 10.35C15.9 10.0833 15.9083 9.82917 16.025 9.5875C16.1417 9.34583 16.3333 9.175 16.6 9.075C16.8667 8.975 17.1208 8.98333 17.3625 9.1C17.6042 9.21667 17.775 9.40833 17.875 9.675L18.9 12.475L17.025 13.175Z" fill="#E2E2E2"/>
+    </svg>
   `
+
+  const hintText = document.createElement('div')
+  hintText.innerHTML = '<p class="content-hint__title">Листайте снизу вверх, чтобы перейти к следующему сюжету</p>'
+
+  const hintActions = document.createElement('div')
+  hintActions.className = 'content-hint__actions'
+
+  soundToggle = document.createElement('button')
+  soundToggle.type = 'button'
+  soundToggle.className = 'button primary icon-button'
+  soundToggle.addEventListener('click', () => setMuted(!isMuted))
+
+  hintActions.appendChild(soundToggle)
+
+  hint.appendChild(hintIcon)
+  hint.appendChild(hintText)
+  hint.appendChild(hintActions)
 
   let startY = 0
   let isTouching = false
@@ -261,8 +329,11 @@ export const renderPointContent = () => {
     container.removeEventListener('touchend', onTouchEnd)
   })
 
+  cleanupCallbacks.push(clearAutoplay)
+
   slider.appendChild(stack)
 
+  setMuted(true)
   updateActive()
 
   container.appendChild(header)

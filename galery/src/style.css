@@ -612,6 +612,7 @@ main,
     padding: 0;
     border-radius: 0;
     box-shadow: none;
+    overflow: hidden;
     background: #0b0c0b;
     min-height: 100dvh;
 }
@@ -1214,7 +1215,6 @@ main,
 }
 
 .content-slider {
-    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -1225,7 +1225,6 @@ main,
     display: flex;
     flex-direction: column;
     gap: 0;
-    position: relative;
 }
 
 .content-stack__item {
@@ -1243,20 +1242,15 @@ main,
 
 .content-panel--guide {
     padding: 24px 18px 32px;
-    display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     overflow: hidden;
     isolation: isolate;
     border: none;
+    box-shadow: none;
+    filter: none;
     background: transparent;
-}
-
-.content-panel--guide .guide__background {
-    inset: 0;
-    opacity: 0.78;
-    transform: scale(1.08);
 }
 
 .content-panel--guide .guide__hero-image {
@@ -1292,7 +1286,7 @@ main,
 }
 
 .content-cards {
-    position: relative;
+    margin: auto;
     align-items: center;
     overflow: hidden;
     box-sizing: border-box;
@@ -1355,13 +1349,12 @@ main,
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 6px;
     pointer-events: none;
 }
 
 .content-cards__nav {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border: none;
     background: transparent;
     display: grid;
@@ -1424,7 +1417,7 @@ main,
 
 .content-hint {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
     gap: 12px;
     align-items: center;
     color: rgba(226, 226, 226, 1);
@@ -1441,6 +1434,9 @@ main,
     margin: 0;
 }
 
+.content-hint__actions {
+    justify-self: end;
+}
 .route-card__status {
     font-size: 12px;
     position: relative;
