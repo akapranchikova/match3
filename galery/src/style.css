@@ -1425,6 +1425,13 @@ main,
     font-family: "SB Sans Display Semibold", sans-serif;
 }
 
+.content-hint--final {
+    grid-template-columns: auto auto;
+    align-items: stretch;
+    gap: 8px;
+    opacity: 1;
+}
+
 .content-hint__icon {
     font-size: 18px;
 }
@@ -1435,6 +1442,14 @@ main,
 }
 
 .content-hint__actions {
+    justify-self: end;
+}
+
+.content-hint__sound {
+    justify-self: start;
+}
+
+.content-hint__finish {
     justify-self: end;
 }
 .route-card__status {

@@ -5,10 +5,21 @@ import { state, viewedPoints } from '../state'
 import { createButton } from '../ui'
 import routePreview from '../assets/onboarding-photo.svg'
 
-export const handleFinishPoint = () => {
+const markPointAsViewed = () => {
   viewedPoints.add(points[state.currentPointIndex].id)
   saveViewed(viewedPoints)
+}
+
+export const handleFinishPoint = () => {
+  markPointAsViewed()
   state.screen = 'infoComplete'
+}
+
+export const navigateToNextPoint = () => {
+  markPointAsViewed()
+  const nextIndex = Math.min(state.currentPointIndex + 1, points.length - 1)
+  state.currentPointIndex = nextIndex
+  state.screen = 'nextPoint'
 }
 
 export const renderPointInfo = (): HTMLElement => {
