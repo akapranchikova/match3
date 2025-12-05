@@ -56,7 +56,7 @@ export const renderRouteList = (): HTMLElement => {
         ${collageImages
           .map(
             (preview, index) =>
-              `<div class="route__footer-thumb" aria-label="Фото-пример ${index + 1}">
+              `<div class="route__footer-thumb ${index ? 'second' : ''}" aria-label="Фото-пример ${index + 1}">
                 <img src="${preview}" alt="Пример фото ${index + 1}">
               </div>`,
           )

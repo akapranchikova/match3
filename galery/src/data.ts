@@ -28,9 +28,9 @@ export const points: RoutePoint[] = [
   },
   {
     id: 'perm-period',
-    title: 'Пермский период, пермское море и геология',
+    title: 'Пермское море, пермский период,  и геология',
     description: 'История пермского периода и артефакты, которые нашли неподалёку.',
-    period: '21 век',
+    period: '298 млн лет назад',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
@@ -44,9 +44,9 @@ export const points: RoutePoint[] = [
   },
   {
     id: 'metal-plant',
-    title: 'Медеплавильный завод и история посёлка',
+    title: 'Медеплавильный завод и история посёлка',
     description: 'Как промышленность повлияла на развитие территории и людей.',
-    period: '21 век',
+    period: '18 век',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
@@ -60,9 +60,9 @@ export const points: RoutePoint[] = [
   },
   {
     id: 'excavation',
-    title: 'История археологических раскопок',
+    title: 'Железная дорога — будущий завод Шпагина',
     description: 'Находки и открытия, которые легли в основу экспозиции.',
-    period: '21 век',
+    period: '19 век',
     photo: pointPlaceholder,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
@@ -76,7 +76,7 @@ export const points: RoutePoint[] = [
   },
   {
     id: 'railway',
-    title: 'Железная дорога — будущий завод Шпагина',
+    title: 'История археологических раскопок',
     description: 'Как железная дорога изменила экономику места и городскую ткань.',
     period: '21 век',
     photo: pointPlaceholder,
@@ -122,7 +122,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         type: 'video',
         src: sampleVideoSrc,
-        poster: pointPlaceholder,
+        // poster: pointPlaceholder,
         subtitles: sampleSubtitle,
       },
       {

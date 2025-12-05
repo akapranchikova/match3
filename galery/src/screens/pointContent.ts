@@ -22,7 +22,7 @@ const renderVideoSection = (section: VideoContent) => {
 
   const video = document.createElement('video')
   video.className = 'content-video'
-  video.controls = true
+  video.controls = false
   video.playsInline = true
   video.src = section.src
   video.poster = section.poster || ''
@@ -226,6 +226,9 @@ export const renderPointContent = () => {
     <div>
       <p class="content-hint__title">Листайте снизу вверх, чтобы перейти к следующему сюжету</p>
     </div>
+    <div>
+<!--    добавить сюда кнопку вкл выкл звук-->
+</div>
   `
 
   let startY = 0
