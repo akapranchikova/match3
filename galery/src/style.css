@@ -1242,7 +1242,7 @@ main,
 }
 
 .content-panel {
-    position: relative;
+    /*position: relative;*/
 }
 
 .content-panel--guide {
@@ -1299,9 +1299,9 @@ main,
 }
 
 .content-cards--stacked {
-    position: relative;
+    /*position: relative;*/
     height: 464px;
-    perspective: 1200px;
+    /*perspective: 1200px;*/
 }
 
 .content-cards__track {
@@ -1418,14 +1418,14 @@ main,
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: rgba(226, 226, 226, 0.3);
+    background: rgba(29, 73, 59, 1);
     transition: transform 0.15s ease, background 0.15s ease;
     cursor: pointer;
 }
 
 .content-cards__dot.is-active {
     transform: scale(1.1);
-    background: #e2e2e2;
+    background: rgba(33, 204, 161, 1);
 }
 
 .content-panel--audio {

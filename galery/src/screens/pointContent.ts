@@ -102,18 +102,20 @@ const renderCardsSection = (section: CardsContent) => {
       blur: 0,
     },
     {
-      translateY: 16,
+      translateY: 0,
+      translateX: -25,
       scale: 0.97,
       opacity: 0.92,
-      rotate: -1.5,
+      rotate: -7,
       shadow: '0px 12px 32px rgba(0, 0, 0, 0.26)',
       blur: 1.5,
     },
     {
-      translateY: 32,
+      translateY: 0,
+      translateX: 25,
       scale: 0.94,
       opacity: 0.84,
-      rotate: 1.25,
+      rotate: 7,
       shadow: '0px 10px 24px rgba(0, 0, 0, 0.22)',
       blur: 3,
     },
@@ -140,6 +142,7 @@ const renderCardsSection = (section: CardsContent) => {
 
       if (style) {
         card.style.setProperty('--stack-translate', `${style.translateY}px`)
+        card.style.setProperty('--drag-translate', `${style.translateX}px`)
         card.style.setProperty('--stack-scale', `${style.scale}`)
         card.style.setProperty('--stack-rotate', `${style.rotate}deg`)
         card.style.setProperty('--stack-shadow', style.shadow)
