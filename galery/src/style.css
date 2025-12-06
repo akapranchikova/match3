@@ -261,6 +261,11 @@ main,
 }
 .card--with-background::after {
     backdrop-filter: blur(0);
+    background: none;
+}
+
+.card--with-background .card__background {
+
 }
 
 .card--onboarding::after {

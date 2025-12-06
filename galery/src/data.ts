@@ -210,7 +210,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
 export const onboardingSlides: OnboardingSlide[] = [
   {
     title: 'История места',
-    body: 'Открывайте исторические «сторис» — видео, панорамы, артефакты и аудиогида.',
+    body: 'Открывайте исторические «сторис» — видео, панорамы, артефакты и аудиогида',
     image: historyIllustration,
     imageAlt: 'Фотографии исторических зданий и экспозиции',
     collagePlaceholder: true,
@@ -218,11 +218,10 @@ export const onboardingSlides: OnboardingSlide[] = [
   {
     title: 'Голос времени',
     body:
-      'Гид — это не&nbsp;человек, а&nbsp;дух самого места. «Голос времени» будет главным проводником в&nbsp;историю Перми и&nbsp;новой галереи. Голос отражает философию места от&nbsp;древнего пермского периода до&nbsp;современного времени.',
+      'Ваш гид, который проведёт через историю Перми от пермского периода до сегодняшнего дня. Его рассказ создан с помощью нейросети ГИГАЧАТ от Сбера',
     image: voiceIllustration,
     backgroundImage: onboardingGolosLogo,
     backgroundConfig: {
-      color: '#0a0c0e',
       position: 'center 83px',
       size: '88%',
       filter: 'none',
@@ -232,9 +231,9 @@ export const onboardingSlides: OnboardingSlide[] = [
     imageAlt: 'Абстрактный шар Голоса времени',
   },
   {
-    title: 'Ищите QR-коды для активации',
+    title: 'Находите QR-коды для активации',
     body:
-      'Ищите такие таблички в&nbsp;галерее — сканируйте их, чтобы открывать новые части маршрута.',
+      'Находите QR-коды в галерее и сканируйте их, чтобы получить доступ к новым частям исторического маршрута',
     image: qrIllustration,
     classStr: 'qr',
     imageAlt: 'QR-код для активации маршрута',
