@@ -1927,6 +1927,128 @@ main,
     font-size: 16px;
 }
 
+.loader-screen {
+    background: #161716;
+    border-radius: 22px;
+    padding: 28px 24px 32px;
+    width: 100%;
+    min-height: 100%;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    position: relative;
+    isolation: isolate;
+}
+
+.loader-screen::before {
+    content: '';
+    position: absolute;
+    width: 420px;
+    height: 140px;
+    left: -120px;
+    top: 22%;
+    background: linear-gradient(229.11deg, #0d1915 14%, #7cbca4 28.48%, #0d1915 93.95%);
+    filter: blur(28px);
+    transform: rotate(-77deg);
+    opacity: 0.7;
+    z-index: 0;
+}
+
+.loader-screen__header {
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+    z-index: 1;
+}
+
+.loader-screen__logo {
+    width: 184px;
+    height: auto;
+}
+
+.loader-screen__body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    flex-direction: column;
+}
+
+.loader-showbox {
+    position: relative;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader {
+    position: relative;
+    margin: 0 auto;
+    width: 80px;
+}
+
+.loader::before {
+    content: '';
+    display: block;
+    padding-top: 100%;
+}
+
+.loader__circular {
+    animation: rotate 2s linear infinite;
+    height: 100%;
+    transform-origin: center center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.loader__path {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: dash 1.5s ease-in-out infinite;
+    stroke-linecap: round;
+    stroke: rgba(255, 255, 255, 1);
+}
+
+.loader-screen__status {
+    margin-top: 28px;
+    color: rgba(255, 255, 255, 1);
+    font-size: 16px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+    }
+
+    100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+    }
+}
+
 @media (max-width: 420px) {
     body {
         padding: 12px;
@@ -1934,7 +2056,8 @@ main,
 
     .card,
     .route,
-    .map {
+    .map,
+    .loader-screen {
         padding: 16px;
     }
 }
@@ -1957,7 +2080,8 @@ main,
     main,
     .card,
     .route,
-    .scanner {
+    .scanner,
+    .loader-screen {
         border-radius: 0;
         box-shadow: none;
         width: 100%;
@@ -1966,7 +2090,8 @@ main,
     main,
     .card,
     .route,
-    .scanner {
+    .scanner,
+    .loader-screen {
         min-height: 100dvh;
     }
 }

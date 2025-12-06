@@ -14,6 +14,7 @@ import { renderRouteList } from './screens/route'
 import { renderScanner } from './screens/scanner'
 import { renderCameraPermission } from './screens/cameraPermission'
 import { renderPointContent } from './screens/pointContent'
+import { renderLoader } from './screens/loader'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
@@ -23,6 +24,7 @@ if (!app) {
 
 // Map app screens to renderers to keep navigation logic centralized
 const screenRenderers: Record<AppScreen, () => RenderResult> = {
+  loader: renderLoader,
   onboardingPrompt: renderHeadphonesPrompt,
   onboardingSlide: renderOnboardingSlide,
   routeModePrompt: renderRouteModePrompt,

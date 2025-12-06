@@ -1,13 +1,18 @@
 import { initialMapPositions } from './data'
-import { loadOnboardingCompleted, loadSoundEnabled, loadViewed } from './storage'
+import { loadOnboardingCompleted, loadSoundEnabled, loadViewed, loadLoaderCompleted } from './storage'
 import { AppState, RenderCleanup } from './types'
 
 // Centralized app state used across all screens
 const onboardingCompleted = loadOnboardingCompleted()
 const soundEnabled = loadSoundEnabled()
+const loaderCompleted = loadLoaderCompleted()
 
 export const state: AppState = {
-  screen: onboardingCompleted ? 'routeModePrompt' : 'onboardingSlide',
+  screen: onboardingCompleted
+    ? 'routeModePrompt'
+    : loaderCompleted
+      ? 'onboardingSlide'
+      : 'loader',
   slideIndex: 0,
   currentPointIndex: 0,
   currentFloor: 1,
