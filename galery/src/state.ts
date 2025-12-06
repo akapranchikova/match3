@@ -1,9 +1,10 @@
 import { initialMapPositions } from './data'
-import { loadOnboardingCompleted, loadViewed } from './storage'
+import { loadOnboardingCompleted, loadSoundEnabled, loadViewed } from './storage'
 import { AppState, RenderCleanup } from './types'
 
 // Centralized app state used across all screens
 const onboardingCompleted = loadOnboardingCompleted()
+const soundEnabled = loadSoundEnabled()
 
 export const state: AppState = {
   screen: onboardingCompleted ? 'routeModePrompt' : 'onboardingSlide',
@@ -12,6 +13,7 @@ export const state: AppState = {
   currentFloor: 1,
   mapPositions: { ...initialMapPositions },
   currentContentIndex: 0,
+  soundEnabled,
 }
 
 export let viewedPoints = loadViewed()

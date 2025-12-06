@@ -1,6 +1,7 @@
 import { STORAGE_KEY } from './data'
 
 const ONBOARDING_KEY = 'gallery-onboarding-complete'
+const SOUND_ENABLED_KEY = 'gallery-sound-enabled'
 
 // Responsible for persisting which points were already viewed by the visitor
 export const loadViewed = (): Set<string> => {
@@ -25,4 +26,13 @@ export const loadOnboardingCompleted = (): boolean => {
 
 export const saveOnboardingCompleted = () => {
   localStorage.setItem(ONBOARDING_KEY, 'true')
+}
+
+export const loadSoundEnabled = (): boolean => {
+  const stored = localStorage.getItem(SOUND_ENABLED_KEY)
+  return stored === null ? false : stored === 'true'
+}
+
+export const saveSoundEnabled = (enabled: boolean) => {
+  localStorage.setItem(SOUND_ENABLED_KEY, String(enabled))
 }

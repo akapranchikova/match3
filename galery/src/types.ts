@@ -58,6 +58,7 @@ export interface AppState {
   currentFloor: number
   mapPositions: Record<number, MapPosition>
   currentContentIndex: number
+  soundEnabled: boolean
 }
 
 export type PointContentKind = 'video' | 'cards' | 'audio'

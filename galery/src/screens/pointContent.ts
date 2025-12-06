@@ -1,6 +1,7 @@
 import { pointContentConfigs, points } from '../data'
 import { rerender } from '../navigation'
 import { state } from '../state'
+import { saveSoundEnabled } from '../storage'
 import { AudioContent, CardsContent, PointContentSection, VideoContent } from '../types'
 import { navigateToNextPoint } from './pointFlow'
 
@@ -363,6 +364,8 @@ export const renderPointContent = () => {
 
   const setMuted = (muted: boolean) => {
     isMuted = muted
+    state.soundEnabled = !muted
+    saveSoundEnabled(!muted)
     mediaElements.forEach((media) => {
       media.muted = muted
     })
@@ -494,7 +497,7 @@ export const renderPointContent = () => {
 
   slider.appendChild(stack)
 
-  setMuted(true)
+  setMuted(!state.soundEnabled)
   updateActive()
 
   container.appendChild(header)
