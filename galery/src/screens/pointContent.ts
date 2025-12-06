@@ -43,7 +43,7 @@ const renderCardsSection = (section: CardsContent) => {
   container.className = 'content-panel content-panel--cards'
 
   const viewport = document.createElement('div')
-  viewport.className = 'content-cards'
+  viewport.className = 'content-cards content-cards--stacked'
 
   const track = document.createElement('div')
   track.className = 'content-cards__track'
@@ -64,6 +64,8 @@ const renderCardsSection = (section: CardsContent) => {
   })
 
   let activeIndex = 0
+  let startX = 0
+  let isTouching = false
 
   const controls = document.createElement('div')
   controls.className = 'content-cards__controls'
@@ -89,34 +91,174 @@ const renderCardsSection = (section: CardsContent) => {
   const dots = document.createElement('div')
   dots.className = 'content-cards__dots'
 
-  const update = () => {
-    track.style.transform = `translateX(-${activeIndex * 100}%)`
+  const stackStyles = [
+    {
+      translateY: 0,
+      scale: 1,
+      opacity: 1,
+      rotate: 0,
+      shadow: '0px 18px 48px rgba(0, 0, 0, 0.35)',
+      blur: 0,
+    },
+    {
+      translateY: 16,
+      scale: 0.97,
+      opacity: 0.92,
+      rotate: -1.5,
+      shadow: '0px 12px 32px rgba(0, 0, 0, 0.26)',
+      blur: 1.5,
+    },
+    {
+      translateY: 32,
+      scale: 0.94,
+      opacity: 0.84,
+      rotate: 1.25,
+      shadow: '0px 10px 24px rgba(0, 0, 0, 0.22)',
+      blur: 3,
+    },
+    {
+      translateY: 46,
+      scale: 0.9,
+      opacity: 0.78,
+      rotate: -0.85,
+      shadow: '0px 6px 16px rgba(0, 0, 0, 0.18)',
+      blur: 4,
+    },
+  ]
+
+  const applyStack = () => {
+    const total = section.cards.length
+    const cards = Array.from(track.children) as HTMLElement[]
+
+    cards.forEach((card, index) => {
+      const relativePosition = (index - activeIndex + total) % total
+      const style = stackStyles[relativePosition]
+
+      card.classList.toggle('is-active', relativePosition === 0)
+      card.classList.toggle('is-hidden', relativePosition >= stackStyles.length)
+
+      if (style) {
+        card.style.setProperty('--stack-translate', `${style.translateY}px`)
+        card.style.setProperty('--stack-scale', `${style.scale}`)
+        card.style.setProperty('--stack-rotate', `${style.rotate}deg`)
+        card.style.setProperty('--stack-shadow', style.shadow)
+        card.style.setProperty('--stack-blur', `${style.blur || 0}px`)
+        card.style.opacity = `${style.opacity}`
+        card.style.zIndex = String(stackStyles.length - relativePosition)
+      } else {
+        card.style.setProperty('--stack-translate', '32px')
+        card.style.setProperty('--stack-scale', '0.9')
+        card.style.setProperty('--stack-rotate', '0deg')
+        card.style.setProperty('--stack-shadow', 'none')
+        card.style.setProperty('--stack-blur', '0px')
+        card.style.opacity = '0'
+        card.style.zIndex = '0'
+      }
+    })
+
     Array.from(dots.children).forEach((dot, index) => {
       dot.classList.toggle('is-active', index === activeIndex)
     })
   }
+
+  const goToIndex = (index: number) => {
+    activeIndex = (index + section.cards.length) % section.cards.length
+    applyStack()
+  }
+
+  const goPrev = () => goToIndex(activeIndex - 1)
+  const goNext = () => goToIndex(activeIndex + 1)
 
   section.cards.forEach((_, index) => {
     const dot = document.createElement('span')
     dot.className = 'content-cards__dot'
     dots.appendChild(dot)
     dot.addEventListener('click', () => {
-      activeIndex = index
-      update()
+      goToIndex(index)
     })
   })
 
-  prev.addEventListener('click', () => {
-    activeIndex = (activeIndex - 1 + section.cards.length) % section.cards.length
-    update()
-  })
+  prev.addEventListener('click', goPrev)
+  next.addEventListener('click', goNext)
 
-  next.addEventListener('click', () => {
-    activeIndex = (activeIndex + 1) % section.cards.length
-    update()
-  })
+  const getActiveCard = () => track.children[activeIndex] as HTMLElement | undefined
 
-  update()
+  const animateSwipeAway = (direction: 'next' | 'prev') => {
+    const activeCard = getActiveCard()
+    const translateSign = direction === 'next' ? -1 : 1
+
+    if (!activeCard) {
+      direction === 'next' ? goNext() : goPrev()
+      return
+    }
+
+    activeCard.style.transition = 'transform 0.25s ease, opacity 0.25s ease, filter 0.25s ease'
+    activeCard.style.setProperty('--drag-translate', `${translateSign * 420}px`)
+    activeCard.style.setProperty('--drag-rotate', `${translateSign * 16}deg`)
+    activeCard.style.opacity = '0'
+    activeCard.style.filter = 'blur(3px)'
+
+    window.setTimeout(() => {
+      direction === 'next' ? goNext() : goPrev()
+
+      activeCard.style.transition = ''
+      activeCard.style.setProperty('--drag-translate', '0px')
+      activeCard.style.setProperty('--drag-rotate', '0deg')
+      activeCard.style.opacity = ''
+      activeCard.style.filter = ''
+    }, 220)
+  }
+
+  const onTouchStart = (event: TouchEvent) => {
+    startX = event.touches[0].clientX
+    isTouching = true
+
+    const activeCard = getActiveCard()
+    if (activeCard) {
+      activeCard.style.transition = 'none'
+    }
+  }
+
+  const onTouchMove = (event: TouchEvent) => {
+    if (!isTouching) return
+
+    const dragDeltaX = event.touches[0].clientX - startX
+    const activeCard = getActiveCard()
+    if (!activeCard) return
+
+    activeCard.style.setProperty('--drag-translate', `${dragDeltaX}px`)
+    const rotateDelta = Math.max(-12, Math.min(12, dragDeltaX / 14))
+    activeCard.style.setProperty('--drag-rotate', `${rotateDelta}deg`)
+  }
+
+  const onTouchEnd = (event: TouchEvent) => {
+    if (!isTouching) return
+    const deltaX = event.changedTouches[0].clientX - startX
+    isTouching = false
+
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD) {
+      const activeCard = getActiveCard()
+      if (activeCard) {
+        activeCard.style.transition = ''
+        activeCard.style.setProperty('--drag-translate', '0px')
+        activeCard.style.setProperty('--drag-rotate', '0deg')
+      }
+      applyStack()
+      return
+    }
+
+    if (deltaX < -SWIPE_THRESHOLD) {
+      animateSwipeAway('next')
+    } else if (deltaX > SWIPE_THRESHOLD) {
+      animateSwipeAway('prev')
+    }
+  }
+
+  viewport.addEventListener('touchstart', onTouchStart)
+  viewport.addEventListener('touchmove', onTouchMove)
+  viewport.addEventListener('touchend', onTouchEnd)
+
+  applyStack()
 
   controls.appendChild(prev)
   controls.appendChild(next)

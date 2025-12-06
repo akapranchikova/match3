@@ -1282,28 +1282,56 @@ main,
 }
 
 .content-panel--cards {
-    padding: 6px 22px 20px;
+    padding: 10px 22px 20px;
 }
 
 .content-cards {
     margin: auto;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
     box-sizing: border-box;
     width: 256px;
 }
 
+.content-cards--stacked {
+    position: relative;
+    height: 464px;
+    perspective: 1200px;
+}
+
 .content-cards__track {
-    display: flex;
-    gap: 0;
-    transition: transform 0.35s ease;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .content-card {
-    flex: 0 0 100%;
+    position: absolute;
+    inset: 0;
     border-radius: 18px;
     overflow: hidden;
     color: rgba(27, 28, 29, 1);
+    box-shadow: var(--stack-shadow, 0px 12px 32px rgba(0, 0, 0, 0.28));
+    transform-origin: center top;
+    transform:
+        translateX(var(--drag-translate, 0px))
+        translateY(var(--stack-translate, 0px))
+        scale(var(--stack-scale, 1))
+        rotate(calc(var(--stack-rotate, 0deg) + var(--drag-rotate, 0deg)));
+    filter: blur(var(--stack-blur, 0px));
+    transition:
+        transform 0.42s cubic-bezier(0.18, 0.8, 0.38, 0.96),
+        opacity 0.32s ease,
+        box-shadow 0.32s ease,
+        filter 0.28s ease;
+}
+
+.content-card.is-hidden {
+    pointer-events: none;
+}
+
+.content-card:not(.is-active) {
+    pointer-events: none;
 }
 
 .content-card__image-wrapper {
@@ -1350,6 +1378,7 @@ main,
     justify-content: space-between;
     align-items: center;
     pointer-events: none;
+    z-index: 5;
 }
 
 .content-cards__nav {
