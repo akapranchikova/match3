@@ -1868,6 +1868,7 @@ main,
 .map__grid {
     position: absolute;
     inset: 0;
+    z-index: -2;
     background-image: linear-gradient(rgba(124, 188, 164, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(124, 188, 164, 0.1) 1px, transparent 1px);
     background-size: 80px 80px;
@@ -1884,6 +1885,7 @@ main,
     position: absolute;
     right: 0;
     top: 0;
+    z-index: -1;
     bottom: 0;
 }
 

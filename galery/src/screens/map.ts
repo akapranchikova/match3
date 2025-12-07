@@ -3,12 +3,13 @@ import {rerender} from '../navigation'
 import {state, viewedPoints} from '../state'
 import floorPlanFirst from '../assets/floor-1.svg?raw'
 import floorPlanSecond from '../assets/floor-2.svg?raw'
+import floorPlanThird from '../assets/floor-3.svg?raw'
 
 export const renderMap = (): HTMLElement => {
     const point = points[state.currentPointIndex]
-    const previousPoint = state.currentPointIndex > 0 ? points[state.currentPointIndex - 1] : null
-    const shouldShowFloors = previousPoint ? previousPoint.map.floor !== point.map.floor : false
-    const activeFloor = shouldShowFloors ? state.currentFloor || point.map.floor : point.map.floor
+    const floors = Array.from(new Set(points.map((item) => item.map.floor))).sort((a, b) => a - b)
+    const activeFloor = floors.includes(state.currentFloor) ? state.currentFloor : point.map.floor
+    const shouldShowFloors = floors.length > 1
     state.currentFloor = activeFloor
 
     if (!state.mapPositions[state.currentFloor]) {
@@ -23,6 +24,7 @@ export const renderMap = (): HTMLElement => {
         1: floorPlanFirst,
         // При необходимости замените второй этаж на свой SVG в файле floor-2.svg
         2: floorPlanSecond,
+        3: floorPlanThird,
     }
 
     const createPlanMarkup = (floor: number) => `
@@ -32,7 +34,7 @@ export const renderMap = (): HTMLElement => {
   `
 
     const floorsMarkup = shouldShowFloors
-        ? `<div class="map__floors">${[1, 2]
+        ? `<div class="map__floors">${floors
             .map(
                 (floor) =>
                     `<button class="map__floor${floor === state.currentFloor ? ' is-active' : ''}" type="button" data-floor="${floor}">Этаж ${floor}</button>`,
@@ -56,7 +58,7 @@ export const renderMap = (): HTMLElement => {
         <div class="map__floor-toggle">${floorsMarkup}</div>
         <div class="map__inner">
           <div class="map__grid"></div>
-          ${[1, 2].map((floor) => createPlanMarkup(floor)).join('')}
+          ${floors.map((floor) => createPlanMarkup(floor)).join('')}
           <div class="map__markers"></div>
         </div>
       </div>

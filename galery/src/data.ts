@@ -72,7 +72,7 @@ export const points: RoutePoint[] = [
       'что археологи искали в первую очередь и почему',
       'как находки влияют на современные представления об истории Перми',
     ],
-    map: { floor: 1, x: 68, y: 38 },
+    map: { floor: 2, x: 68, y: 38 },
   },
   {
     id: 'railway',
@@ -88,7 +88,7 @@ export const points: RoutePoint[] = [
       'как железная дорога помогла появиться заводу Шпагина и новым профессиям',
       'почему железнодорожные мотивы стали визуальным кодом современного пространства',
     ],
-    map: { floor: 1, x: 38, y: 54 },
+    map: { floor: 3, x: 38, y: 54 },
   },
   {
     id: 'final',
@@ -104,7 +104,7 @@ export const points: RoutePoint[] = [
       'где узнать о ближайших событиях и новых выставках',
       'какие зоны отдыха и фото-точки стоит посетить перед уходом',
     ],
-    map: { floor: 2, x: 46, y: 72 },
+    map: { floor: 3, x: 46, y: 72 },
   },
 ]
 
@@ -243,4 +243,5 @@ export const onboardingSlides: OnboardingSlide[] = [
 export const initialMapPositions: Record<number, MapPosition> = {
   1: { x: -120, y: -90 },
   2: { x: -100, y: -120 },
+  3: { x: -110, y: -110 },
 }
