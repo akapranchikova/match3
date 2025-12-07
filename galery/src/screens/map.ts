@@ -1,42 +1,42 @@
-import { initialMapPositions, points } from '../data'
-import { rerender } from '../navigation'
-import { state, viewedPoints } from '../state'
-import { createButton } from '../ui'
+import {initialMapPositions, points} from '../data'
+import {rerender} from '../navigation'
+import {state, viewedPoints} from '../state'
 
 export const renderMap = (): HTMLElement => {
-  const point = points[state.currentPointIndex]
-  const previousPoint = state.currentPointIndex > 0 ? points[state.currentPointIndex - 1] : null
-  const shouldShowFloors = previousPoint ? previousPoint.map.floor !== point.map.floor : false
-  const activeFloor = shouldShowFloors ? state.currentFloor || point.map.floor : point.map.floor
-  state.currentFloor = activeFloor
+    const point = points[state.currentPointIndex]
+    const previousPoint = state.currentPointIndex > 0 ? points[state.currentPointIndex - 1] : null
+    const shouldShowFloors = previousPoint ? previousPoint.map.floor !== point.map.floor : false
+    const activeFloor = shouldShowFloors ? state.currentFloor || point.map.floor : point.map.floor
+    state.currentFloor = activeFloor
 
-  if (!state.mapPositions[state.currentFloor]) {
-    state.mapPositions[state.currentFloor] = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
-  }
+    if (!state.mapPositions[state.currentFloor]) {
+        state.mapPositions[state.currentFloor] = initialMapPositions[state.currentFloor] || {x: 0, y: 0}
+    }
 
-  const defaultPosition = initialMapPositions[state.currentFloor] || { x: 0, y: 0 }
+    const defaultPosition = initialMapPositions[state.currentFloor] || {x: 0, y: 0}
+    const mapPosition = state.mapPositions[state.currentFloor] || defaultPosition
 
-  const createSegments = (floor: number) =>
-    (floor === 1
-      ? [
-          { top: '6%', left: '32%', width: '22%', height: '34%' },
-          { top: '34%', left: '10%', width: '48%', height: '26%' },
-          { top: '48%', left: '30%', width: '30%', height: '36%' },
-          { top: '62%', left: '8%', width: '30%', height: '26%' },
-        ]
-      : [
-          { top: '10%', left: '38%', width: '22%', height: '28%' },
-          { top: '34%', left: '30%', width: '26%', height: '26%' },
-          { top: '52%', left: '14%', width: '42%', height: '24%' },
-        ]
-    )
-      .map(
-        (style) =>
-          `<div class="map__segment" style="top:${style.top};left:${style.left};width:${style.width};height:${style.height};"></div>`,
-      )
-      .join('')
+    const createSegments = (floor: number) =>
+        (floor === 1
+                ? [
+                    {top: '6%', left: '32%', width: '22%', height: '34%'},
+                    {top: '34%', left: '10%', width: '48%', height: '26%'},
+                    {top: '48%', left: '30%', width: '30%', height: '36%'},
+                    {top: '62%', left: '8%', width: '30%', height: '26%'},
+                ]
+                : [
+                    {top: '10%', left: '38%', width: '22%', height: '28%'},
+                    {top: '34%', left: '30%', width: '26%', height: '26%'},
+                    {top: '52%', left: '14%', width: '42%', height: '24%'},
+                ]
+        )
+            .map(
+                (style) =>
+                    `<div class="map__segment" style="top:${style.top};left:${style.left};width:${style.width};height:${style.height};"></div>`,
+            )
+            .join('')
 
-  const createPlanMarkup = (floor: number) => `
+    const createPlanMarkup = (floor: number) => `
     <div class="map__plan map__plan--${floor}${floor === state.currentFloor ? ' is-active' : ''}">
       <div class="map__outline"></div>
       ${createSegments(floor)}
@@ -44,84 +44,153 @@ export const renderMap = (): HTMLElement => {
     </div>
   `
 
-  const floorsMarkup = shouldShowFloors
-    ? `<div class="map__floors">${[1, 2]
-        .map(
-          (floor) =>
-            `<button class="map__floor${floor === state.currentFloor ? ' is-active' : ''}" type="button" data-floor="${floor}">Этаж ${floor}</button>`,
-        )
-        .join('')}</div>`
-    : `<span class="map__floor-label">Этаж ${state.currentFloor}</span>`
+    const floorsMarkup = shouldShowFloors
+        ? `<div class="map__floors">${[1, 2]
+            .map(
+                (floor) =>
+                    `<button class="map__floor${floor === state.currentFloor ? ' is-active' : ''}" type="button" data-floor="${floor}">Этаж ${floor}</button>`,
+            )
+            .join('')}</div>`
+        : `<span class="map__floor-label">Этаж ${state.currentFloor}</span>`
 
-  const page = document.createElement('div')
-  page.className = 'map-screen'
-  page.innerHTML = `
-    <section class="map map--sheet">
-      <div class="map__handle"></div>
+    const page = document.createElement('div')
+    page.className = 'map-screen'
+    page.innerHTML = `
+    <div class="map-screen__backdrop"></div>
+    <section class="map map--sheet" role="dialog" aria-label="Карта галереи">
+      <div class="map__handle" aria-hidden="true"></div>
+      <div class="map__body">
       <div class="map__header">
-        <h1>Карта</h1>
-        ${floorsMarkup}
+        <div class="map__title-group">
+          <h1>Карта</h1>
+        </div>
       </div>
-      <p class="map__subtitle">Фиксированный план этажа с отмеченными точками маршрута.</p>
       <div class="map__viewport">
-  
+        <div class="map__floor-toggle">${floorsMarkup}</div>
+        <div class="map__inner">
+          <div class="map__grid"></div>
+          ${[1, 2].map((floor) => createPlanMarkup(floor)).join('')}
+          <div class="map__markers"></div>
+        </div>
       </div>
+</div>   
     </section>
   `
 
-  const inner = page.querySelector<HTMLDivElement>('.map__inner')
+    const inner = page.querySelector<HTMLDivElement>('.map__markers')
 
-  points
-    .filter((item) => item.map.floor === state.currentFloor)
-    .forEach((item) => {
-      const originalIndex = points.findIndex((original) => original.id === item.id)
-      const isActive = item.id === point.id
-      const isComplete = viewedPoints.has(item.id)
+    points
+        .filter((item) => item.map.floor === state.currentFloor)
+        .forEach((item) => {
+            const originalIndex = points.findIndex((original) => original.id === item.id)
+            const isActive = item.id === point.id
+            const isComplete = viewedPoints.has(item.id)
 
-      const statusMarkup = isComplete ? '<span class="map__marker-status">Пройдена</span>' : ''
+            const statusMarkup = isComplete ? '<span class="map__marker-status">Пройдена</span>' : ''
 
-      inner?.insertAdjacentHTML(
-        'beforeend',
-        `
+            inner?.insertAdjacentHTML(
+                'beforeend',
+                `
         <button class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}" style="left:${item.map.x}%;top:${item.map.y}%;" title="${item.title}" data-index="${originalIndex}">
           <span class="map__marker-dot"></span>
           <span class="map__marker-label">${originalIndex + 1}</span>
           ${statusMarkup}
         </button>
       `,
-      )
+            )
+        })
+
+    page.querySelectorAll<HTMLButtonElement>('.map__marker').forEach((marker) => {
+        marker.addEventListener('click', (event) => {
+            event.stopPropagation()
+            const originalIndex = Number(marker.dataset.index)
+            state.currentPointIndex = originalIndex
+            state.screen = 'nextPoint'
+            rerender()
+        })
     })
 
-  page.querySelectorAll<HTMLButtonElement>('.map__marker').forEach((marker) => {
-    marker.addEventListener('click', (event) => {
-      event.stopPropagation()
-      const originalIndex = Number(marker.dataset.index)
-      state.currentPointIndex = originalIndex
-      state.screen = 'nextPoint'
-      rerender()
+    page.querySelectorAll<HTMLButtonElement>('.map__floor').forEach((floorButton) => {
+        floorButton.addEventListener('click', () => {
+            const floor = Number(floorButton.dataset.floor)
+            state.currentFloor = floor
+            if (!state.mapPositions[floor]) {
+                state.mapPositions[floor] = initialMapPositions[floor] || {x: 0, y: 0}
+            }
+            rerender()
+        })
     })
-  })
 
-  page.querySelectorAll<HTMLButtonElement>('.map__floor').forEach((floorButton) => {
-    floorButton.addEventListener('click', () => {
-      const floor = Number(floorButton.dataset.floor)
-      state.currentFloor = floor
-      if (!state.mapPositions[floor]) {
-        state.mapPositions[floor] = initialMapPositions[floor] || { x: 0, y: 0 }
-      }
-      rerender()
-    })
-  })
+    const closeMap = () => {
+        state.screen = 'nextPoint'
+        rerender()
+    }
 
-  page.querySelector<HTMLButtonElement>('[data-action="focus"]')?.addEventListener('click', () => {
-    state.screen = 'nextPoint'
-    rerender()
-  })
+    const mapSheet = page.querySelector<HTMLElement>('.map')
+    if (mapSheet) {
+        let startY = 0
+        let currentY = 0
+        let dragging = false
 
-  page.querySelector<HTMLButtonElement>('[data-action="route"]')?.addEventListener('click', () => {
-    state.screen = 'routeList'
-    rerender()
-  })
+        const resetTransform = () => {
+            mapSheet.style.transition = ''
+            mapSheet.style.transform = ''
+        }
 
-  return page
+        const startDrag = (y: number) => {
+            dragging = true
+            startY = y
+            mapSheet.style.transition = 'none'
+        }
+
+        const moveDrag = (y: number) => {
+            if (!dragging) return
+            currentY = Math.max(0, y - startY)
+            mapSheet.style.transform = `translateY(${Math.min(currentY, 260)}px)`
+        }
+
+        const endDrag = () => {
+            if (!dragging) return
+            dragging = false
+            const shouldClose = currentY > 120
+            mapSheet.style.transition = 'transform 0.25s ease'
+
+            if (shouldClose) {
+                mapSheet.style.transform = 'translateY(110%)'
+                mapSheet.addEventListener('transitionend', closeMap, {once: true})
+            } else {
+                mapSheet.style.transform = 'translateY(0)'
+                setTimeout(() => {
+                    resetTransform()
+                    currentY = 0
+                }, 250)
+            }
+        }
+
+        mapSheet.addEventListener('touchstart', (event) => {
+            startDrag(event.touches[0]?.clientY || 0)
+        })
+
+        mapSheet.addEventListener('touchmove', (event) => {
+            moveDrag(event.touches[0]?.clientY || 0)
+        })
+
+        mapSheet.addEventListener('touchend', endDrag)
+        mapSheet.addEventListener('touchcancel', endDrag)
+
+        mapSheet.addEventListener('mousedown', (event) => {
+            startDrag(event.clientY)
+        })
+
+        mapSheet.addEventListener('mousemove', (event) => {
+            if (dragging) {
+                moveDrag(event.clientY)
+            }
+        })
+
+        mapSheet.addEventListener('mouseup', endDrag)
+        mapSheet.addEventListener('mouseleave', endDrag)
+    }
+
+    return page
 }
