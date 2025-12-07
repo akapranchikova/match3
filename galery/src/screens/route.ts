@@ -75,9 +75,13 @@ export const renderRouteList = (): HTMLElement => {
     })
   })
 
-  const cta = createButton('Пройти маршрут с Гидом')
+  const firstUnviewedPointIndex = points.findIndex((point) => !viewedPoints.has(point.id))
+  const nextPointIndex = firstUnviewedPointIndex === -1 ? state.currentPointIndex : firstUnviewedPointIndex
+
+  const cta = createButton('Продолжить маршрут с Гидом')
   cta.addEventListener('click', () => {
-    state.screen = 'cameraPermission'
+    state.currentPointIndex = nextPointIndex
+    state.screen = 'nextPoint'
     rerender()
   })
   container.appendChild(cta)

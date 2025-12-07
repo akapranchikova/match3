@@ -532,6 +532,9 @@ main,
 
 .point-layout__route {
     width: 100%;
+    position: sticky;
+    bottom: 16px;
+    z-index: 20;
 }
 
 .button.icon-button {
@@ -1054,14 +1057,6 @@ main,
     box-shadow: 0 0 0 1px rgba(33, 204, 161, 0.35), 0 4px 12px rgba(16, 76, 58, 0.35);
 }
 
-.progress__bar {
-    display: block;
-    width: calc(((var(--step, 1)) / var(--total, 3)) * 100%);
-    height: 100%;
-    background: linear-gradient(90deg, #1d4ed8, #2563eb);
-    border-radius: 999px;
-}
-
 .overlay {
     background: rgba(10, 12, 11, 0.7);
     backdrop-filter: blur(3px);
@@ -1103,7 +1098,11 @@ main,
 
 .route > .button:last-child {
     margin-top: auto;
+    position: sticky;
+    bottom: 8px;
     align-self: center;
+    z-index: 10;
+    background: rgba(22, 23, 22, 1);
 }
 
 .route--timeline {
@@ -1646,13 +1645,6 @@ main,
     background-repeat: no-repeat;
     background-size: contain;
     opacity: 0.7;
-}
-
-.link {
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 14px;
 }
 
 .stack {
