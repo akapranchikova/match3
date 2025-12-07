@@ -1,6 +1,8 @@
 import {initialMapPositions, points} from '../data'
 import {rerender} from '../navigation'
 import {state, viewedPoints} from '../state'
+import floorPlanFirst from '../assets/floor-1.svg?raw'
+import floorPlanSecond from '../assets/floor-2.svg?raw'
 
 export const renderMap = (): HTMLElement => {
     const point = points[state.currentPointIndex]
@@ -16,31 +18,16 @@ export const renderMap = (): HTMLElement => {
     const defaultPosition = initialMapPositions[state.currentFloor] || {x: 0, y: 0}
     const mapPosition = state.mapPositions[state.currentFloor] || defaultPosition
 
-    const createSegments = (floor: number) =>
-        (floor === 1
-                ? [
-                    {top: '6%', left: '32%', width: '22%', height: '34%'},
-                    {top: '34%', left: '10%', width: '48%', height: '26%'},
-                    {top: '48%', left: '30%', width: '30%', height: '36%'},
-                    {top: '62%', left: '8%', width: '30%', height: '26%'},
-                ]
-                : [
-                    {top: '10%', left: '38%', width: '22%', height: '28%'},
-                    {top: '34%', left: '30%', width: '26%', height: '26%'},
-                    {top: '52%', left: '14%', width: '42%', height: '24%'},
-                ]
-        )
-            .map(
-                (style) =>
-                    `<div class="map__segment" style="top:${style.top};left:${style.left};width:${style.width};height:${style.height};"></div>`,
-            )
-            .join('')
+    const floorPlanSvgs: Record<number, string> = {
+        // Вставьте SVG плана первого этажа вместо содержимого файла floor-1.svg
+        1: floorPlanFirst,
+        // При необходимости замените второй этаж на свой SVG в файле floor-2.svg
+        2: floorPlanSecond,
+    }
 
     const createPlanMarkup = (floor: number) => `
     <div class="map__plan map__plan--${floor}${floor === state.currentFloor ? ' is-active' : ''}">
-      <div class="map__outline"></div>
-      ${createSegments(floor)}
-      <div class="map__path"></div>
+      <div class="map__plan-svg">${floorPlanSvgs[floor] || ''}</div>
     </div>
   `
 
