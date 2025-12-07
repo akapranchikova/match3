@@ -768,6 +768,15 @@ main,
     align-self: center;
 }
 
+.option-card__image-wrap--voice {
+    height: 130px;
+}
+
+.option-card__image-wrap--voice .option-card__image {
+    width: 130px;
+    height: 130px;
+}
+
 .card--options .option-card--secondary .option-card__image-wrap {
     position: relative;
 }

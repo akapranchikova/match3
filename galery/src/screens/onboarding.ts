@@ -61,6 +61,7 @@ interface OptionCardConfig {
     image: string
     imageAlt?: string
     className?: string
+    imageClassName?: string
     variant?: OptionVariant
     onSelect: () => void
 }
@@ -92,7 +93,7 @@ const renderOptionPrompt = ({
             .map(
                 (option, index) => `
         <button class="option-card ${option.variant ? `option-card--${option.variant}` : ''}" type="button" data-index="${index}">
-          <div class="option-card__image-wrap">
+          <div class="option-card__image-wrap ${option.imageClassName ?? ''}">
             <img src="${option.image}" alt="${option.imageAlt ?? option.title}" class="option-card__image">
           </div>
           <span class="option-card__title">${option.title}</span>
@@ -342,7 +343,7 @@ export const renderRouteModePrompt = (): RenderResult => {
                 title: 'С гидом Голос времени',
                 image: onboardingVoice,
                 imageAlt: 'Голос времени',
-                className: 'golos-img',
+                imageClassName: 'option-card__image-wrap--voice',
                 variant: 'primary',
                 onSelect: () => {
                     state.screen = 'guideIntro'
