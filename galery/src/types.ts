@@ -41,6 +41,7 @@ export interface OnboardingSlide {
   imageAlt?: string
   classStr?: string
   collagePlaceholder?: boolean
+  collageImages?: string[]
   backgroundImage?: string
   backgroundConfig?: {
     color?: string

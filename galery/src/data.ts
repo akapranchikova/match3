@@ -6,6 +6,9 @@ import pointPlaceholder from './assets/point-placeholder.svg'
 import guideBackground from './assets/guide-background.png'
 import guideIntroAudio from './assets/guide-intro.wav'
 import onboardingGolosLogo from './assets/onboarding-golos-logo.svg'
+import boardingPhoto1 from './assets/boarding-1/photo-1.png'
+import boardingPhoto2 from './assets/boarding-1/photo-2.png'
+import boardingPhoto3 from './assets/boarding-1/photo-3.png'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 
@@ -214,6 +217,7 @@ export const onboardingSlides: OnboardingSlide[] = [
     image: historyIllustration,
     imageAlt: 'Фотографии исторических зданий и экспозиции',
     collagePlaceholder: true,
+    collageImages: [boardingPhoto1, boardingPhoto2, boardingPhoto3],
   },
   {
     title: 'Голос времени',

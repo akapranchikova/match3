@@ -111,6 +111,7 @@ const renderCard = ({
                         classStr,
                         imageAlt,
                         collagePlaceholder,
+                        collageImages,
                         backgroundImage,
                         backgroundConfig,
                         onAdvance,
@@ -123,6 +124,7 @@ const renderCard = ({
     classStr?: string
     imageAlt?: string
     collagePlaceholder?: boolean
+    collageImages?: string[]
     backgroundImage?: string
     backgroundConfig?: {
         color?: string
@@ -177,15 +179,32 @@ const renderCard = ({
         ? `<img src="${logoList}" alt="Лого" class="logo-list">`
         : '';
 
-    const previewContent = collagePlaceholder
+    const collageContent = collageImages
+        ?.slice(0, 3)
+        .map(
+            (src, index) => `
+          <div class="photo-collage__card photo-collage__card--${['back-left', 'back-right', 'front'][index]}">
+            <img src="${src}" alt="Историческая фотография ${index + 1}" class="photo-collage__image">
+          </div>
+        `,
+        )
+        .join('')
+
+    const previewContent = collageContent
         ? `
+        <div class="photo-collage" aria-hidden="true">
+          ${collageContent}
+        </div>
+      `
+        : collagePlaceholder
+            ? `
         <div class="photo-collage" aria-hidden="true">
           <div class="photo-collage__card photo-collage__card--back-left"></div>
           <div class="photo-collage__card photo-collage__card--back-right"></div>
           <div class="photo-collage__card photo-collage__card--front"></div>
         </div>
       `
-        : `<img src="${imageSrc}" alt="${imageAlt ?? 'Превью экспозиции галереи'}" class="card__image ${classStr}">`
+            : `<img src="${imageSrc}" alt="${imageAlt ?? 'Превью экспозиции галереи'}" class="card__image ${classStr}">`
 
     container.innerHTML = `
     <div class="card__content">
@@ -277,6 +296,7 @@ export const renderOnboardingSlide = (): RenderResult => {
         classStr: slide.classStr,
         showProgress: true,
         collagePlaceholder: slide.collagePlaceholder,
+        collageImages: slide.collageImages,
         backgroundImage: slide.backgroundImage,
         backgroundConfig: slide.backgroundConfig,
         onAdvance: handleAdvance,
