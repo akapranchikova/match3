@@ -60,6 +60,7 @@ export interface AppState {
   mapPositions: Record<number, MapPosition>
   currentContentIndex: number
   soundEnabled: boolean
+  onboardingCompleted: boolean
 }
 
 export type PointContentKind = 'video' | 'cards' | 'audio'

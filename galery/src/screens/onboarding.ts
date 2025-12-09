@@ -265,10 +265,17 @@ const renderCard = ({
 
 export const renderOnboardingSlide = (): RenderResult => {
     const slide = onboardingSlides[state.slideIndex]
+    const completeOnboarding = () => {
+        if (!state.onboardingCompleted) {
+            state.onboardingCompleted = true
+            saveOnboardingCompleted()
+        }
+        state.screen = 'onboardingPrompt'
+    }
     const handleAdvance = () => {
         const nextSlide = state.slideIndex + 1
         if (nextSlide >= onboardingSlides.length) {
-            state.screen = 'onboardingPrompt'
+            completeOnboarding()
         } else {
             state.slideIndex = nextSlide
         }
@@ -299,7 +306,6 @@ export const renderOnboardingSlide = (): RenderResult => {
 
 export const renderHeadphonesPrompt = (): RenderResult => {
     const goNext = () => {
-        saveOnboardingCompleted()
         state.screen = 'routeModePrompt'
         rerender()
     }

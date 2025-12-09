@@ -3,8 +3,8 @@ import { loadOnboardingCompleted, loadSoundEnabled, loadViewed } from './storage
 import { AppState, RenderCleanup } from './types'
 
 // Centralized app state used across all screens
-export const onboardingCompleted = loadOnboardingCompleted()
 const soundEnabled = loadSoundEnabled()
+const onboardingCompleted = loadOnboardingCompleted()
 
 export const state: AppState = {
   screen: 'loader',
@@ -14,6 +14,7 @@ export const state: AppState = {
   mapPositions: { ...initialMapPositions },
   currentContentIndex: 0,
   soundEnabled,
+  onboardingCompleted,
 }
 
 export let viewedPoints = loadViewed()

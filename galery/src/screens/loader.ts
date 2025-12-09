@@ -1,6 +1,6 @@
 import logoList from '../assets/logo-list.svg'
 import { rerender } from '../navigation'
-import { onboardingCompleted, state } from '../state'
+import { state } from '../state'
 import { RenderResult } from '../types'
 
 const LOADER_DURATION_MS = 2600
@@ -34,7 +34,7 @@ export const renderLoader = (): RenderResult => {
   `
 
   const timeoutId = window.setTimeout(() => {
-    state.screen = onboardingCompleted ? 'routeModePrompt' : 'onboardingSlide'
+    state.screen = state.onboardingCompleted ? 'onboardingPrompt' : 'onboardingSlide'
     rerender()
   }, LOADER_DURATION_MS)
 
