@@ -7,19 +7,29 @@ import { RenderResult } from '../types'
 import headphonesIllustration from '../assets/onboarding-headphones.png'
 import bookIllustration from '../assets/book.png'
 import logoList from '../assets/logo-list.svg'
-import guideIntroAudio from '../assets/guide-intro.wav'
 import guideBackground from '../assets/guide-background.png'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import onboardingHistory from '../assets/onboarding-history.png'
-import guideIntroSubtitlesUrl from '../assets/guide-intro.srt?url'
+import guideGreetingAudio from '../assets/audio/0. Приветствие..mp3'
+import guideGreetingSubtitlesUrl from '../assets/audio/0. Приветствие..srt?url'
 import { createCueFromText, loadSrtSubtitles, SubtitleCue } from '../subtitles'
 
 const ONBOARDING_SLIDE_DURATION_MS = 6000
 
 const introSubtitlesFallback: SubtitleCue[] = [
-    createCueFromText('Это начало моего вступительного слова...', 0, 1.4),
-    createCueFromText('Где я знакомлю вас с маршрутом по галерее.', 1.4, 2.9),
-    createCueFromText('Слушайте аудио и следите за субтитрами.', 2.9, 4.6),
+    createCueFromText('Добро пожаловать в цифровой маршрут по истории Перми', 0, 3.298),
+    createCueFromText('созданные технологиями Сбера.', 3.298, 5.299),
+    createCueFromText(
+        'Весь контент сгенерирован искусственным интеллектом Гигачат на основе исторических материалов.',
+        6.139,
+        12.24,
+    ),
+    createCueFromText('Следуйте по разным точкам в пространстве и вам', 13.019, 15.859),
+    createCueFromText(
+        'откроется история места, в котором расположилась первонская художественная галерея.',
+        15.859,
+        20.6,
+    ),
 ]
 
 let cachedIntroSubtitles: SubtitleCue[] | null = null
@@ -27,7 +37,7 @@ let cachedIntroSubtitles: SubtitleCue[] | null = null
 const getIntroSubtitles = async () => {
     if (cachedIntroSubtitles) return cachedIntroSubtitles
 
-    cachedIntroSubtitles = await loadSrtSubtitles(guideIntroSubtitlesUrl, introSubtitlesFallback)
+    cachedIntroSubtitles = await loadSrtSubtitles(guideGreetingSubtitlesUrl, introSubtitlesFallback)
     return cachedIntroSubtitles
 }
 
@@ -379,7 +389,7 @@ export const renderGuideIntro = (): RenderResult => {
     audio.className = 'guide__audio'
     audio.controls = false
     audio.autoplay = true
-    audio.src = guideIntroAudio
+    audio.src = guideGreetingAudio
     audio.preload = 'auto'
     media.appendChild(audio)
 
@@ -389,7 +399,7 @@ export const renderGuideIntro = (): RenderResult => {
 
     const subtitleText = document.createElement('span')
     subtitleText.className = 'guide__subtitle-text'
-    subtitleText.textContent = '—'
+    subtitleText.textContent = ''
 
     intro.appendChild(subtitleFill)
     intro.appendChild(subtitleText)
@@ -401,7 +411,7 @@ export const renderGuideIntro = (): RenderResult => {
 
     const resetSubtitleState = () => {
         subtitleFill.style.setProperty('--progress', '0%')
-        subtitleText.textContent = '—'
+        subtitleText.textContent = ''
         subtitleCurrent.classList.remove('guide__subtitle--visible')
         activeCueIndex = null
         revealedWordCount = 0
