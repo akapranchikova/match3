@@ -885,14 +885,22 @@ main,
 }
 
 .guide__subtitle {
-    margin-top: 40px;
+    margin: 32px auto 0;
     text-align: center;
-    font-size: 18px;
-    background: transparent;
-    font-weight: bold;
-    transition: opacity 0.2s ease;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: 0.2px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
     position: relative;
     overflow: hidden;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.52);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.42);
+    color: #f4f4f4;
+    opacity: 0;
+    transform: translateY(8px);
 }
 
 .guide__subtitle--current {
@@ -901,10 +909,11 @@ main,
 
 .guide__subtitle--visible {
     opacity: 1;
+    transform: translateY(0);
 }
 
 .guide__subtitle:not(.guide__subtitle--visible) {
-    opacity: 0.6;
+    pointer-events: none;
 }
 
 .guide__subtitle-fill {
@@ -912,10 +921,11 @@ main,
     inset: 0;
     width: var(--progress);
     max-width: 100%;
-    background: transparent;
-    opacity: 0.45;
+    background: rgba(255, 255, 255, 0.08);
+    opacity: 0.68;
     transition: width 0.1s linear;
     pointer-events: none;
+    border-radius: inherit;
 }
 
 .guide__subtitle-text {
@@ -923,11 +933,13 @@ main,
     z-index: 1;
     display: block;
     text-align: center;
+    color: inherit;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .guide__subtitle-word {
     opacity: 0.35;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.12s ease;
 }
 
 .guide__subtitle-word--visible {

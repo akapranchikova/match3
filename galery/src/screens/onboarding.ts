@@ -11,48 +11,10 @@ import guideIntroAudio from '../assets/guide-intro.wav'
 import guideBackground from '../assets/guide-background.png'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import onboardingHistory from '../assets/onboarding-history.png'
+import guideIntroSubtitleSrc from '../assets/guide-intro.srt?url'
+import {loadSrt, SubtitleCue} from '../subtitles'
 
 const ONBOARDING_SLIDE_DURATION_MS = 6000
-
-const introSubtitles = [
-    {
-        start: 0,
-        end: 1.4,
-        words: [
-            {start: 0, text: 'Это'},
-            {start: 0.3, text: 'начало'},
-            {start: 0.55, text: 'моего'},
-            {start: 0.75, text: 'вступительного'},
-            {start: 1.05, text: 'слова...'},
-        ],
-    },
-    {
-        start: 1.4,
-        end: 2.9,
-        words: [
-            {start: 0, text: 'Где'},
-            {start: 0.25, text: 'я'},
-            {start: 0.35, text: 'знакомлю'},
-            {start: 0.7, text: 'вас'},
-            {start: 0.9, text: 'с'},
-            {start: 1.0, text: 'маршрутом'},
-            {start: 1.35, text: 'по'},
-            {start: 1.45, text: 'галерее.'},
-        ],
-    },
-    {
-        start: 2.9,
-        end: 4.6,
-        words: [
-            {start: 0, text: 'Слушайте'},
-            {start: 0.4, text: 'аудио'},
-            {start: 0.8, text: 'и'},
-            {start: 0.9, text: 'следите'},
-            {start: 1.3, text: 'за'},
-            {start: 1.45, text: 'субтитрами.'},
-        ],
-    },
-]
 
 type OptionVariant = 'primary' | 'secondary'
 
@@ -400,13 +362,15 @@ export const renderGuideIntro = (): RenderResult => {
     audio.preload = 'auto'
     media.appendChild(audio)
 
+    let introSubtitles: SubtitleCue[] = []
+
     const subtitleFill = document.createElement('span')
     subtitleFill.className = 'guide__subtitle-fill'
     subtitleFill.style.setProperty('--progress', '0%')
 
     const subtitleText = document.createElement('span')
     subtitleText.className = 'guide__subtitle-text'
-    subtitleText.textContent = '—'
+    subtitleText.textContent = ''
 
     intro.appendChild(subtitleFill)
     intro.appendChild(subtitleText)
@@ -416,13 +380,17 @@ export const renderGuideIntro = (): RenderResult => {
     let revealedWordCount = 0
 
     const findActiveCueIndex = (current: number) =>
-        introSubtitles.findIndex((cue, index) => {
-            const isLastCue = index === introSubtitles.length - 1
-            const cueEnd = isLastCue ? cue.end + 0.15 : cue.end
-            return current >= cue.start && current < cueEnd
-        })
+        introSubtitles.length
+            ? introSubtitles.findIndex((cue, index) => {
+                const isLastCue = index === introSubtitles.length - 1
+                const cueEnd = isLastCue ? cue.end + 0.15 : cue.end
+                return current >= cue.start && current < cueEnd
+            })
+            : -1
 
     const showFinalCue = () => {
+        if (!introSubtitles.length) return
+
         const lastCue = introSubtitles[introSubtitles.length - 1]
         activeCueIndex = introSubtitles.length - 1
         revealedWordCount = lastCue.words.length
@@ -447,9 +415,14 @@ export const renderGuideIntro = (): RenderResult => {
         })
     }
 
-    renderWords(introSubtitles[0].words, 0)
-
     const updateSubtitles = () => {
+        if (!introSubtitles.length) {
+            subtitleText.textContent = ''
+            subtitleCurrent.classList.remove('guide__subtitle--visible')
+            subtitleFill.style.setProperty('--progress', '0%')
+            return
+        }
+
         const current = audio.currentTime
         const activeCueIndexNext = findActiveCueIndex(current)
 
@@ -478,6 +451,19 @@ export const renderGuideIntro = (): RenderResult => {
             subtitleCurrent.classList.remove('guide__subtitle--visible')
             activeCueIndex = null
             revealedWordCount = 0
+        }
+    }
+
+    const applySubtitles = (cues: SubtitleCue[]) => {
+        introSubtitles = cues
+
+        if (introSubtitles.length) {
+            renderWords(introSubtitles[0].words, 0)
+            updateSubtitles()
+        } else {
+            subtitleText.textContent = ''
+            subtitleCurrent.classList.remove('guide__subtitle--visible')
+            subtitleFill.style.setProperty('--progress', '0%')
         }
     }
 
@@ -511,6 +497,10 @@ export const renderGuideIntro = (): RenderResult => {
     audio.addEventListener('ended', showFinalCue)
 
     requestAnimationFrame(tryPlay)
+
+    loadSrt(guideIntroSubtitleSrc)
+        .then(applySubtitles)
+        .catch(() => applySubtitles([]))
 
     const controls = document.createElement('div')
     controls.className = 'guide__controls'
