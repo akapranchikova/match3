@@ -3,6 +3,7 @@ import { rerender } from '../navigation'
 import { saveViewed } from '../storage'
 import { state, viewedPoints } from '../state'
 import { createButton } from '../ui'
+import onboardingVoice from '../assets/onboarding-voice.png'
 import routePreview from '../assets/onboarding-photo.svg'
 
 const markPointAsViewed = () => {
@@ -106,8 +107,17 @@ export const renderNextPoint = (): HTMLElement => {
   card.className = 'card card--point card--next'
   card.innerHTML = `
     <div class="point-layout__header">
-      <p class="point-layout__eyebrow">Маршрут «Голос времени»</p>
+    <div>   
+    <p class="point-layout__eyebrow">Маршрут «Голос времени»</p>
       <h1 class="point-layout__title">Где находится точка ${state.currentPointIndex + 1}?</h1>
+    </div>
+          <button class="button icon-button primary route-button" data-action="route" aria-label="Продолжить без гида">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 9.49902L19 20L14 20L14 14H10L10 20H5L5 9.49902L12 4.24902L19 9.49902Z" stroke="#E2E2E2" stroke-width="2"/>
+           </svg>
+
+        </span>
+      </button>
     </div>
     <article class="point-visual">
       <div class="point-visual__frame">
@@ -127,8 +137,20 @@ export const renderNextPoint = (): HTMLElement => {
      
       <button class="button secondary" data-action="scan">Отсканировать QR код</button>
     </div>
-    <p class="point-layout__hint">Отсканируйте QR-код точки, чтобы открыть следующую часть маршрута</p>
-    <button class="button point-layout__route" data-action="route">Продолжить без гида</button>
+    <p class="point-layout__hint"> Отсканируйте QR-код, чтобы открыть следующую часть маршрута</p>
+    <div class="point-layout__route footer">
+    <div class="footer__voice">
+            <img src="${onboardingVoice}" alt="voice-img" class="footer__voice__image">
+            <div>
+            тут будут субтитры
+</div>
+   
+</div>
+    <div class="footer__button">
+    
+  todo здесь будет кнопка включения и выключения звука
+</div>
+</div>
   `
 
   card.querySelector<HTMLButtonElement>('[data-action="map"]')?.addEventListener('click', () => {

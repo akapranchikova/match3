@@ -1,9 +1,9 @@
-import {onboardingSlides} from '../data'
-import {rerender} from '../navigation'
-import {state} from '../state'
-import {saveOnboardingCompleted, saveSoundEnabled} from '../storage'
-import {createButton} from '../ui'
-import {RenderResult} from '../types'
+import { onboardingSlides } from '../data'
+import { rerender } from '../navigation'
+import { state } from '../state'
+import { saveOnboardingCompleted, saveSoundEnabled } from '../storage'
+import { createButton } from '../ui'
+import { RenderResult } from '../types'
 import headphonesIllustration from '../assets/onboarding-headphones.png'
 import bookIllustration from '../assets/book.png'
 import logoList from '../assets/logo-list.svg'
@@ -11,48 +11,25 @@ import guideIntroAudio from '../assets/guide-intro.wav'
 import guideBackground from '../assets/guide-background.png'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import onboardingHistory from '../assets/onboarding-history.png'
+import guideIntroSubtitlesUrl from '../assets/guide-intro.srt?url'
+import { createCueFromText, loadSrtSubtitles, SubtitleCue } from '../subtitles'
 
 const ONBOARDING_SLIDE_DURATION_MS = 6000
 
-const introSubtitles = [
-    {
-        start: 0,
-        end: 1.4,
-        words: [
-            {start: 0, text: 'Это'},
-            {start: 0.3, text: 'начало'},
-            {start: 0.55, text: 'моего'},
-            {start: 0.75, text: 'вступительного'},
-            {start: 1.05, text: 'слова...'},
-        ],
-    },
-    {
-        start: 1.4,
-        end: 2.9,
-        words: [
-            {start: 0, text: 'Где'},
-            {start: 0.25, text: 'я'},
-            {start: 0.35, text: 'знакомлю'},
-            {start: 0.7, text: 'вас'},
-            {start: 0.9, text: 'с'},
-            {start: 1.0, text: 'маршрутом'},
-            {start: 1.35, text: 'по'},
-            {start: 1.45, text: 'галерее.'},
-        ],
-    },
-    {
-        start: 2.9,
-        end: 4.6,
-        words: [
-            {start: 0, text: 'Слушайте'},
-            {start: 0.4, text: 'аудио'},
-            {start: 0.8, text: 'и'},
-            {start: 0.9, text: 'следите'},
-            {start: 1.3, text: 'за'},
-            {start: 1.45, text: 'субтитрами.'},
-        ],
-    },
+const introSubtitlesFallback: SubtitleCue[] = [
+    createCueFromText('Это начало моего вступительного слова...', 0, 1.4),
+    createCueFromText('Где я знакомлю вас с маршрутом по галерее.', 1.4, 2.9),
+    createCueFromText('Слушайте аудио и следите за субтитрами.', 2.9, 4.6),
 ]
+
+let cachedIntroSubtitles: SubtitleCue[] | null = null
+
+const getIntroSubtitles = async () => {
+    if (cachedIntroSubtitles) return cachedIntroSubtitles
+
+    cachedIntroSubtitles = await loadSrtSubtitles(guideIntroSubtitlesUrl, introSubtitlesFallback)
+    return cachedIntroSubtitles
+}
 
 type OptionVariant = 'primary' | 'secondary'
 
@@ -418,27 +395,25 @@ export const renderGuideIntro = (): RenderResult => {
     intro.appendChild(subtitleText)
     const subtitleCurrent = intro
 
+    let introSubtitles = cachedIntroSubtitles || introSubtitlesFallback
     let activeCueIndex: number | null = null
     let revealedWordCount = 0
 
-    const findActiveCueIndex = (current: number) =>
-        introSubtitles.findIndex((cue, index) => {
-            const isLastCue = index === introSubtitles.length - 1
-            const cueEnd = isLastCue ? cue.end + 0.15 : cue.end
-            return current >= cue.start && current < cueEnd
-        })
-
-    const showFinalCue = () => {
-        const lastCue = introSubtitles[introSubtitles.length - 1]
-        activeCueIndex = introSubtitles.length - 1
-        revealedWordCount = lastCue.words.length
-        renderWords(lastCue.words, lastCue.words.length)
-        subtitleFill.style.setProperty('--progress', '100%')
-        subtitleCurrent.classList.add('guide__subtitle--visible')
+    const resetSubtitleState = () => {
+        subtitleFill.style.setProperty('--progress', '0%')
+        subtitleText.textContent = '—'
+        subtitleCurrent.classList.remove('guide__subtitle--visible')
+        activeCueIndex = null
+        revealedWordCount = 0
     }
 
     const renderWords = (words: { text: string }[], visibleCount: number) => {
         subtitleText.replaceChildren()
+
+        if (!words.length) {
+            resetSubtitleState()
+            return
+        }
 
         words.forEach((word, index) => {
             const span = document.createElement('span')
@@ -453,9 +428,41 @@ export const renderGuideIntro = (): RenderResult => {
         })
     }
 
-    renderWords(introSubtitles[0].words, 0)
+    const findActiveCueIndex = (current: number) =>
+        introSubtitles.findIndex((cue, index) => {
+            const isLastCue = index === introSubtitles.length - 1
+            const cueEnd = isLastCue ? cue.end + 0.15 : cue.end
+            return current >= cue.start && current < cueEnd
+        })
+
+    const showFinalCue = () => {
+        if (!introSubtitles.length) return
+
+        const lastCue = introSubtitles[introSubtitles.length - 1]
+        activeCueIndex = introSubtitles.length - 1
+        revealedWordCount = lastCue.words.length
+        renderWords(lastCue.words, lastCue.words.length)
+        subtitleFill.style.setProperty('--progress', '100%')
+        subtitleCurrent.classList.add('guide__subtitle--visible')
+    }
+
+    const setSubtitles = (subtitles: SubtitleCue[]) => {
+        introSubtitles = subtitles
+        resetSubtitleState()
+
+        if (introSubtitles.length) {
+            renderWords(introSubtitles[0].words, 0)
+        }
+    }
+
+    setSubtitles(introSubtitles)
 
     const updateSubtitles = () => {
+        if (!introSubtitles.length) {
+            resetSubtitleState()
+            return
+        }
+
         const current = audio.currentTime
         const activeCueIndexNext = findActiveCueIndex(current)
 
@@ -479,11 +486,7 @@ export const renderGuideIntro = (): RenderResult => {
         } else if (audio.ended) {
             showFinalCue()
         } else {
-            subtitleFill.style.setProperty('--progress', '0%')
-            subtitleText.textContent = '—'
-            subtitleCurrent.classList.remove('guide__subtitle--visible')
-            activeCueIndex = null
-            revealedWordCount = 0
+            resetSubtitleState()
         }
     }
 
@@ -515,6 +518,14 @@ export const renderGuideIntro = (): RenderResult => {
     audio.addEventListener('loadedmetadata', handleLoadedMetadata)
     audio.addEventListener('canplay', tryPlay)
     audio.addEventListener('ended', showFinalCue)
+
+    getIntroSubtitles()
+        .then((subtitles) => {
+            setSubtitles(subtitles)
+            updateSubtitles()
+        })
+        .catch(() => {
+        })
 
     requestAnimationFrame(tryPlay)
 

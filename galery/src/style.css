@@ -370,6 +370,23 @@ main,
 .card--point h1 {
     line-height: 1.15;
 }
+.card--point .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+.card--point .footer__voice {
+    display: flex;
+    font-family: "SB Sans Display Semibold", sans-serif;
+    font-size: 16px;
+    gap: 12px;
+    align-items: center;
+}
+.card--point .footer__voice .footer__voice__image{
+    width: 48px;
+    height: 48px;
+}
 
 .card--next {
     background: transparent;
@@ -377,19 +394,19 @@ main,
     box-shadow: none;
     align-items: center;
     gap: 18px;
+    padding-bottom: 26px !important;
 }
 
 .point-layout__header {
     z-index: 10;
     width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    justify-content: space-between;
 }
 
 .point-layout__eyebrow {
     font-size: 14px;
-    margin-bottom: 0;
+    margin-bottom: 6px;
 }
 
 .point-layout__title {
@@ -449,6 +466,10 @@ main,
     z-index: 10;
     display: flex;
     justify-content: center;
+}
+
+.button.primary.route-button {
+    background: rgba(22, 23, 22, 1);
 }
 
 .point-visual .button.primary.map-button {
@@ -1125,16 +1146,42 @@ main,
     pointer-events: none;
     mix-blend-mode: soft-light;
 }
-
+.route__hero {
+    padding-top: 62px;
+}
 .route__hero h1 {
     font-family: "SB Sans Display Semibold", sans-serif;
-    font-size: 28px;
-    margin-bottom: 12px;
+    position: fixed;
+    z-index: 13;
+    top:38px;
+    background: rgba(22, 23, 22, 1);
+}
+.route__hero::before {
+    content: "";
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 12;
+    height: 80px;
+    background: rgba(22, 23, 22, 1);
+    position: fixed;
+}
+.route__hero::after {
+    content: "";
+    top: 80px;
+    left: 0;
+    right: 0;
+    height: 100px;
+    z-index: 10;
+    position: fixed;
+    background: linear-gradient(180deg, #161716 0%, rgba(22, 23, 22, 0) 100%);
 }
 
 .route__subtitle {
     margin: 0;
     font-size: 15px;
+    position: relative;
+    z-index: 11;
     color: #cdd5cf;
 }
 
@@ -1990,14 +2037,11 @@ main,
 }
 
 .loader-screen__header {
-    display: flex;
-    justify-content: flex-start;
     position: relative;
     z-index: 1;
 }
 
 .loader-screen__logo {
-    width: 184px;
     height: auto;
 }
 
