@@ -2,12 +2,7 @@ import './style.css'
 import { setRenderer } from './navigation'
 import { resetTeardown, setTeardown, state } from './state'
 import { AppScreen, RenderResult } from './types'
-import {
-  renderGuideIntro,
-  renderHeadphonesPrompt,
-  renderOnboardingSlide,
-  renderRouteModePrompt,
-} from './screens/onboarding'
+import { renderGuideIntro, renderOnboardingSlide, renderRouteModePrompt } from './screens/onboarding'
 import { renderInfoComplete, renderNextPoint, renderPointInfo } from './screens/pointFlow'
 import { renderMap } from './screens/map'
 import { renderRouteList } from './screens/route'
@@ -25,7 +20,6 @@ if (!app) {
 // Map app screens to renderers to keep navigation logic centralized
 const screenRenderers: Record<AppScreen, () => RenderResult> = {
   loader: renderLoader,
-  onboardingPrompt: renderHeadphonesPrompt,
   onboardingSlide: renderOnboardingSlide,
   routeModePrompt: renderRouteModePrompt,
   guideIntro: renderGuideIntro,

@@ -1,6 +1,5 @@
 import { STORAGE_KEY } from './data'
 
-const ONBOARDING_KEY = 'gallery-onboarding-complete'
 const SOUND_ENABLED_KEY = 'gallery-sound-enabled'
 const LOADER_KEY = 'gallery-loader-complete'
 
@@ -21,17 +20,9 @@ export const saveViewed = (set: Set<string>) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set)))
 }
 
-export const loadOnboardingCompleted = (): boolean => {
-  return localStorage.getItem(ONBOARDING_KEY) === 'true'
-}
-
-export const saveOnboardingCompleted = () => {
-  localStorage.setItem(ONBOARDING_KEY, 'true')
-}
-
 export const loadSoundEnabled = (): boolean => {
   const stored = localStorage.getItem(SOUND_ENABLED_KEY)
-  return stored === null ? false : stored === 'true'
+  return stored === null ? true : stored === 'true'
 }
 
 export const saveSoundEnabled = (enabled: boolean) => {

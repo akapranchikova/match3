@@ -1,11 +1,9 @@
 import {onboardingSlides} from '../data'
 import {rerender} from '../navigation'
 import {state} from '../state'
-import {saveOnboardingCompleted, saveSoundEnabled} from '../storage'
+import {saveSoundEnabled} from '../storage'
 import {createButton} from '../ui'
 import {RenderResult} from '../types'
-import headphonesIllustration from '../assets/onboarding-headphones.png'
-import bookIllustration from '../assets/book.png'
 import logoList from '../assets/logo-list.svg'
 import guideIntroAudio from '../assets/guide-intro.wav'
 import guideBackground from '../assets/guide-background.png'
@@ -249,7 +247,7 @@ const renderCard = ({
 
         const nextSlide = state.slideIndex + 1
         if (nextSlide >= onboardingSlides.length) {
-            state.screen = 'onboardingPrompt'
+            state.screen = 'routeModePrompt'
         } else {
             state.slideIndex = nextSlide
         }
@@ -268,7 +266,7 @@ export const renderOnboardingSlide = (): RenderResult => {
     const handleAdvance = () => {
         const nextSlide = state.slideIndex + 1
         if (nextSlide >= onboardingSlides.length) {
-            state.screen = 'onboardingPrompt'
+            state.screen = 'routeModePrompt'
         } else {
             state.slideIndex = nextSlide
         }
@@ -295,42 +293,6 @@ export const renderOnboardingSlide = (): RenderResult => {
         element,
         cleanup: () => window.clearTimeout(autoAdvanceTimeout),
     }
-}
-
-export const renderHeadphonesPrompt = (): RenderResult => {
-    const goNext = () => {
-        saveOnboardingCompleted()
-        state.screen = 'routeModePrompt'
-        rerender()
-    }
-
-    const selectHeadphones = (enabled: boolean) => {
-        state.soundEnabled = enabled
-        saveSoundEnabled(enabled)
-        goNext()
-    }
-
-    return renderOptionPrompt({
-        title: 'Будете ли использовать наушники?',
-        subtitle: 'На маршруте звучат аудио-истории. Наденьте наушники, чтобы ничего не пропустить. Изменить режим можно в любой момент',
-        className: 'card--headphones',
-        options: [
-            {
-                title: 'Да, буду слушать в наушниках',
-                image: headphonesIllustration,
-                imageAlt: 'Наушники',
-                variant: 'primary',
-                onSelect: () => selectHeadphones(true),
-            },
-            {
-                title: 'Нет, буду читать субтитры',
-                image: bookIllustration,
-                imageAlt: 'Наушники',
-                variant: 'secondary',
-                onSelect: () => selectHeadphones(false),
-            },
-        ],
-    })
 }
 
 export const renderRouteModePrompt = (): RenderResult => {
