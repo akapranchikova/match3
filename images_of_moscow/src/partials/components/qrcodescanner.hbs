@@ -1,0 +1,57 @@
+<style>
+  .container {
+    position: fixed;
+    bottom: 30px;
+    height: 400px;
+    box-sizing: border-box;
+    width: calc(100% - 60px);
+    background: black;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 30px;
+    margin: 30px;
+  }
+
+
+  .video-container {
+    position: relative;
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+    border-radius: 8px;
+
+  }
+
+  video {
+    width: 100%;
+    border-radius: 8px;
+    background: #000;
+  }
+
+  .qrcanvas {
+    background-color: #000;
+  }
+
+  .scanner-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border: 2px solid #007bff;
+    border-radius: 12px;
+    pointer-events: none;
+  }
+
+</style>
+<div class="container">
+  <div class="video-container" id="videoContainer">
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="canvas" class="qrcanvas"></canvas>
+  </div>
+</div>
+
+<script type="module" src="/src/qrscanner.js"></script>

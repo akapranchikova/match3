@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>8th Wall Pure JS Redirect</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #000;
+      }
+
+      #camerafeed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.172.0/build/three.module.min.js",
+          "three/addons/": "https://unpkg.com/three@0.172.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <!-- XR Extras - provides utilities like load screen, almost there, and error handling.
+         See github.com/8thwall/web/tree/master/xrextras -->
+    <script src="//8cdn.4app.pro/web/xrextras/xrextras.js"></script>
+    <!-- 8thWall Web - Replace the app key here with your own app key -->
+    <script
+      async
+      src="//8apps.4app.pro/xrweb?appKey=j2hNNtpTtKE7HghzgB8PUl2gykdNfU4OEZtpBApXZ4p7gwfvZpsveby44YlnZHF2NvlAN0"
+    ></script>
+
+    <script type="module">
+      window.THREE = { ...THREE }
+      window.THREE.GLTFLoader = GLTFLoader
+      /*
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        window.THREE = { ...THREE };
+        window.THREE.GLTFLoader = GLTFLoader;
+        */
+    </script>
+
+    <script>
+      // КОНФИГУРАЦИЯ
+      const BASE_URL = "./?r=paint"
+
+      const onImageFound = (detail) => {
+        if (isRedirecting) return
+
+        const markerName = detail.name
+        console.log(`Маркер найден: ${markerName}`)
+
+        isRedirecting = true
+
+        // Останавливаем движок, чтобы сэкономить ресурсы перед переходом
+        XR8.pause()
+
+        // Формируем ссылку и переходим
+        const finalUrl = `${BASE_URL}&marker=${encodeURIComponent(markerName)}`
+        window.location.href = finalUrl
+      }
+
+      // --- Модуль логики перенаправления ---
+      // Это кастомный модуль пайплайна 8th Wall
+      const redirectPipelineModule = () => {
+        let isRedirecting = false // Флаг, чтобы не редиректить много раз подряд
+
+        return {
+          name: "redirect-logic",
+
+          listeners: [{ event: "reality.imagefound", process: showTarget }],
+        }
+      }
+
+      // --- Основная функция инициализации ---
+      const onXrLoaded = () => {
+        // Инициализируем Three.js сцену, камеру и рендерер
+        const scene = new THREE.Scene()
+        const camera = new THREE.PerspectiveCamera(
+          60,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        )
+
+        const renderer = new THREE.WebGLRenderer({
+          canvas: document.getElementById("camerafeed"),
+          antialias: true,
+          alpha: true,
+        })
+        renderer.setSize(window.innerWidth, window.innerHeight)
+        renderer.setPixelRatio(window.devicePixelRatio)
+
+        // Добавляем свет (не обязательно для сканирования, но нужно, если будете добавлять 3D объекты)
+        scene.add(new THREE.AmbientLight(0x404040, 5))
+
+        // Настройка 8th Wall
+        XR8.addCameraPipelineModules([
+          // Модуль интеграции с Three.js (рисует видео с камеры на задний план)
+          XR8.Threejs.pipelineModule(),
+          // Модуль контроллера (нужен для работы AR)
+          XR8.XrController.pipelineModule(),
+          // Наш кастомный модуль для редиректа
+          redirectPipelineModule(),
+        ])
+
+        // Запуск движка
+        XR8.run({
+          canvas: document.getElementById("camerafeed"),
+          scene: scene,
+          camera: camera,
+          renderer: renderer,
+          allowedDevices: XR8.XrConfig.device().ANY, // Разрешить на всех устройствах
+
+          // Конфигурация сканирования
+          xrConfig: {
+            disableWorldTracking: true, // Отключаем SLAM (поиск пола), оставляем только Image Target
+          },
+        })
+      }
+
+      // Ждем загрузки скрипта 8th Wall
+      window.onload = () => {
+        if (window.XR8) {
+          onXrLoaded()
+        } else {
+          window.addEventListener("xrloaded", onXrLoaded)
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <!-- Канвас для отрисовки видео и 3D -->
+    <canvas id="camerafeed"></canvas>
+  </body>
+</html>

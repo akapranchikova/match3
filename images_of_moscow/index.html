@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vdnh.svg" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
+    />
+    <title>VDNH</title>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div x-cloak x-data id="app">
+      <div>
+        {{> bckg }}
+        <div x-show="$store.app.currentPage === 'splash'">{{> splash }}</div>
+        <div x-show="$store.app.currentPage === 'onboard'">{{> intro }}</div>
+        <!-- <div x-show="$store.app.currentPage === 'player'">{{> player }}</div> -->
+        <div x-show="$store.app.currentPage === 'quiz'">{{> quiz }}</div>
+        <!-- <div x-show="$store.app.currentPage === 'gallery'">{{> gallery }}</div> -->
+        <div x-show="$store.app.currentPage === 'paint'" class="paint">
+          {{> paint }}
+        </div>
+      </div>
+    </div>
+    <!-- <script src="tcrs-moving-tooltip.min.js"></script> -->
+    <script src="toolcool-range-slider.min.js"></script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

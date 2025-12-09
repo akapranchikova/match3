@@ -1,0 +1,37 @@
+{{! <div class="bckg-gray" x-show="$store.app.currentPage==='gallery'" x-transition>
+</div> }}
+<div
+  class="bckg-1"
+  x-show="$store.app.currentPage==='paint' && !$store.app.player.isFinished"
+>
+  <img
+    x-bind:src="`/content/${$store.app.player.currentPicture}/thumb.webp`"
+    x-bind:style="`height: 100%; object-fit:cover;filter: blur(10px) grayscale(${$store.app.bckgPicGrayscale}%);opacity:${ $store.app.currentPage==='player' ? 1 : 0};transition: 1.5s ease`"
+  />
+</div>
+<div
+  x-show="$store.app.currentPage === 'onboard' || $store.app.currentPage === 'splash'"
+  :class="{'start-bg': true, '--onboard': $store.app.currentPage === 'onboard' }"
+>
+</div>
+{{! <div
+  class="bckg-2"
+  x-show="$store.app.currentPage==='player' || $store.app.currentPage==='intro'"
+  x-transition
+>
+</div> }}
+<style>
+  .bckg-1 {
+    position: fixed;
+    height: 100dvh;
+    width: 100dvw;
+    object-fit: cover;
+  }
+
+  .bckg-gray {
+    position: fixed;
+    height: 100dvh;
+    width: 100dvw;
+    background-color: #1a1a1a;
+  }
+</style>

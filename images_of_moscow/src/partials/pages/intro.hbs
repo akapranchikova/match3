@@ -1,0 +1,258 @@
+{{> intro-top-navbar }}
+<div x-init="$store.app.initOnboard()" class="intro">
+
+  <div
+    x-show="$store.app.introStep === 1"
+    class="intro-text-1 intro-text-type-1"
+    x-transition:enter
+  >
+    ОБРАЗ МОСКВЫ В&nbsp;РУССКОМ ИСКУССТВЕ
+  </div>
+
+  <div x-show="$store.app.introStep === 1" class="intro-art" x-transition:enter>
+    <span class="_s-1-item-1">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/step-1-item-1.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-rotated"
+        x-transition:enter-end="transition-straight"
+      />
+    </span>
+    <span class="_s-1-item-2">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/step-1-item-2.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-right"
+        x-transition:enter-end="transition-show-x"
+      />
+    </span>
+    <span class="_s-1-item-3">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/step-1-item-3.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-rotated-m"
+        x-transition:enter-end="transition-straight"
+      />
+    </span>
+    <span class="_s-1-item-4">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/step-1-arrow.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-zoom"
+        x-transition:enter-end="transition-show-zoom"
+      />
+    </span>
+    <span class="_s-1-item-5">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/step-1-frame.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-zoom"
+        x-transition:enter-end="transition-show-zoom"
+      />
+    </span>
+  </div>
+
+  <span class="_intro-play-head">
+    <img
+      x-show="$store.app.introStep === 2 && $store.app.introArtAnimated"
+      src="/img/onboard/play-head.png"
+      class="_preload-intro-img"
+      alt=""
+      x-transition:enter="bouncy"
+      x-transition:enter-start="transition-hidden-up"
+      x-transition:enter-end="transition-show-y"
+    />
+  </span>
+  <div x-show="$store.app.introStep === 2" class="intro-art" x-transition:enter>
+    <span class="_play">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/play.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-zoom"
+        x-transition:enter-end="transition-show-zoom"
+      />
+    </span>
+  </div>
+
+  <div x-show="$store.app.introStep === 3" class="intro-art" x-transition:enter>
+    <span class="_giga">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/giga-logo.svg"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-down"
+        x-transition:enter-end="transition-show-x"
+      />
+    </span>
+    <span class="_giga-art-2">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/giga-art-2.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-rotated"
+        x-transition:enter-end="transition-straight"
+      />
+    </span>
+    <span class="_giga-art-1">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/giga-art-1.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-rotated-m"
+        x-transition:enter-end="transition-straight"
+      />
+    </span>
+  </div>
+
+  <div x-show="$store.app.introStep === 4" class="intro-art" x-transition:enter>
+    <span class="_hp-1">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/headphones-1.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-left"
+        x-transition:enter-end="transition-show-x"
+      />
+    </span>
+    <span class="_hp-2">
+      <img
+        x-show="$store.app.introArtAnimated"
+        src="/img/onboard/headphones-2.png"
+        class="_preload-intro-img"
+        alt=""
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-right"
+        x-transition:enter-end="transition-show-x"
+      />
+    </span>
+  </div>
+
+  <div
+    x-show="$store.app.introStep >= 2 && $store.app.introStep <= 4"
+    class="intro-content"
+    x-transition
+  >
+    <div
+      x-show="$store.app.introStep === 2"
+      class="intro-text-type-1"
+      x-transition:enter
+    >
+      ЖИВОЙ ПОРТРЕТ ЭПОХ
+    </div>
+    <div
+      x-show="$store.app.introStep === 3"
+      class="intro-text-type-1"
+      x-transition:enter
+    >
+      Гигачат расскажет историю
+    </div>
+    <div
+      x-show="$store.app.introStep === 4"
+      class="intro-text-type-1"
+      x-transition:enter
+    >
+      Наденьте наушники
+    </div>
+
+    <div
+      x-show="$store.app.introStep === 2"
+      class="intro-text-type-2"
+      x-transition:enter
+    >
+      Москва — это портрет эпох, зеркало общества и экран, на&nbsp;котором каждый
+      увидит своё. Сбер оживил картины с&nbsp;помощью анимации, чтобы увидеть Москву
+      прошлого в&nbsp;движении
+    </div>
+    <div
+      x-show="$store.app.introStep === 3"
+      class="intro-text-type-2"
+      x-transition:enter
+    >
+      Истории о картинах созданы с&nbsp;помощью нейросети Сбера ГигаЧат, но&nbsp;основаны
+      на&nbsp;реальных фактах из&nbsp;жизни москвичей
+    </div>
+    <div
+      x-show="$store.app.introStep === 4"
+      class="intro-text-type-2"
+      x-transition:enter
+    >
+      Так будет комфортнее вам и&nbsp;другим посетителям, выставка дополнена
+      аудиосопровождением
+    </div>
+
+    <button
+      :class="{'button-intro': true, 'button-accent': $store.app.mainButtonActive}"
+      @click="$store.app.introNextStep()"
+    >
+      Дальше
+    </button>
+  </div>
+
+  <div x-show="$store.app.introStep === 5" class="intro-video" x-transition>
+    <video id="onboard-video" playsinline preload="metadata">
+      <source x-show="$store.app.isIOS()" src="/intro-guide-ios.mov" type='video/mp4;codecs="hvc1"' />
+      <source x-show="!$store.app.isIOS()" src="/intro-guide.webm" type='video/webm' />
+    </video>
+  </div>
+
+  <div x-show="$store.app.introStep === 5" class="intro-content" x-transition>
+    <div
+      class="intro-content__subtitles"
+      x-html="$store.app.introCurrentSubtitles"
+    ></div>
+    <button
+      :class="{'button-intro': true, 'button-accent': $store.app.mainButtonActive}"
+      @click="$store.app.introNextStep()"
+    >
+      К картине
+    </button>
+  </div>
+
+  <div x-show="$store.app.introStep === 1" class="intro-logos" x-transition>
+    <img src="/img/bottom-logos.svg" class="_preload-intro-img" />
+  </div>
+</div>
+
+<style>
+  .transition-slide {
+    transition:
+      opacity 3s ease-out 0.3s,
+      transform 3s ease-out;
+  }
+
+  .transition-slide.enter-start {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+
+  .transition-slide.enter-end {
+    opacity: 1;
+    transform: translateX(0);
+  }
+</style>

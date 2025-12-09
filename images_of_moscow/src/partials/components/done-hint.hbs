@@ -1,0 +1,22 @@
+<div x-show="!$store.app.isPlaying && $store.app.player.playerMode === 'picture' && $store.app.isCurrentPictureDone()" x-transition class="hint"
+  style="display: flex; flex-direction: column; align-content: center; text-align: center; bottom:10px; gap: 30px">
+  <p>
+    Вы посмотрели все детали, перейдем к следующей картине?
+  </p>
+  <div class="button-wrapper bottom-button-wrapper" style="width: 100%;margin:auto">
+    <button class="button border-bottom bottom-button" style="padding-right: 20px;padding-left:20px"
+      @click="$store.app.dropCurrentPictureProgress()">
+      <img src="/icons/rere.svg" style="margin-top: 5px;" />
+    </button>
+    <button class="button border-bottom bottom-button" style="padding-right: 20px;padding-left:20px"
+      @click="$store.app.share()">
+      Рассказать Друзьям
+    </button>
+  </div>
+  <div class="button-wrapper bottom-button-wrapper" style="margin:auto">
+    <button class="button border-bottom bottom-button"
+      @click="() => {$store.app.currentPage='gallery'}">
+      В Галерею
+    </button>
+  </div>
+</div>

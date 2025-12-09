@@ -1,0 +1,1759 @@
+$small-phone-w: 435px;
+$small-phone-h: 680px;
+
+html,
+body {
+  touch-action: manipulation;
+  /* Prevents double-tap zoom */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@font-face {
+  font-family: "TT-Fors";
+  src: url("/fonts/TT-Fors-Medium.ttf") format("truetype");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "TT-Fors";
+  src: url("/fonts/TT-Fors-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "TT Alientz Trial Serif";
+  src:
+    url("/fonts/TT Alientz Trial Serif.woff2") format("woff2"),
+    url("/fonts/TT Alientz Trial Serif.woff") format("woff");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Geologica";
+  src:
+    url("/fonts/Geologica-Regular.woff2") format("woff2"),
+    url("/fonts/Geologica-Regular.woff") format("woff");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Geologica";
+  src:
+    url("/fonts/Geologica-Medium.woff2") format("woff2"),
+    url("/fonts/Geologica-Medium.woff") format("woff");
+  font-weight: 600;
+}
+
+$font-al: "TT Alientz Trial Serif";
+$font-geo: "Geologica";
+
+:root {
+  font-family: "TT-Fors", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  transition: 0.2s ease-in-out;
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100dvw;
+  height: 100vh;
+  background-color: #000;
+  color: #eee;
+}
+
+.button-green {
+  background:
+    radial-gradient(
+        147.34% 192.91% at 62.01% -54.07%,
+        #33e15d 0%,
+        #19bcae 45.15%,
+        #009732 90.31%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+    radial-gradient(
+        125.58% 237% at -7.6% 130.23%,
+        #95e800 9.69%,
+        #03aeef 75.89%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+    radial-gradient(
+        125.99% 175.29% at 31.28% 139.66%,
+        #faed03 0%,
+        #9fe71f 32.5%,
+        #42e3b4 60%,
+        #02adee 100%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+    #ffffff;
+}
+
+.button-intro {
+  width: 204px;
+  height: 86px;
+  border: 0;
+  border-radius: 109px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-family: "TT-Fors";
+  font-size: 18px;
+  font-weight: 500;
+  transition: 0.2s ease;
+
+  margin: 0 auto;
+
+  backdrop-filter: blur(5px) brightness(150%);
+  -webkit-tap-highlight-color: transparent;
+
+  background:
+    radial-gradient(
+        147.34% 192.91% at 62.01% -54.07%,
+        #33e15d 0%,
+        #19bcae 45.15%,
+        #009732 90.31%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+    radial-gradient(
+        125.58% 237% at -7.6% 130.23%,
+        #95e800 9.69%,
+        #03aeef 75.89%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+    radial-gradient(
+        125.99% 175.29% at 31.28% 139.66%,
+        #faed03 0%,
+        #9fe71f 32.5%,
+        #42e3b4 60%,
+        #02adee 100%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+    #ffffff;
+
+  // background:
+  //   radial-gradient(
+  //       125.99% 175.29% at 31.28% 139.66%,
+  //       #faed03 0%,
+  //       #9fe71f 32.5%,
+  //       #42e3b4 60%,
+  //       #02adee 100%
+  //     )
+  //     /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+  //   #ffffff;
+
+  @media screen and (max-width: $small-phone-w) {
+    height: 68px;
+  }
+  @media screen and (max-height: $small-phone-h) {
+    height: 58px;
+  }
+}
+
+.button-accent {
+  transform: scale(0.95);
+}
+
+.button-close {
+  border-radius: 100px;
+  background-color: #171a16;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 94px;
+  height: 54px;
+}
+
+.button {
+  width: 100%;
+  padding-right: auto;
+  padding-left: auto;
+  display: inline-block;
+  color: #fff;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  font-family: "TT-Fors";
+  font-size: 18px;
+  font-weight: 500;
+  transition: 0.2s ease;
+  // background-color: #0000;
+  // background: linear-gradient(#dadada13, #0003, #4442);
+  margin-top: -3px;
+  backdrop-filter: blur(5px) brightness(150%);
+  -webkit-tap-highlight-color: transparent;
+
+  background:
+    radial-gradient(
+        125.99% 175.29% at 31.28% 139.66%,
+        #faed03 0%,
+        #9fe71f 32.5%,
+        #42e3b4 60%,
+        #02adee 100%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+    #ffffff;
+  // border-radius: 109px;
+}
+
+.button-in-game {
+  background: rgba(120, 120, 128, 0.16);
+  mix-blend-mode: normal;
+  backdrop-filter: blur(32px);
+  border-radius: 100px;
+  height: 68px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.1s ease;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 20px;
+  @media screen and (max-height: $small-phone-h) {
+    height: 58px;
+  }
+}
+
+.button-wrapper {
+  --h: 50px;
+  height: var(--h);
+  border-radius: calc(var(--h) / 2);
+  // border-top: 1.8px solid #9997;
+  // border-bottom: 1.8px solid #aaa7;
+  box-sizing: border-box;
+  // background: radial-gradient(#0000001a, #00101020, #04101020, #00000077);
+  overflow: hidden;
+  display: flex;
+}
+
+.button-blurred-red {
+  background-color: #e004;
+  backdrop-filter: blur(1.5px);
+}
+
+// .. SPLASH SCREEN ....................................................................................................................
+
+.splash {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  &__img {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    @media screen and (max-width: $small-phone-w) {
+      top: 40%;
+    }
+    @media screen and (max-height: $small-phone-h) {
+      top: 33%;
+      width: 200px;
+    }
+    img,
+    video {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 100%;
+      animation: moveInCircle 3s linear infinite;
+    }
+  }
+  &__text {
+    position: absolute;
+    left: 0;
+    bottom: 120px;
+    font-family: $font-al;
+    font-size: 22px;
+    line-height: 150%;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 0 40px;
+    @media screen and (max-width: 390px) {
+      font-size: 18px;
+      bottom: 110px;
+    }
+    @media screen and (max-height: $small-phone-h) {
+      font-size: 18px;
+      bottom: 110px;
+    }
+  }
+}
+
+.start-bg {
+  position: fixed;
+  height: 100dvh;
+  width: 100dvw;
+  transition: all 0.2s ease-in;
+
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 6.59%, rgba(0, 0, 0, 0) 100%),
+    radial-gradient(
+        138.75% 35.62% at 0% -12.76%,
+        #377a00 0%,
+        #607900 47.96%,
+        #020005 100%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: all 0.2s ease-in;
+
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.6) 6.59%, rgba(0, 0, 0, 0) 100%),
+      radial-gradient(
+          164.43% 36.6% at -3.98% 7.95%,
+          #377a00 0%,
+          #607900 41.24%,
+          #020005 100%
+        )
+        /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+  }
+
+  &.--onboard {
+    &:after {
+      opacity: 1;
+    }
+  }
+}
+
+.header {
+  top: 0;
+  gap: 25px;
+  padding: 24px;
+  width: 100dvw;
+  position: fixed;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+// .. INTRO ............................................................................................................................
+
+.intro-logos {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100dvw;
+  padding: 0 33px 35px;
+  text-align: center;
+  img {
+    width: 100%;
+    max-width: 336px;
+  }
+}
+
+.intro-text-1 {
+  position: fixed;
+  bottom: 120px;
+  left: 0;
+  @media screen and (max-width: $small-phone-w) {
+    bottom: 110px;
+  }
+}
+
+.intro-video-preload {
+  position: absolute;
+  top: 100%;
+  height: 0;
+  overflow: hidden;
+}
+
+.intro-content {
+  position: fixed;
+  bottom: 40px;
+  left: 0;
+  width: 100%;
+  .bottom-button-wrapper {
+    margin: 0 auto;
+  }
+  &__subtitles {
+    margin-bottom: 32px;
+    color: white;
+    font-size: 24px;
+    line-height: 124%;
+    padding: 0 49px;
+    @media screen and (max-height: $small-phone-h) {
+      font-size: 18px;
+    }
+  }
+  // @media screen and (max-width: $small-phone-w) {
+  //   bottom: 30px;
+  // }
+  @media screen and (max-height: $small-phone-h) {
+    bottom: 30px;
+  }
+}
+
+.intro-text-type-1 {
+  font-family: $font-al;
+  font-size: 45px;
+  line-height: 100%;
+  text-transform: uppercase;
+  text-align: center;
+  color: white;
+  padding: 0 40px;
+  @media screen and (max-width: 390px) {
+    font-size: 40px;
+  }
+  @media screen and (max-width: $small-phone-w) {
+    font-size: 32px;
+  }
+  @media screen and (max-height: $small-phone-h) {
+    font-size: 24px;
+    line-height: 120%;
+  }
+}
+
+.intro-text-type-2 {
+  font-size: 20px;
+  line-height: 124%;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 23px 0 32px;
+  text-align: center;
+  padding: 0 40px;
+  @media screen and (max-width: 390px) {
+    font-size: 18px;
+  }
+  @media screen and (max-width: $small-phone-w) {
+    font-size: 16px;
+    margin: 20px 0 28px;
+  }
+  @media screen and (max-height: $small-phone-h) {
+    font-size: 15px;
+    margin: 18px 0 26px;
+  }
+}
+
+.intro-video {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  video {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    @media screen and (min-width: 430px) {
+      max-width: 88%;
+    }
+
+    @media screen and (max-height: $small-phone-h) {
+      width: auto;
+      height: 90%;
+    }
+  }
+}
+
+._intro-play-head {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  img {
+    width: 100%;
+  }
+  @media screen and (max-height: $small-phone-h) {
+    top: -80px;
+  }
+}
+
+.intro-art {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -80%);
+  ._play {
+    position: absolute;
+    left: 0;
+    top: -100px;
+    transform: translate(-50%, -50%);
+    img {
+      width: 276px;
+      @media screen and (max-width: $small-phone-w) {
+        width: 198px;
+      }
+      @media screen and (max-height: $small-phone-h) {
+        width: 216px;
+      }
+    }
+  }
+  ._giga {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -50%);
+    img {
+      width: 376px;
+    }
+    @media screen and (max-width: 390px) {
+      img {
+        width: 326px;
+      }
+    }
+    @media screen and (max-width: $small-phone-w) {
+      img {
+        width: 289px;
+      }
+    }
+    @media screen and (max-height: $small-phone-h) {
+      img {
+        width: 229px;
+        margin-top: -50px;
+      }
+    }
+  }
+  ._giga-art-2 {
+    position: absolute;
+    left: 220px;
+    top: 110px;
+    transform: translate(-50%, -50%);
+    img {
+      width: 273px;
+    }
+    @media screen and (max-width: $small-phone-w) {
+      left: 170px;
+      top: 80px;
+      img {
+        width: 213px;
+      }
+    }
+    @media screen and (max-height: $small-phone-h) {
+      left: 170px;
+      top: 80px;
+      img {
+        width: 213px;
+      }
+    }
+  }
+  ._giga-art-1 {
+    position: absolute;
+    left: -180px;
+    top: -310px;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    img {
+      width: 766px;
+    }
+    @media screen and (max-width: $small-phone-w) {
+      left: -130px;
+      top: -180px;
+      img {
+        width: 513px;
+      }
+    }
+    @media screen and (max-height: $small-phone-h) {
+      left: -130px;
+      top: -180px;
+      img {
+        width: 513px;
+      }
+    }
+  }
+  ._hp-1,
+  ._hp-2 {
+    img {
+      width: 216px;
+    }
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -50%);
+  }
+  ._hp-1 {
+    left: -70px;
+    top: 70px;
+    @media screen and (max-width: $small-phone-w) {
+      top: 40px;
+    }
+    @media screen and (max-height: $small-phone-h) {
+      top: 10px;
+      img {
+        width: 186px;
+      }
+    }
+  }
+  ._hp-2 {
+    left: 70px;
+    top: -70px;
+    @media screen and (max-height: $small-phone-h) {
+      img {
+        width: 186px;
+      }
+    }
+  }
+  ._s-1-item-1 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-110%, -30%);
+    z-index: 2;
+    img {
+      width: 316px;
+      @media screen and (max-width: $small-phone-w) {
+        width: 289px;
+      }
+      @media screen and (max-height: $small-phone-h) {
+        width: 289px;
+      }
+    }
+  }
+  ._s-1-item-2 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-29%, -60%);
+    z-index: 1;
+    img {
+      width: 916px;
+      @media screen and (max-width: $small-phone-w) {
+        width: 789px;
+      }
+      @media screen and (max-height: $small-phone-h) {
+        width: 789px;
+      }
+    }
+  }
+  ._s-1-item-3 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(0%, -10%);
+    z-index: 5;
+    img {
+      width: 326px;
+      @media screen and (max-width: $small-phone-w) {
+        width: 232px;
+      }
+      @media screen and (max-height: $small-phone-h) {
+        width: 232px;
+      }
+    }
+  }
+  // arrow
+  ._s-1-item-4 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-20%, -95%);
+    z-index: 4;
+    img {
+      width: 396px;
+      @media screen and (max-width: $small-phone-w) {
+        width: 260px;
+      }
+      @media screen and (max-height: $small-phone-h) {
+        width: 260px;
+      }
+    }
+  }
+  // frame
+  ._s-1-item-5 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-42%, -65%);
+    z-index: 3;
+    img {
+      width: 596px;
+      @media screen and (max-width: $small-phone-w) {
+        width: 419px;
+      }
+      @media screen and (max-height: $small-phone-h) {
+        width: 419px;
+      }
+    }
+  }
+}
+
+.gallery-top-navbar {
+  font-style: normal;
+  box-sizing: border-box;
+  top: 0px;
+  margin: 30px;
+  width: calc(100dvw - 50px);
+  position: fixed;
+  color: white;
+  display: flex;
+  gap: 15px;
+}
+
+.left-part {
+  flex: 1;
+  display: flex;
+  gap: 15px;
+  color: #eeed;
+  font-weight: 600;
+  align-items: center;
+}
+
+.left-title {
+  flex: 1;
+  display: flex;
+  color: #eeed;
+  font-weight: 500;
+  line-height: 1;
+  font-size: 27px;
+}
+
+.right-part {
+  flex: 0;
+  display: flex;
+  gap: 7px;
+}
+
+.word-transition {
+  transition: all 0.3s ease;
+  display: inline-block;
+  margin: 0 2px;
+}
+
+.subtitle-block {
+  text-rendering: optimizeLegibility;
+  text-align: center;
+}
+
+.top-content {
+  touch-action: none;
+  /* Prevents double-tap zoom */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  position: fixed;
+  width: calc(100dvw - 60px);
+  margin: 30px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  bottom: 120px;
+}
+
+.subtitles {
+  font-size: 18px;
+  touch-action: none;
+  pointer-events: none;
+  /* Prevents double-tap zoom */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  position: fixed;
+  background-color: #0005;
+  box-shadow: 0px 0px 50px 50px #0005;
+  transition: 0.3ease;
+  width: 100dvw;
+  box-sizing: border-box;
+  padding: 10px 30px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  bottom: 20px;
+  transition: 0.5s ease-out;
+  mix-blend-mode: luminosity;
+}
+
+.hint {
+  position: fixed;
+  width: calc(100dvw - 60px);
+  margin: 30px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  bottom: 120px;
+  background-color: #000a;
+  box-shadow: 0px 0px 50px 50px #000a;
+}
+
+.display-horizontal {
+  display: flex;
+}
+
+@media (max-width: 500px) {
+  body {
+    height: 100dvh;
+  }
+
+  .display-horizontal {
+    display: none;
+  }
+}
+
+.bckg-2 {
+  pointer-events: none;
+  transition: 0.1s ease;
+  position: fixed;
+  height: 100dvh;
+  width: 100dvw;
+  background: linear-gradient(#000a, #0000, #0002, #000e);
+}
+
+// .. QUIZ ...............................................................................................................
+
+.quiz {
+  width: 100%;
+  height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 6.59%, rgba(0, 0, 0, 0) 100%),
+    linear-gradient(
+      180deg,
+      rgba(2, 0, 5, 0) -39.75%,
+      rgba(9, 76, 171, 0.02) -28.34%,
+      rgba(6, 195, 91, 0.05) 59.15%
+    ),
+    linear-gradient(0deg, rgba(22, 26, 3, 0.6), rgba(22, 26, 3, 0.6)), #000000;
+}
+
+.quiz-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 60px 22px;
+  gap: 30px;
+  &__progress {
+    padding: 6px 0 0;
+    flex-grow: 1;
+    &__label {
+      font-family: $font-al;
+      font-size: 15px;
+      line-height: 120%;
+      margin-bottom: 10px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    &__line {
+      height: 8px;
+      border-radius: 10px;
+      background-color: rgba(77, 88, 68, 0.5);
+      width: 100%;
+      position: relative;
+      ._passed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        border-radius: 10px;
+
+        background:
+          linear-gradient(360deg, #00be3f 9.69%, #61e481 100%),
+          linear-gradient(
+            270.01deg,
+            #02adee -93.29%,
+            #42e3b4 -15.97%,
+            #9fe71f 37.18%,
+            #faed03 100%
+          ),
+          #ccfebd;
+
+        transition: all 0.3s ease-out;
+      }
+    }
+  }
+  @media screen and (max-width: $small-phone-h) {
+    padding: 30px 22px;
+  }
+}
+
+.quiz-content {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 20px 32px;
+  &__question {
+    font-size: 24px;
+    line-height: 124%;
+    font-weight: 500;
+    color: #d6e1d0;
+    text-align: center;
+    @media screen and (max-width: $small-phone-w) {
+      font-size: 22px;
+      line-height: 114%;
+    }
+    @media screen and (max-width: $small-phone-h) {
+      font-size: 20px;
+    }
+  }
+  &__answers {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    > div {
+      background-color: #1e291a;
+      height: 68px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: $font-geo;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1;
+      color: #d8ffc3;
+      border-radius: 100px;
+      padding: 0 20px;
+      position: relative;
+      transition: all 0.2s ease;
+
+      > span {
+        max-width: 70vw;
+      }
+
+      &.--right {
+        background:
+          radial-gradient(
+              147.34% 192.91% at 62.01% -54.07%,
+              #33e15d 0%,
+              #19bcae 45.15%,
+              #009732 90.31%
+            )
+            /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+          radial-gradient(
+              125.58% 237% at -7.6% 130.23%,
+              #95e800 9.69%,
+              #03aeef 75.89%
+            )
+            /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+          radial-gradient(
+              125.99% 175.29% at 31.28% 139.66%,
+              #faed03 0%,
+              #9fe71f 32.5%,
+              #42e3b4 60%,
+              #02adee 100%
+            )
+            /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+          #ffffff;
+
+        transform: scale(1.05);
+      }
+      &.--wrong {
+        background: linear-gradient(86.48deg, #fd5d0d 14.41%, #ff3b30 62.8%);
+        transform: scale(1.05);
+      }
+      @media screen and (max-width: $small-phone-w) {
+        height: 58px;
+        font-size: 17px;
+      }
+      @media screen and (max-width: $small-phone-h) {
+        height: 58px;
+        font-size: 17px;
+      }
+    }
+  }
+}
+
+.quiz-paint {
+  position: fixed;
+  top: 42%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  text-align: center;
+  img {
+    max-height: 300px;
+  }
+  @media screen and (max-width: $small-phone-h) {
+    top: 34%;
+    img {
+      max-height: 200px;
+      max-width: 300px;
+    }
+  }
+}
+
+.quiz-finish {
+  height: 100%;
+
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 6.59%, rgba(0, 0, 0, 0) 100%),
+    radial-gradient(
+        164.43% 36.6% at -3.98% 7.95%,
+        #377a00 0%,
+        #607900 41.24%,
+        #020005 100%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+
+  &__sber {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    z-index: 10;
+    @media screen and (max-width: $small-phone-w) {
+      width: 190px;
+      left: 20px;
+      top: 20px;
+    }
+  }
+  &__art {
+    position: fixed;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+
+    img {
+      width: 720px;
+      margin-right: 10px;
+    }
+
+    &.--bad {
+      img {
+        // width: 480px;
+      }
+    }
+    &.--max {
+      img {
+        margin-right: 50px;
+      }
+    }
+    // @media screen and (max-width: $small-phone-w) {
+    //   top: 30%;
+    //   transform: scale(0.8);
+    // }
+  }
+  &__result {
+    margin-bottom: 36px;
+    text-align: center;
+    font-family: $font-al;
+    font-size: 32px;
+    line-height: 100%;
+    text-transform: uppercase;
+    ._score {
+      font-size: 300px;
+      line-height: 300px;
+      @media screen and (max-width: $small-phone-w) {
+        font-size: 240px;
+        line-height: 240px;
+      }
+      @media screen and (max-height: $small-phone-h) {
+        font-size: 240px;
+        line-height: 240px;
+      }
+    }
+  }
+  &__message {
+    margin-bottom: 36px;
+    @media screen and (max-width: $small-phone-w) {
+      margin-bottom: 22px;
+    }
+    ._title {
+      font-family: $font-geo;
+      font-size: 37px;
+      line-height: 100%;
+      text-align: center;
+      color: white;
+      margin-bottom: 23px;
+      @media screen and (max-width: $small-phone-w) {
+        font-size: 35px;
+        margin-bottom: 16px;
+      }
+      @media screen and (max-height: $small-phone-h) {
+        font-size: 30px;
+        margin-bottom: 16px;
+      }
+    }
+    ._text {
+      font-family: $font-geo;
+      font-size: 18px;
+      @media screen and (max-width: $small-phone-w) {
+        font-size: 16px;
+      }
+      @media screen and (max-height: $small-phone-h) {
+        font-size: 16px;
+      }
+    }
+  }
+  &__content {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    padding: 0 30px;
+    text-align: center;
+    z-index: 10;
+    @media screen and (max-height: $small-phone-h) {
+      bottom: 20px;
+    }
+  }
+  &__overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+    opacity: 0.4;
+    z-index: 1;
+  }
+}
+
+// .. PAINT ............................................................................................................................
+
+.paint {
+  height: 100%;
+  position: fixed;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+.paint-finish {
+  height: 100%;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 6.59%, rgba(0, 0, 0, 0) 100%),
+    radial-gradient(
+        164.43% 36.6% at -3.98% 7.95%,
+        #377a00 0%,
+        #607900 41.24%,
+        #020005 100%
+      )
+      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+
+  &__sber {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    z-index: 10;
+    @media screen and (max-width: $small-phone-w) {
+      width: 190px;
+      left: 20px;
+      top: 20px;
+    }
+  }
+  &__art {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    ._art-1 {
+      position: relative;
+      transform: translateY(10%);
+      z-index: 0;
+      @media screen and (max-width: 390px) {
+        width: 349px;
+      }
+      @media screen and (max-width: $small-phone-w) {
+        width: 309px;
+      }
+    }
+    ._art-2 {
+      position: relative;
+      transform: translate(270px, -130px);
+      z-index: 1;
+      @media screen and (max-width: 390px) {
+        width: 210px;
+      }
+      @media screen and (max-width: $small-phone-w) {
+        width: 180px;
+        transform: translate(230px, -130px);
+      }
+    }
+    ._paint {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 290px;
+      max-height: 300px;
+      @media screen and (max-width: $small-phone-w) {
+        max-width: 210px;
+        top: 40%;
+      }
+    }
+  }
+  &__bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 0 16px 32px;
+    @media screen and (max-width: $small-phone-w) {
+      padding: 0 16px 20px;
+    }
+    .intro-text-type-1 {
+      padding: 0 5px;
+      @media screen and (max-width: 390px) {
+        font-size: 40px;
+      }
+      @media screen and (max-width: $small-phone-w) {
+        font-size: 32px;
+      }
+    }
+    .intro-text-type-2 {
+      @media screen and (max-width: 390px) {
+        font-size: 16px;
+        margin: 18px 0 24px;
+      }
+      @media screen and (max-width: $small-phone-w) {
+        font-size: 14px;
+      }
+    }
+    &__options {
+      display: grid;
+      gap: 8px;
+      ._btn {
+        height: 68px;
+        border-radius: 100px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(120, 120, 128, 0.16);
+        font-size: 18px;
+        text-decoration: none;
+        color: #eee;
+        &.--special {
+          backdrop-filter: blur(5px) brightness(150%);
+          -webkit-tap-highlight-color: transparent;
+
+          background:
+            radial-gradient(
+              125.99% 175.29% at 31.28% 139.66%,
+              #faed03 0%,
+              #9fe71f 32.5%,
+              #42e3b4 60%,
+              #02adee 100%
+            ),
+            #ffffff;
+        }
+
+        @media screen and (max-width: 390px) {
+          height: 60px;
+          font-size: 17px;
+        }
+        @media screen and (max-width: $small-phone-w) {
+          height: 50px;
+          font-size: 15px;
+        }
+      }
+    }
+  }
+}
+
+.paint-game {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 6.59%, rgba(0, 0, 0, 0) 100%),
+    linear-gradient(
+      180deg,
+      rgba(2, 0, 5, 0) -39.75%,
+      rgba(9, 76, 171, 0.02) -28.34%,
+      rgba(6, 195, 91, 0.05) 59.15%
+    ),
+    linear-gradient(0deg, rgba(22, 26, 3, 0.6), rgba(22, 26, 3, 0.6)), #000000;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px 22px;
+    position: relative;
+    z-index: 100;
+    font-family: $font-geo;
+    ._labels {
+      padding-top: 2px;
+      font-size: 14px;
+      line-height: 1;
+      padding-right: 20px;
+      color: rgba(255, 255, 255, 0.5);
+      div + div {
+        margin-top: 8px;
+      }
+      ._title {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+
+  &__footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0 22px 30px;
+    &__static-text {
+      text-align: center;
+      margin-bottom: -20px;
+      ._btn {
+        background: rgba(120, 120, 128, 0.16);
+        mix-blend-mode: normal;
+        backdrop-filter: blur(32px);
+        border-radius: 100px;
+        height: 68px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.1s ease;
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 20px;
+      }
+    }
+    &__buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      > div {
+        background: rgba(120, 120, 128, 0.16);
+        mix-blend-mode: normal;
+        backdrop-filter: blur(32px);
+        border-radius: 100px;
+        height: 68px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.1s ease;
+        @media screen and (max-height: $small-phone-h) {
+          height: 58px;
+        }
+      }
+      ._play {
+        flex-grow: 2;
+        img {
+          height: 40px;
+          vertical-align: bottom;
+        }
+      }
+      ._speed {
+        width: 108px;
+        font-family: $font-geo;
+        font-size: 18px;
+        font-weight: 600;
+        span {
+          color: #ccfebd;
+          // background:
+          //   linear-gradient(
+          //     270.01deg,
+          //     #02adee -93.29%,
+          //     #42e3b4 -15.97%,
+          //     #9fe71f 37.18%,
+          //     #faed03 100%
+          //   ),
+          //   linear-gradient(0deg, #61e481, #61e481),
+          //   linear-gradient(0deg, #ccfebd, #ccfebd),
+          //   linear-gradient(
+          //     0deg,
+          //     rgba(255, 255, 255, 0.6),
+          //     rgba(255, 255, 255, 0.6)
+          //   ),
+          //   rgba(255, 255, 255, 0.8);
+          // -webkit-background-clip: text;
+          // -webkit-text-fill-color: transparent;
+          // background-clip: text;
+          // text-fill-color: transparent;
+        }
+      }
+    }
+  }
+
+  &__guide {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 45vw;
+    &.--left {
+      right: auto;
+      left: 0;
+    }
+    video {
+      width: 100%;
+      vertical-align: bottom;
+    }
+  }
+}
+
+// .. TRANSITIONS ......................................................................................................................
+
+.bouncy {
+  transition: all 0.3s cubic-bezier(0.6, 1.1, 0.6, 1.1);
+}
+
+.transition-hidden-down {
+  transform: translateX(50%) translateY(100%);
+}
+
+.transition-hidden-up {
+  transform: translateY(-100%);
+}
+
+.transition-hidden-left {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.transition-hidden-right {
+  transform: translateX(100%) translateY(50px) scale(0.8);
+  opacity: 0;
+}
+
+.transition-show-y {
+  transform: translateY(0);
+}
+
+.transition-show-x {
+  transform: translateX(0) translateY(0) scale(1);
+  opacity: 1;
+}
+
+.transition-rotated {
+  transform: rotate(70deg);
+}
+
+.transition-rotated-m {
+  transform: rotate(-70deg);
+}
+
+.transition-straight {
+  transform: rotate(0);
+}
+
+.transition-hidden-zoom {
+  transform: rotate(-70deg) scale(0.4);
+  opacity: 0.2;
+}
+
+.transition-show-zoom {
+  transform: rotate(0) scale(1);
+  opacity: 1;
+}
+.transition-hidden-scale {
+  transform: scale(0.4);
+  opacity: 0.2;
+}
+
+.transition-show-scale {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.video-player-container {
+  top: 0;
+  left: 0;
+  position: fixed;
+  width: 100dvw;
+  height: 100dvh;
+  overflow: hidden;
+  touch-action: none;
+  transform-origin: center center;
+  transition: none;
+  align-content: center;
+}
+
+.video-play {
+  margin: 0;
+  width: 100%;
+
+  .--as-point {
+    border-radius: 50%;
+    position: relative;
+    &:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      height: 110vw;
+      width: 110vw;
+      backdrop-filter: blur(30px);
+      border: 0.5px solid white;
+      border-radius: 50%;
+      overflow: hidden;
+      //mask: radial-gradient(transparent, black 80%);
+      mask: radial-gradient(transparent 55%, black 60%, black 100%);
+    }
+  }
+}
+
+#video-to-play,
+#img-to-play {
+  width: 100%;
+  touch-action: none;
+  transform-origin: center center;
+  transition: none;
+  margin: 0;
+  text-align: center;
+  // transform: translateY(-100px);
+}
+
+#img-container {
+  // padding-bottom: 100px;
+}
+
+#img-to-play .image {
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+  &.--revealed {
+    opacity: 1;
+  }
+}
+
+#video-to-play {
+  span {
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+    &.--revealed {
+      opacity: 1;
+    }
+    &.--as-point {
+      display: block;
+      transform: scale(0.1) rotate(25deg);
+      opacity: 0.1;
+      transition: all 0.75s ease-in;
+      &.--reveal {
+        transform: scale(0.96) rotate(0deg);
+        opacity: 1;
+      }
+      &:after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        inset: 0;
+        height: 100%;
+        width: 100%;
+        backdrop-filter: blur(10px);
+        // border: 0.5px solid white;
+        border-radius: 100%;
+        overflow: hidden;
+        transform: scale(1.03);
+        //mask: radial-gradient(transparent, black 80%);
+        mask: radial-gradient(transparent 55%, black 60%, black 100%);
+      }
+      video {
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+.paint-game {
+  .points-wrap {
+    z-index: 100;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .point {
+    position: absolute;
+    width: 50px;
+    margin-left: -25px;
+    height: 50px;
+    margin-top: -25px;
+    object-fit: cover;
+    border-radius: 25px;
+    transition: 0;
+    transform-origin: center;
+    -webkit-tap-highlight-color: #5d32;
+    &.--hidden {
+      display: none;
+    }
+  }
+
+  .point-img {
+    width: 100%;
+    border-radius: 50%;
+    // transform: scale(0.5);
+    transform-origin: center;
+    vertical-align: bottom;
+  }
+  .point-img-wrap {
+    position: relative;
+    img {
+      z-index: 1;
+      position: relative;
+    }
+    &:before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(
+            125.99% 175.29% at 31.28% 139.66%,
+            #faed03 0%,
+            #9fe71f 32.5%,
+            #42e3b4 60%,
+            #02adee 100%
+          )
+          /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
+        #ffffff;
+      left: 0;
+      top: 0;
+      border-radius: 50%;
+      z-index: 0;
+      transform: scale(1.1);
+      filter: blur(1px);
+    }
+  }
+}
+
+.paint .intro-content__subtitles {
+  font-size: 18px;
+  margin-bottom: 36px;
+}
+
+.video-slider {
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.text-hint {
+  text-align: center;
+  padding: 0 40px;
+  font-family: $font-geo;
+  &__title {
+    font-size: 20px;
+    line-height: 120%;
+    color: white;
+    font-weight: 600;
+    padding-top: 12px;
+  }
+  &__text {
+    font-size: 17px;
+    line-height: 130%;
+    color: rgba(255, 255, 255, 0.7);
+    padding-top: 6px;
+  }
+  @media screen and ((max-height: $small-phone-h) or (max-width: $small-phone-w)) {
+    &__title {
+      font-size: 16px;
+      padding-top: 10px;
+    }
+    &__text {
+      font-size: 14px;
+    }
+  }
+}
+
+.tap-hint {
+}
+
+.points-hint {
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+}
+
+.paint-loader {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  color: #ccfebd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  z-index: 10;
+  // text-transform: uppercase;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.6) 6.59%, rgba(0, 0, 0, 0) 100%),
+    linear-gradient(
+      180deg,
+      rgba(2, 0, 5, 0) -39.75%,
+      rgba(9, 76, 171, 0.02) -28.34%,
+      rgba(6, 195, 91, 0.05) 59.15%
+    ),
+    linear-gradient(0deg, rgba(22, 26, 3, 0.6), rgba(22, 26, 3, 0.6)), #000000;
+  > div {
+    display: inline-flex;
+    justify-items: center;
+    gap: 8px;
+  }
+  ._dot {
+    display: inline-block;
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+    background-color: #62e481;
+  }
+  ._btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: calc(100vw - 40px);
+    &.blocked {
+      pointer-events: none;
+      opacity: 0.3;
+    }
+  }
+  span {
+    animation: pulse-o 1s infinite ease-in;
+  }
+  ._paint {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    img {
+      width: 100%;
+    }
+  }
+  ._preload-video {
+    position: absolute;
+    top: 100%;
+    width: 0;
+    height: 0;
+  }
+}
+
+@keyframes pulse-o {
+  0% {
+    opacity: 0.7;
+    transform: scale(1); /* Start at normal size */
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1); /* Grow slightly */
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1); /* Return to normal size */
+  }
+}
+
+#videos-buffer {
+  height: 0;
+  top: 100%;
+  position: absolute;
+}
+
+#debug-zoom {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: #ccc;
+  font-size: 14px;
+  padding: 4px;
+  z-index: 10000000;
+}

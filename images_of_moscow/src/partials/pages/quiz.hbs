@@ -1,0 +1,126 @@
+<div x-show="$store.app.currentPage === 'quiz'" class="quiz">
+  <div x-show="$store.app.quiz.finished === false">
+    <div class="quiz-header">
+      <div class="quiz-header__progress">
+        <div class="quiz-header__progress__label">
+          <span x-text="$store.app.quiz.currentQuestion"></span>
+          из
+          <span x-text="$store.app.quiz.questions.length"></span>
+        </div>
+        <div class="quiz-header__progress__line">
+          <div
+            class="_passed"
+            :style="{width: (($store.app.quiz.currentQuestion) / $store.app.quiz.questions.length * 100) + '%'}"
+          ></div>
+        </div>
+      </div>
+      <div>
+        <span class="button-close" @click="$store.app.goToScan()"><img
+            src="/icons/close.svg"
+          /></span>
+      </div>
+    </div>
+
+    <div class="quiz-paint">
+      <img
+        :src="'paints/' + $store.app.quizCurrentQuestion().paint + '/paint.jpg'"
+        alt=""
+        x-transition
+      />
+    </div>
+
+    <div class="quiz-content">
+      <div
+        class="quiz-content__question"
+        x-html="$store.app.quizCurrentQuestion().text"
+      >
+
+      </div>
+      <div class="quiz-content__answers">
+        <template
+          x-for="answer, answerNum in $store.app.quizCurrentQuestion().options"
+          :key="answerNum"
+        >
+          <div
+            :class="answerNum === $store.app.quiz.highlightQuizAnswer.num && $store.app.quiz.highlightQuizAnswer.style"
+            @click="$store.app.quizAnswer(answerNum)"
+          ><span x-html="answer.text"></span></div></template>
+      </div>
+      <div></div>
+    </div>
+  </div>
+
+  <div x-show="$store.app.quiz.finished === true" class="quiz-finish">
+
+    <img src="/img/header-logo.svg" class="quiz-finish__sber" />
+
+    <div x-show="$store.app.quiz.score <= 2" class="quiz-finish__art --bad">
+      <img
+        src="/img/quiz/result-min.png"
+        x-show="$store.app.quiz.finishAnimated"
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-scale"
+        x-transition:enter-end="transition-show-scale"
+      />
+    </div>
+
+    <div
+      x-show="$store.app.quiz.score > 2 && $store.app.quiz.score < 5"
+      class="quiz-finish__art --good"
+    >
+      <img
+        src="/img/quiz/result-mid.png"
+        x-show="$store.app.quiz.finishAnimated"
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-scale"
+        x-transition:enter-end="transition-show-scale"
+      />
+    </div>
+
+    <div x-show="$store.app.quiz.score >= 5" class="quiz-finish__art --max">
+      <img
+        src="/img/quiz/result-max.png"
+        x-show="$store.app.quiz.finishAnimated"
+        x-transition:enter="bouncy"
+        x-transition:enter-start="transition-hidden-scale"
+        x-transition:enter-end="transition-show-scale"
+      />
+    </div>
+
+    <div class="quiz-finish__overlay"></div>
+
+    <div class="quiz-finish__content">
+      <div class="quiz-finish__result">
+        <div class="_score" x-text="$store.app.quiz.score"></div>
+        из
+        <span x-text="$store.app.quiz.questions.length"></span>
+      </div>
+      <div
+        x-show="$store.app.quiz.score > 2 && $store.app.quiz.score == 5"
+        class="quiz-finish__message --exc"
+      >
+        <div class="_title">Поздравляем!</div>
+        <div class="_text"> Вы великий знаток искусства</div>
+      </div>
+      <div
+        x-show="$store.app.quiz.score > 2 && $store.app.quiz.score < 5"
+        class="quiz-finish__message --good"
+      >
+        <div class="_title">Ваши знания впечатляют</div>
+        <div class="_text">Но есть еще много интересной информации. Пройдите
+          по&nbsp;выставке еще раз и&nbsp;можно улучшить результаты квиза.</div>
+      </div>
+      <div
+        x-show="$store.app.quiz.score <= 2"
+        class="quiz-finish__message --bad"
+      >
+        <div class="_text">Есть еще много интересных фактов, которые можно
+          узнать. Пройдите по&nbsp;выставке еще раз и&nbsp;можно улучшить
+          результаты квиза</div>
+      </div>
+      <button class="button-intro" @click="$store.app.quizRestart()">
+        Начать сначала
+      </button>
+    </div>
+  </div>
+</div>

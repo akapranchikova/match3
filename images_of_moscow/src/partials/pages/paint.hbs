@@ -1,0 +1,280 @@
+{{! <div id="debug-zoom"></div> }}
+
+<div class="paint-loader" x-show="$store.app.player.isPreloading" x-transition>
+  <div x-show="$store.app.player.isPreloading"><span class="_dot"></span><span
+      class="_dot"
+    ></span><span class="_dot"></span>
+  </div>
+  <div x-show="!$store.app.player.isPreloading" class="_paint" x-transition>
+    <img :src="'paints/'+$store.app.currentPaint+'/paint.jpg'" alt="" />
+  </div>
+  {{! <div
+    class="_btn button-in-game"
+    :class="{ blocked: $store.app.player.isPreloading }"
+    @click="$store.app.startPaintGame()"
+  >Начать</div> }}
+
+  {{! <video
+    playsinline
+    loop
+    muted
+    class="_preload-video"
+    preload="metadata"
+    :src="`/paints/${$store.app.currentPaint}/node-1.mp4`"
+  >
+    <source
+      x-bind:src="`/paints/${$store.app.currentPaint}/node-1.mp4`"
+      type="video/mp4"
+    />
+  </video> }}
+</div>
+
+<div
+  x-show="$store.app.currentPage === 'paint' && !$store.app.player.isFinished"
+  class="paint-game"
+  x-data="{ pointClick: 0 }"
+  @click="$store.app.hideHints()"
+>
+  {{! header }}
+  <template x-if="$store.app.paintData() !== undefined">
+
+    <div class="paint-game__header">
+      <div class="_labels">
+        <div class="_title" x-text="$store.app.paintData().name"></div>
+        <div><span x-text="$store.app.paintData().artist"></span>
+          -
+          <span x-text="$store.app.paintData().years"></span></div>
+      </div>
+      <div>
+        <span class="button-close" @click="$store.app.closeInPaint()"><img
+            src="/icons/close.svg"
+          /></span>
+      </div>
+    </div>
+  </template>
+
+  {{! as video }}
+  <div
+    x-show="$store.app.currentNodeData().mediaType === 'video'"
+    id="video-container"
+    class="video-player-container"
+    @click="$store.app.togglePlayerFooter()"
+    x-transition
+  >
+    <div id="video-to-play">
+      <span :class="{ '--revealed': $store.app.player.videoReady }">
+        <video
+          playsinline
+          muted
+          class="paint-game__video video-play"
+          id="paint-video"
+          preload="metadata"
+          :src="`/paints/${$store.app.currentPaint}/node-${$store.app.player.currentNode}.mp4`"
+        >
+          <source
+            x-bind:src="`/paints/${$store.app.currentPaint}/node-${$store.app.player.currentNode}.mp4`"
+            type="video/mp4"
+          />
+          Your browser does not support the video tag.
+        </video>
+      </span>
+    </div>
+  </div>
+
+  {{! as image (picture) }}
+  <div
+    x-show="$store.app.currentNodeData().mediaType === 'img'"
+    id="img-container"
+    class="video-player-container"
+    x-transition
+    @click="$store.app.showPlayerFooter()"
+  >
+    <div id="img-to-play">
+      <img
+        class="image _preload-img"
+        :class="{ '--revealed': $store.app.player.pointsReady }"
+        x-bind:src="`/paints/${$store.app.currentPaint}/node-${$store.app.player.currentNode}.jpg`"
+      />
+
+      {{! as image (points) }}
+      <div
+        x-show="$store.app.currentNodeData().mediaType === 'img' && !$store.app.allPointsFinished()"
+        class="points-wrap"
+      >
+        <template
+          x-for="point, pointNum in $store.app.currentNodeData().pointsOfInterest"
+          :key="pointNum"
+        >
+          <div
+            :data-id="point.id"
+            :class="{'point': true, '--hidden': point.hide === true}"
+            @click="$store.app.handlePointClick(point.id); pointClick++"
+            :style="`left: ${point.x}%;top:${point.y}%;`"
+          >
+            <div
+              class="point-img-wrap"
+              x-transition
+              x-bind:style="$store.app.getPointStyle(point.id)"
+            >
+              <img
+                class="point-img _preload-img"
+                :src="`paints/${$store.app.currentPaint}/node-${$store.app.player.currentNode}-point-${point.id}.png`"
+              />
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  {{! as image (hint) }}
+  <div
+    x-show="$store.app.currentNodeData().mediaType === 'img' && $store.app.showPointsHint"
+    class="points-hint text-hint"
+    x-transition
+  >
+    <img src="icons/pinch.svg" alt="" />
+    <div class="text-hint__title">Приблизьте изображение</div>
+    <div class="text-hint__text">Чтобы рассмотреть скрытые детали и&nbsp;нюансы
+      этого полотна.</div>
+  </div>
+
+  {{! guide }}
+  <div
+    x-show="$store.app.currentNodeData().withGuide === true || $store.app.player.currentNodeGuide !== $store.app.currentNodeData().id"
+    class="paint-game__guide"
+    :class="{'--left': $store.app.currentNodeData().guideOnLeftSide === true}"
+  >
+    <video
+      playsinline
+      id="paint-video-guide"
+      :key="$store.app.player.currentNodeGuide"
+      @loadedmetadata="$store.app.onLoadedMetadata()"
+      @timeupdate="$store.app.onTimeUpdate()"
+      @play="$store.app.isPlaying = true"
+      @pause="$store.app.isPlaying = false"
+      @waiting="$store.app.isLoading = true"
+      @canplay="$store.app.isLoading = false"
+      preload="metadata"
+      :src="
+        $store.app.isIOS()
+        ? `/paints/${$store.app.currentPaint}/node-${$store.app.player.currentNodeGuide}-guide.mov`
+        : `/paints/${$store.app.currentPaint}/node-${$store.app.player.currentNodeGuide}-guide.webm`
+      "
+    >
+
+      <source
+        x-show="$store.app.isIOS()"
+        x-bind:src="`/paints/${$store.app.currentPaint}/node-${$store.app.player.currentNodeGuide}-guide.mov`"
+        type='video/mp4;codecs="hvc1"'
+      />
+      <source
+        x-show="!$store.app.isIOS()"
+        x-bind:src="`/paints/${$store.app.currentPaint}/node-${$store.app.player.currentNodeGuide}-guide.webm`"
+        type="video/webm"
+      />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  {{! footer }}
+  <div class="paint-game__footer">
+    <div
+      x-show="$store.app.allPointsFinished()"
+      class="paint-game__footer__static-text"
+    >Вы просмотрели все детали, перейдем к&nbsp;следующей картине?
+      <div class="_btn" @click="$store.app.player.isFinished = true">К следующей
+        картине</div>
+    </div>
+    <div>
+      <div
+        class="intro-content__subtitles"
+        x-html="$store.app.player.currentSubtitles"
+      ></div>
+    </div>
+    <div
+      x-show="$store.app.player.isFooterVisible && !$store.app.allPointsFinished()"
+      x-transition
+    >
+      <div class="video-slider" id="video-slider">
+        <tc-range-slider
+          id="video-duration-slider"
+          min="0"
+          max="50"
+          slider-height="8px"
+          slider-radius="4px"
+          slider-bg="rgba(77, 88, 68, 0.5)"
+          slider-bg-fill="#DCDCDC"
+          pointer-bg="#DCDCDC"
+          pointer-bg-hover="#DCDCDC"
+          pointer-bg-focus="#DCDCDC"
+          pointer-border="none"
+          pointer-shadow="none"
+          pointer-width="4px"
+          pointer-height="42px"
+          pointer-radius="2px"
+          generate-labels="true"
+          slider-width="100%"
+          @touchstart="$store.app.sliderTouchStart()"
+          @touchend="$store.app.sliderTouchEnd()"
+        ></tc-range-slider>
+      </div>
+      <div class="paint-game__footer__buttons">
+        <div
+          :class="{'_play': true, 'button-accent': $store.app.playButtonActive}"
+          @click="$store.app.playPausePaintNode()"
+        ><span x-show="$store.app.isPlaying"><img
+              src="/img/game/pause.png"
+            /></span>
+          <span x-show="!$store.app.isPlaying"><img
+              src="/img/game/play.png"
+            /></span></div>
+        <div
+          :class="{'_speed': true, 'button-accent': $store.app.speedButtonActive}"
+          @click="$store.app.changePaintNodeSpeed()"
+        ><span x-text="$store.app.player.speed + ' x'"></span></div>
+      </div>
+    </div>
+
+    {{! tap hint }}
+    <div
+      x-show="$store.app.currentNodeData().mediaType === 'video' && $store.app.showPlayerHint"
+      class="tap-hint text-hint"
+      @click="$store.app.togglePlayerFooter()"
+    >
+      <img src="icons/tap.svg" alt="" />
+      <div class="text-hint__title">Нажмите, чтобы включить панель перемотки</div>
+      <div class="text-hint__text">И перейти к нужному фрагменту аудио.</div>
+    </div>
+  </div>
+</div>
+
+<div x-show="$store.app.player.isFinished" class="paint-finish">
+  <img src="/img/header-logo.svg" class="paint-finish__sber" />
+  <div class="paint-finish__art">
+    <img src="/img/paint-finish-art-1.svg" alt="" class="_art-1" />
+    <img
+      :src="'/paints/' + $store.app.currentPaint + '/paint.jpg'"
+      class="_paint"
+    />
+    <img src="/img/paint-finish-art-2.svg" alt="" class="_art-2" />
+  </div>
+  <div class="paint-finish__bottom">
+    <div class="intro-text-type-1">Что дальше</div>
+    <div class="intro-text-type-2">Галерея предлагает выбрать, как продолжить
+      знакомство с&nbsp;выставкой. Выбери удобный вариант.
+    </div>
+    <div class="paint-finish__bottom__options">
+      <div @click="$store.app.restartPaint()" class="_btn">Повторить путь</div>
+      <a href="/scan.html" class="_btn">Отсканировать картину</a>
+      <div
+        @click="$store.app.currentPage = 'quiz'"
+        class="_btn --special"
+      >Пройти Квиз</div>
+    </div>
+  </div>
+</div>
+
+<div id="videos-buffer"></div>
+
+<script type="module" src="/src/modules/zoom.js"></script>

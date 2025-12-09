@@ -1,0 +1,17 @@
+stages:
+  - deploy
+
+deploy_production:
+  stage: deploy
+  script:
+    - npm ci
+    - npm run build
+    - rm -rf /var/www/obrazmoscow.ru/*
+    - cp -r ./dist/* /var/www/obrazmoscow.ru
+  only:
+    - master
+
+cache:
+  key: npm-cache
+  paths:
+    - node_modules/
