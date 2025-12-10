@@ -930,7 +930,6 @@ main,
     border-radius: 14px;
     background: rgba(0, 0, 0, 0.35);
     min-width: 220px;
-    backdrop-filter: blur(6px);
 }
 
 .guide__media {
