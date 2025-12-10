@@ -69,8 +69,7 @@ const markPointAsViewed = () => {
 }
 
 export const handleFinishPoint = () => {
-  markPointAsViewed()
-  state.screen = 'infoComplete'
+  navigateToNextPoint()
 }
 
 export const navigateToNextPoint = () => {
