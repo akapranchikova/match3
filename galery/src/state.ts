@@ -14,6 +14,20 @@ const onboardingCompleted = loadOnboardingCompleted()
 const deepLinkPointIndex = resolvePointIndexFromLocation(window.location)
 const cameraPermissionGranted = loadCameraPermissionGranted()
 
+const isExternalReferrer = (): boolean => {
+  if (!document.referrer) return true
+
+  try {
+    const referrerUrl = new URL(document.referrer)
+    return referrerUrl.origin !== window.location.origin
+  } catch (error) {
+    console.warn('[state] failed to parse referrer URL', error)
+    return true
+  }
+}
+
+const deepLinkRequiresHeadphones = deepLinkPointIndex !== null && isExternalReferrer()
+
 export const state: AppState = {
   screen: 'loader',
   slideIndex: 0,
@@ -24,6 +38,7 @@ export const state: AppState = {
   soundEnabled,
   onboardingCompleted,
   deepLinkPointIndex,
+  deepLinkRequiresHeadphones,
   scannerExpectedPointIndex: null,
   scannerOrigin: null,
   cameraPermissionGranted,

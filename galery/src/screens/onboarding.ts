@@ -317,6 +317,7 @@ export const renderHeadphonesPrompt = (): RenderResult => {
             state.screen = 'pointContent'
             state.currentContentIndex = 0
             state.deepLinkPointIndex = null
+            state.deepLinkRequiresHeadphones = false
             rerender()
             return
         }

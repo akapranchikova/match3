@@ -63,6 +63,7 @@ export interface AppState {
   soundEnabled: boolean
   onboardingCompleted: boolean
   deepLinkPointIndex: number | null
+  deepLinkRequiresHeadphones: boolean
   scannerExpectedPointIndex: number | null
   scannerOrigin: AppScreen | null
   cameraPermissionGranted: boolean
