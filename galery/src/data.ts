@@ -123,12 +123,14 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
     body: 'Текст',
     sections: [
       {
+        heading: 'История места',
         type: 'video',
         src: sampleVideoSrc,
         // poster: pointPlaceholder,
         subtitles: sampleSubtitle,
       },
       {
+        heading: 'Кадры экспедиции',
         type: 'cards',
         cards: [
           {
@@ -155,6 +157,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         ],
       },
       {
+        heading: 'Аудиогид галереи',
         type: 'audio',
         src: guideIntroAudio,
         artwork: voiceIllustration,
@@ -168,12 +171,14 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
     body: 'Текст',
     sections: [
       {
+        heading: 'Вступление о пермском море',
         type: 'video',
         src: sampleVideoSrc,
         poster: pointPlaceholder,
         subtitles: sampleSubtitle,
       },
       {
+        heading: 'Карточки с фактами',
         type: 'cards',
         cards: [
           {
@@ -200,6 +205,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         ],
       },
       {
+        heading: 'Истории моря',
         type: 'audio',
         src: guideIntroAudio,
         artwork: voiceIllustration,
