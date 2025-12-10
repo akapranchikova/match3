@@ -74,10 +74,12 @@ export interface VideoContent {
   src: string
   poster?: string
   subtitles?: string[]
+  heading: string
 }
 
 export interface CardsContent {
   type: 'cards'
+  heading: string
   cards: {
     title: string
     text: string
@@ -92,6 +94,7 @@ export interface AudioContent {
   artwork: string
   background: string
   subtitles?: string[]
+  heading: string
 }
 
 export type PointContentSection = VideoContent | CardsContent | AudioContent

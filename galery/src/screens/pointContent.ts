@@ -328,14 +328,17 @@ export const renderPointContent = () => {
   const point = points[state.currentPointIndex]
   const config = pointContentConfigs[point.id] || pointContentConfigs.history
   state.currentContentIndex = Math.min(state.currentContentIndex, config.sections.length - 1)
+  const currentSection = config.sections[state.currentContentIndex]
   const container = document.createElement('section')
   container.className = 'card card--content'
+
+  const contentPositionLabel = `Сюжет ${state.currentContentIndex + 1} из ${config.sections.length}`
 
   const header = document.createElement('header')
   header.className = 'content-header'
   header.innerHTML = `
-    <p class="content-header__eyebrow">${config.body}</p>
-    <h1 class="content-header__title">${config.heading}</h1>
+    <p class="content-header__eyebrow">${contentPositionLabel}</p>
+    <h1 class="content-header__title">${currentSection?.heading || config.heading}</h1>
   `
 
   const slider = document.createElement('div')
