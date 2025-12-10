@@ -1157,6 +1157,17 @@ main,
     border: 1px solid rgba(124, 188, 164, 0.2);
 }
 
+.modal__eyebrow {
+    color: #c7d2fe;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+}
+
+.modal__title {
+    font-size: 20px;
+    margin: 0;
+}
+
 .route {
     display: flex;
     overflow-y: auto !important;
