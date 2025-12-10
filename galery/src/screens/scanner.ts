@@ -40,6 +40,7 @@ export const renderScanner = (): RenderResult => {
   let alertHideTimeout: number | null = null
   let lastProcessedPayload: string | null = null
   let lastProcessedAt = 0
+  let qrScanner: { stop: () => void; destroy?: () => void } | null = null
 
   const expectedPointIndex = state.scannerExpectedPointIndex ?? state.currentPointIndex
 
@@ -50,6 +51,11 @@ export const renderScanner = (): RenderResult => {
     if (stream) {
       stream.getTracks().forEach((track) => track.stop())
       stream = null
+    }
+    if (qrScanner) {
+      qrScanner.stop()
+      qrScanner.destroy?.()
+      qrScanner = null
     }
     if (alertHideTimeout) {
       window.clearTimeout(alertHideTimeout)
@@ -145,8 +151,57 @@ export const renderScanner = (): RenderResult => {
       const supportsQr = detectorFormats.includes('qr_code')
 
       if (!detectorClass || !supportsQr) {
-        showStatus('Распознавание QR-кодов не поддерживается в этом браузере')
+        showStatus('Встроенное распознавание QR недоступно, включаем резервный сканер…')
         console.warn('[scanner] BarcodeDetector missing or QR not supported', detectorFormats)
+
+        const qrScannerModule = await import(
+          /* @vite-ignore */ 'https://unpkg.com/qr-scanner@1.4.2/qr-scanner.min.js'
+        ).catch((error) => {
+          console.error('[scanner] failed to load fallback scanner', error)
+          return null
+        })
+
+        const QrScanner =
+          qrScannerModule?.default ?? (qrScannerModule as { QrScanner?: unknown })?.QrScanner ?? qrScannerModule
+
+        if (!QrScanner || !video) {
+          showStatus('Не удалось загрузить резервный сканер')
+          setLoading(false)
+          return
+        }
+
+        ;(QrScanner as { WORKER_PATH?: string }).WORKER_PATH =
+          'https://unpkg.com/qr-scanner@1.4.2/qr-scanner-worker.min.js'
+
+        qrScanner = new (QrScanner as new (
+          video: HTMLVideoElement,
+          onDecode: (result: { data?: string } | string) => void,
+          options?: unknown
+        ) => { start: () => Promise<void>; stop: () => void; destroy?: () => void })(
+          video,
+          async (result) => {
+            if (!active) return
+
+            const payload = typeof result === 'string' ? result : result?.data
+            if (!payload) return
+
+            showStatus('QR-код найден! Проверяем ссылку…')
+            const accepted = await handleScan(payload)
+            if (!accepted) {
+              showStatus('Наведите камеру на QR-код')
+            }
+          },
+          {
+            preferredCamera: 'environment',
+            highlightScanRegion: true,
+            highlightCodeOutline: true,
+          }
+        )
+
+        await qrScanner.start()
+        stream = (video.srcObject as MediaStream | null) ?? null
+
+        showStatus('Камера включена. Наведите её на QR-код.')
         setLoading(false)
         return
       }
