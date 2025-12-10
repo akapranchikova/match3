@@ -7,6 +7,38 @@ import onboardingVoice from '../assets/onboarding-voice.png'
 import routePreview from '../assets/onboarding-photo.svg'
 import { loadSrtSubtitles, SubtitleCue } from '../subtitles'
 
+const pointProgressHeadings = [
+  {
+    title: 'Пройдено 0 из 6 точек',
+    subtitle: 'Перейдём к первой точке',
+  },
+  {
+    title: 'Пройдено 1 из 6 точек',
+    subtitle: 'Готовы к следующей?',
+  },
+  {
+    title: 'Пройдено 2 из 6 точек',
+    subtitle: 'Следующая точка уже близко',
+  },
+  {
+    title: 'Пройдено 3 из 6 точек',
+    subtitle: 'Продолжаем путешествие!',
+  },
+  {
+    title: 'Пройдено 4 из 6 точек',
+    subtitle: 'Осталось всего пару шагов',
+  },
+  {
+    title: 'Пройдено 5 из 6 точек',
+    subtitle: 'Осталась последняя точка!',
+  },
+]
+
+const getPointProgressHeading = (completedPoints: number) => {
+  const headingIndex = Math.min(completedPoints, pointProgressHeadings.length - 1)
+  return pointProgressHeadings[headingIndex] || pointProgressHeadings[0]
+}
+
 const transitionAssets: Record<number, { audio: string; subtitles: string }> = {
   1: {
     audio: '../assets/audio/Переход к точке 1..mp3',
@@ -95,12 +127,18 @@ export const renderPointInfo = (): HTMLElement => {
 }
 
 export const renderInfoComplete = (): HTMLElement => {
-  const remaining = points.length - viewedPoints.size
+  const completedPoints = viewedPoints.size
+  const heading = getPointProgressHeading(completedPoints)
+  const remaining = points.length - completedPoints
+
+  document.title = heading.title
+
   const overlay = document.createElement('div')
   overlay.className = 'overlay'
   overlay.innerHTML = `
     <div class="modal">
-      <h2>Хотите ли продолжить экскурсию от Голоса времени?</h2>
+      <p class="modal__eyebrow">${heading.title}</p>
+      <h2 class="modal__title">${heading.subtitle}</h2>
       <p>${remaining > 0 ? `Впереди ещё ${remaining} истории` : 'Вы посмотрели все точки маршрута.'}</p>
     </div>
   `
@@ -128,13 +166,15 @@ export const renderInfoComplete = (): HTMLElement => {
 
 export const renderNextPoint = (): HTMLElement => {
   const point = points[state.currentPointIndex]
+  const completedPoints = viewedPoints.size
+  const progressHeading = getPointProgressHeading(completedPoints)
   const card = document.createElement('section')
   card.className = 'card card--point card--next'
   card.innerHTML = `
     <div class="point-layout__header">
       <div>
-        <p class="point-layout__eyebrow">Маршрут «Голос времени»</p>
-        <h1 class="point-layout__title">Где находится точка ${state.currentPointIndex + 1}?</h1>
+        <p class="point-layout__eyebrow">${progressHeading.title}</p>
+        <h1 class="point-layout__title">${progressHeading.subtitle}</h1>
       </div>
       <button class="button icon-button primary route-button" data-action="route" aria-label="Продолжить без гида">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
