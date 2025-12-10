@@ -386,6 +386,17 @@ export const renderGuideIntro = (): RenderResult => {
     background.style.backgroundImage = `linear-gradient(180deg, rgba(12, 20, 16, 0.86) 0%, rgba(11, 12, 11, 0.94) 100%), url(${guideBackground})`
     container.appendChild(background)
 
+    const header = document.createElement('header')
+    header.className = 'card__header card__header--onboarding guide__header'
+
+    const logo = document.createElement('img')
+    logo.src = logoList
+    logo.alt = 'Логотип Сбера'
+    logo.className = 'logo-list'
+    header.appendChild(logo)
+
+    container.appendChild(header)
+
     const content = document.createElement('div')
     content.className = 'guide__content'
 

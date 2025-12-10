@@ -375,6 +375,7 @@ main,
     justify-content: space-between;
     align-items: center;
     margin-top: auto;
+    gap: 16px;
 }
 .card--point .footer__voice {
     display: flex;
@@ -853,14 +854,24 @@ main,
     font-size: 16px;
 }
 
+.guide__header {
+    width: 100%;
+    justify-content: center;
+}
+
 .guide__content {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
+    grid-template-rows: 1fr 130px;
     align-items: center;
-    gap: 14px;
+    gap: 40px;
+}
+
+.guide__logo {
+    width: 128px;
+    height: auto;
+    align-self: center;
 }
 
 .guide__controls {
@@ -905,7 +916,8 @@ main,
 .guide__hero {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
+    height: 100%;
     width: 100%;
     margin: 8px 0 4px;
 }
@@ -943,7 +955,6 @@ main,
 }
 
 .guide__subtitle {
-    margin-top: 40px;
     text-align: center;
     font-size: 18px;
     background: transparent;

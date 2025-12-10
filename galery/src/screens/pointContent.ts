@@ -4,6 +4,7 @@ import { state } from '../state'
 import { saveSoundEnabled } from '../storage'
 import { AudioContent, CardsContent, PointContentSection, VideoContent } from '../types'
 import { navigateToNextPoint } from './pointFlow'
+import logoList from '../assets/logo-list.svg'
 
 const SWIPE_THRESHOLD = 48
 
@@ -282,6 +283,12 @@ const renderAudioSection = (section: AudioContent) => {
 
   const content = document.createElement('div')
   content.className = 'guide__content'
+
+  const logo = document.createElement('img')
+  logo.src = logoList
+  logo.alt = 'Логотип Сбера'
+  logo.className = 'guide__logo'
+  content.appendChild(logo)
 
   const hero = document.createElement('div')
   hero.className = 'guide__hero'
