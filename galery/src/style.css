@@ -387,6 +387,37 @@ main,
     width: 48px;
     height: 48px;
 }
+.card--point .footer__subtitles {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: #e2e2e2;
+    font-size: 14px;
+    line-height: 1.35;
+    opacity: 0.72;
+    transition: opacity 0.2s ease;
+}
+
+.card--point .footer__subtitles--visible {
+    opacity: 1;
+}
+
+.card--point .footer__subtitle-text {
+    margin: 0;
+}
+
+.card--point .footer__subtitle-word {
+    opacity: 0.35;
+    transition: opacity 0.2s ease;
+}
+
+.card--point .footer__subtitle-word--visible {
+    opacity: 1;
+}
+
+.card--point .footer__audio {
+    display: none;
+}
 
 .card--next {
     background: transparent;
