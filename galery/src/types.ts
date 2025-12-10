@@ -68,6 +68,7 @@ export interface AppState {
   scannerExpectedPointIndex: number | null
   scannerOrigin: AppScreen | null
   cameraPermissionGranted: boolean
+  nextPointHintsCompleted: boolean
 }
 
 export type PointContentKind = 'video' | 'cards' | 'audio' | 'models'

@@ -3,6 +3,7 @@ import { STORAGE_KEY } from './data'
 const ONBOARDING_KEY = 'gallery-onboarding-complete'
 const SOUND_ENABLED_KEY = 'gallery-sound-enabled'
 const CAMERA_PERMISSION_KEY = 'gallery-camera-permission-granted'
+const NEXT_POINT_HINTS_KEY = 'gallery-next-point-hints'
 
 // Responsible for persisting which points were already viewed by the visitor
 export const loadViewed = (): Set<string> => {
@@ -44,5 +45,13 @@ export const loadCameraPermissionGranted = (): boolean => {
 
 export const saveCameraPermissionGranted = () => {
   localStorage.setItem(CAMERA_PERMISSION_KEY, 'true')
+}
+
+export const loadNextPointHintsCompleted = (): boolean => {
+  return localStorage.getItem(NEXT_POINT_HINTS_KEY) === 'true'
+}
+
+export const saveNextPointHintsCompleted = () => {
+  localStorage.setItem(NEXT_POINT_HINTS_KEY, 'true')
 }
 

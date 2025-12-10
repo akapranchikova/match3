@@ -2450,6 +2450,30 @@ main,
     }
 }
 
+.next-point-hint {
+    position: absolute;
+    color: #ffffff;
+    font-size: 14px;
+    top: 63px;
+    right: 60px;
+    z-index: 40;
+    pointer-events: none;
+}
+
+.next-point-hint__text {
+    margin: 0;
+}
+
+.next-point-hint__arrow {
+    position: absolute;
+    right: -35px;
+    top: 10px;
+}
+.next-point-hint__arrow.home {
+    right: -44px;
+    top: 1px;
+}
+
 @media (max-width: 420px) {
     body {
         padding: 12px;

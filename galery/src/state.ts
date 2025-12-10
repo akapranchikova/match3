@@ -2,6 +2,7 @@ import { initialMapPositions } from './data'
 import {
   loadCameraPermissionGranted,
   loadOnboardingCompleted,
+  loadNextPointHintsCompleted,
   loadSoundEnabled,
   loadViewed,
 } from './storage'
@@ -13,6 +14,7 @@ const soundEnabled = loadSoundEnabled()
 const onboardingCompleted = loadOnboardingCompleted()
 const deepLinkPointIndex = resolvePointIndexFromLocation(window.location)
 const cameraPermissionGranted = loadCameraPermissionGranted()
+const nextPointHintsCompleted = loadNextPointHintsCompleted()
 
 const isExternalReferrer = (): boolean => {
   if (!document.referrer) return true
@@ -43,6 +45,7 @@ export const state: AppState = {
   scannerExpectedPointIndex: null,
   scannerOrigin: null,
   cameraPermissionGranted,
+  nextPointHintsCompleted,
 }
 
 export let viewedPoints = loadViewed()

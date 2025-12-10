@@ -1,12 +1,25 @@
 import { points } from '../data'
 import { rerender } from '../navigation'
-import { saveCameraPermissionGranted, saveSoundEnabled, saveViewed } from '../storage'
+import {
+  saveCameraPermissionGranted,
+  saveNextPointHintsCompleted,
+  saveSoundEnabled,
+  saveViewed,
+} from '../storage'
 import { state, viewedPoints } from '../state'
 import { createButton } from '../ui'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import routePreview from '../assets/onboarding-photo.svg'
 import { loadSrtSubtitles, SubtitleCue } from '../subtitles'
 import { hasCameraPermission } from '../permissions'
+import { RenderResult } from '../types'
+
+type HintStep = {
+  target: HTMLElement
+  anchor: HTMLElement
+  message: string
+  arrowSvg: string
+}
 
 const pointProgressHeadings = [
   {
@@ -62,6 +75,86 @@ const getTransitionAssetUrl = (pointNumber: number, type: 'audio' | 'subtitles')
   const extension = type === 'audio' ? 'mp3' : 'srt'
 
   return new URL(`../assets/audio/Переход к точке ${pointNumber}..${extension}`, import.meta.url).href
+}
+
+const mapArrowSvg = `
+  <svg width="26" height="61" viewBox="0 0 26 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.07031 0C7.78825 0.957574 13.9441 4.28102 18.4307 9.37207C22.9172 14.4632 25.4398 20.9883 25.5449 27.7734C25.65 34.5584 23.3313 41.1581 19.0049 46.3857C14.8078 51.4569 8.98814 54.9134 2.54102 56.1797L7.66992 59.1406L7.16992 60.0068L0.613281 56.2217L4.39844 49.665L5.26465 50.165L2.3584 55.1963C8.57536 53.973 14.1867 50.6396 18.2344 45.749C22.4092 40.7048 24.6473 34.336 24.5459 27.7891C24.4445 21.242 22.0098 14.9457 17.6807 10.0332C13.3516 5.12079 7.41186 1.91426 0.929688 0.990234L1.07031 0Z" fill="#E2E2E2"/>
+  </svg>
+`
+
+const routeArrowSvg = `
+  <svg width="65" height="37" viewBox="0 0 65 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M24.6048 18.6149C29.1552 20.3846 34.2187 21.3996 38.8533 21.3361C43.4779 21.2725 47.7437 20.1328 50.6198 17.5181C54.322 14.1522 55.1877 9.80169 55.0465 3.43954L58.9833 7.86098L59.7303 7.19595L54.696 1.54152L49.0415 6.57584L49.7066 7.32287L54.0469 3.45676C54.1866 9.74074 53.3196 13.7127 49.9474 16.7786C47.3237 19.1638 43.3385 20.2741 38.8389 20.3358C34.3494 20.3974 29.4135 19.4129 24.9667 17.6834L24.7857 18.1487L24.6048 18.6149Z" fill="#E2E2E2"/>
+  </svg>
+`
+
+const createButtonHint = (step: HintStep) => {
+  const hint = document.createElement('div')
+  hint.className = 'next-point-hint'
+  hint.innerHTML = `
+    <p class="next-point-hint__text">${step.message}</p>
+    <div class="next-point-hint__arrow ${step.message.includes('гид')? 'home' : ''}" aria-hidden="true">${step.arrowSvg}</div>
+  `
+  document.body.appendChild(hint)
+
+  return () => {
+    hint.remove()
+  }
+}
+
+const runNextPointHints = (
+  mapButton: HTMLElement | null,
+  routeButton: HTMLElement | null,
+): (() => void) | null => {
+  if (!mapButton || !routeButton || state.nextPointHintsCompleted) return null
+
+  let currentCleanup: (() => void) | null = null
+  let timerId: number | null = null
+
+  const anchor = mapButton.closest<HTMLElement>('.point-visual__frame') || mapButton
+
+  const stopHints = () => {
+    if (timerId !== null) {
+      window.clearTimeout(timerId)
+      timerId = null
+    }
+    currentCleanup?.()
+    currentCleanup = null
+  }
+
+  const steps: HintStep[] = [
+    {
+      target: mapButton,
+      anchor,
+      message: 'Открыть карту',
+      arrowSvg: mapArrowSvg,
+    },
+    {
+      target: routeButton,
+      anchor,
+      message: 'Продолжить без гида',
+      arrowSvg: routeArrowSvg,
+    },
+  ]
+
+  const showStep = (index: number) => {
+    stopHints()
+
+    if (index >= steps.length) {
+      state.nextPointHintsCompleted = true
+      saveNextPointHintsCompleted()
+      return
+    }
+
+    const step = steps[index]
+    currentCleanup = createButtonHint(step)
+    timerId = window.setTimeout(() => showStep(index + 1), 3200)
+  }
+
+  showStep(0)
+
+  return stopHints
 }
 
 const markPointAsViewed = () => {
@@ -165,12 +258,13 @@ export const renderInfoComplete = (): HTMLElement => {
   return overlay
 }
 
-export const renderNextPoint = (): HTMLElement => {
+export const renderNextPoint = (): RenderResult => {
   const point = points[state.currentPointIndex]
   const completedPoints = viewedPoints.size
   const progressHeading = getPointProgressHeading(completedPoints)
   const card = document.createElement('section')
   card.className = 'card card--point card--next'
+  const cleanups: (() => void)[] = []
   card.innerHTML = `
     <div class="point-layout__header">
       <div>
@@ -404,6 +498,22 @@ export const renderNextPoint = (): HTMLElement => {
     state.screen = 'routeList'
     rerender()
   })
+
+  const hintCleanup = runNextPointHints(
+    card.querySelector<HTMLElement>('.map-button'),
+    card.querySelector<HTMLElement>('.route-button'),
+  )
+
+  if (hintCleanup) {
+    cleanups.push(hintCleanup)
+  }
+
+  if (cleanups.length) {
+    return {
+      element: card,
+      cleanup: () => cleanups.forEach((fn) => fn()),
+    }
+  }
 
   return card
 }
