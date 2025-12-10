@@ -7,6 +7,30 @@ import onboardingVoice from '../assets/onboarding-voice.png'
 import routePreview from '../assets/onboarding-photo.svg'
 import { loadSrtSubtitles, SubtitleCue } from '../subtitles'
 
+const transitionAssets: Record<number, { audio: string; subtitles: string }> = {
+  1: {
+    audio: '../assets/audio/Переход к точке 1..mp3',
+    subtitles: '../assets/audio/Переход к точке 1..srt',
+  },
+  2: {
+    audio: '../assets/points/2/Переход между точками 1 и 2..mp3',
+    subtitles: '../assets/points/2/Переход между точками 1 и 2..srt',
+  },
+}
+
+const getTransitionAssetUrl = (pointNumber: number, type: 'audio' | 'subtitles') => {
+  const assets = transitionAssets[pointNumber]
+
+  if (assets) {
+    const assetPath = type === 'audio' ? assets.audio : assets.subtitles
+    return new URL(assetPath, import.meta.url).href
+  }
+
+  const extension = type === 'audio' ? 'mp3' : 'srt'
+
+  return new URL(`../assets/audio/Переход к точке ${pointNumber}..${extension}`, import.meta.url).href
+}
+
 const markPointAsViewed = () => {
   viewedPoints.add(points[state.currentPointIndex].id)
   saveViewed(viewedPoints)
@@ -165,8 +189,8 @@ export const renderNextPoint = (): HTMLElement => {
 
     subtitleWrapper?.appendChild(subtitleText)
 
-    const audioSrc = new URL(`../assets/audio/Переход к точке ${pointNumber}..mp3`, import.meta.url).href
-    const subtitlesUrl = new URL(`../assets/audio/Переход к точке ${pointNumber}..srt`, import.meta.url).href
+    const audioSrc = getTransitionAssetUrl(pointNumber, 'audio')
+    const subtitlesUrl = getTransitionAssetUrl(pointNumber, 'subtitles')
 
     footerAudio = document.createElement('audio')
     footerAudio.className = 'footer__audio'
