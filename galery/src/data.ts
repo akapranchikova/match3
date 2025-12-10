@@ -117,8 +117,7 @@ export const points: RoutePoint[] = [
 
 const sampleVideoSrc = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'
 const sampleSubtitle = [
-  'Это место для субтитров, где будет текст Голоса.',
-  'Листайте снизу вверх, чтобы перейти к следующему сюжету.',
+  'Это место для субтитров, где будет текст Голоса.'
 ]
 
 export const pointContentConfigs: Record<string, PointContentConfig> = {
@@ -130,7 +129,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         heading: 'Создание и история галереи',
         type: 'video',
         src: sampleVideoSrc,
-        subtitles: [],
+        subtitles: sampleSubtitle,
       },
     ],
   },
@@ -190,6 +189,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         heading: 'Археологические находки',
         type: 'models',
         hint: 'Коснитесь и проведите,<br> чтобы вращать объект',
+          subtitles: sampleSubtitle,
         models: [
           {
             title: 'Чаша от курительной трубки',

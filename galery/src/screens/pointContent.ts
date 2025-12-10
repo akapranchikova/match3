@@ -5,19 +5,9 @@ import { saveSoundEnabled } from '../storage'
 import { AudioContent, CardsContent, ModelsContent, PointContentSection, VideoContent } from '../types'
 import { navigateToNextPoint } from './pointFlow'
 import logoList from '../assets/logo-list.svg'
+import onboardingVoice from '../assets/onboarding-voice.png'
 
 const SWIPE_THRESHOLD = 48
-
-const renderSubtitles = (subtitles?: string[]) => {
-  if (!subtitles?.length) {
-    return null
-  }
-
-  const wrapper = document.createElement('div')
-  wrapper.className = 'content-subtitles'
-  wrapper.innerHTML = subtitles.map((line) => `<p>${line}</p>`).join('')
-  return wrapper
-}
 
 const renderVideoSection = (section: VideoContent) => {
   const container = document.createElement('div')
@@ -31,11 +21,6 @@ const renderVideoSection = (section: VideoContent) => {
   video.poster = section.poster || ''
 
   container.appendChild(video)
-
-  const subtitles = renderSubtitles(section.subtitles)
-  if (subtitles) {
-    container.appendChild(subtitles)
-  }
 
   return container
 }
@@ -426,10 +411,6 @@ const renderAudioSection = (section: AudioContent) => {
   img.alt = 'Голос времени'
   hero.appendChild(img)
 
-  const subtitle = document.createElement('p')
-  subtitle.className = 'guide__intro guide__subtitle guide__subtitle--current guide__subtitle--visible'
-  subtitle.innerHTML = section.subtitles?.join('<br>') || ''
-
   const audio = document.createElement('audio')
   audio.className = 'guide__audio'
   audio.controls = false
@@ -437,7 +418,6 @@ const renderAudioSection = (section: AudioContent) => {
   audio.src = section.src
 
   content.appendChild(hero)
-  content.appendChild(subtitle)
   content.appendChild(audio)
 
   container.appendChild(content)
@@ -662,6 +642,24 @@ export const renderPointContent = () => {
 
   container.appendChild(header)
   container.appendChild(slider)
+
+  if (currentSection.subtitles?.length) {
+    const subtitleLayout = document.createElement('div')
+    subtitleLayout.className = 'content-subtitles content-subtitles--voice'
+
+    const subtitleImage = document.createElement('img')
+    subtitleImage.src = onboardingVoice
+    subtitleImage.alt = 'Голос времени'
+    subtitleImage.className = 'content-subtitles__image'
+    subtitleLayout.appendChild(subtitleImage)
+
+    const subtitleText = document.createElement('div')
+    subtitleText.className = 'content-subtitles__text'
+    subtitleText.innerHTML = currentSection.subtitles.map((line) => `<p>${line}</p>`).join('')
+    subtitleLayout.appendChild(subtitleText)
+
+    container.appendChild(subtitleLayout)
+  }
   container.appendChild(hint)
 
   const cleanup = () => {

@@ -1413,13 +1413,31 @@ main,
 }
 
 .content-subtitles {
-    font-family: "SB Sans Display Semibold", serif;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: "SB Sans Display Semibold", sans-serif;
+    font-size: 16px;
+    padding: 0 6px 8px;
 }
 
-.content-subtitles p {
+.content-subtitles__image {
+    width: 48px;
+    height: 48px;
+}
+
+.content-subtitles__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: #e2e2e2;
+    font-size: 14px;
+    line-height: 1.35;
+    opacity: 0.72;
+}
+
+.content-subtitles__text p {
     margin: 0;
-    font-weight: 700;
-    color: #e7e7e7;
 }
 
 .content-panel--cards {

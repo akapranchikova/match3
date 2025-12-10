@@ -105,6 +105,7 @@ export interface ModelsContent {
   heading: string
   hint?: string
   description?: string
+  subtitles?: string[]
   models: {
     title: string
     src: string
