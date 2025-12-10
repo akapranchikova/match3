@@ -62,6 +62,9 @@ export interface AppState {
   currentContentIndex: number
   soundEnabled: boolean
   onboardingCompleted: boolean
+  deepLinkPointIndex: number | null
+  scannerExpectedPointIndex: number | null
+  scannerOrigin: AppScreen | null
 }
 
 export type PointContentKind = 'video' | 'cards' | 'audio'

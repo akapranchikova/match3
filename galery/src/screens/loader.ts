@@ -34,7 +34,8 @@ export const renderLoader = (): RenderResult => {
   `
 
   const timeoutId = window.setTimeout(() => {
-    state.screen = state.onboardingCompleted ? 'onboardingPrompt' : 'onboardingSlide'
+    const shouldSkipIntro = state.onboardingCompleted || state.deepLinkPointIndex !== null
+    state.screen = shouldSkipIntro ? 'onboardingPrompt' : 'onboardingSlide'
     rerender()
   }, LOADER_DURATION_MS)
 

@@ -2,6 +2,7 @@ import { points } from '../data'
 import { rerender } from '../navigation'
 import { saveViewed } from '../storage'
 import { state, viewedPoints } from '../state'
+import { resolvePointIndexFromPayloadWithRedirect } from '../qr'
 import {
   BarcodeDetectorConstructor,
   BarcodeDetectorResult,
@@ -16,6 +17,12 @@ export const renderScanner = (): RenderResult => {
     <div class="scanner__preview scanner__preview--fullscreen">
       <video class="scanner__video" playsinline muted autoplay></video>
       <div class="scanner__frame"></div>
+      <div class="scanner__alert" role="alert" hidden>
+        <div class="scanner__alert-content">
+          <p class="scanner__alert-title">QR-код не подошёл</p>
+          <p class="scanner__alert-message"></p>
+        </div>
+      </div>
       <button class="scanner__close" type="button" aria-label="Закрыть сканер">×</button>
     </div>
     <p class="scanner__status visually-hidden">Запрашиваем доступ к камере…</p>
@@ -23,10 +30,17 @@ export const renderScanner = (): RenderResult => {
 
   const video = wrapper.querySelector<HTMLVideoElement>('.scanner__video')
   const status = wrapper.querySelector<HTMLParagraphElement>('.scanner__status')
+  const alert = wrapper.querySelector<HTMLDivElement>('.scanner__alert')
+  const alertMessage = wrapper.querySelector<HTMLParagraphElement>('.scanner__alert-message')
 
   let active = true
   let stream: MediaStream | null = null
   let rafId: number | null = null
+  let alertHideTimeout: number | null = null
+  let lastProcessedPayload: string | null = null
+  let lastProcessedAt = 0
+
+  const expectedPointIndex = state.scannerExpectedPointIndex ?? state.currentPointIndex
 
   const stopScanner: RenderCleanup = () => {
     active = false
@@ -36,26 +50,82 @@ export const renderScanner = (): RenderResult => {
       stream.getTracks().forEach((track) => track.stop())
       stream = null
     }
+    if (alertHideTimeout) {
+      window.clearTimeout(alertHideTimeout)
+      alertHideTimeout = null
+    }
   }
 
   const showStatus = (message: string) => {
+    console.log('[scanner] status:', message)
+    if (!status) return
     status.textContent = message
+    status.classList.remove('visually-hidden')
   }
 
-  const handleScan = (payload: string) => {
-    const matchedIndex = points.findIndex((point) => point.id === payload)
+  const hideAlert = () => {
+    if (!alert) return
+    alert.hidden = true
+    alert.classList.remove('scanner__alert--visible')
+    alertHideTimeout = null
+  }
+
+  const showAlert = (message: string) => {
+    if (!alert || !alertMessage) return
+    alertMessage.textContent = message
+    alert.hidden = false
+    alert.classList.add('scanner__alert--visible')
+    console.log('[scanner] show alert:', message)
+
+    if (alertHideTimeout) {
+      window.clearTimeout(alertHideTimeout)
+    }
+
+    alertHideTimeout = window.setTimeout(() => hideAlert(), 3200)
+  }
+
+  const handleScan = async (payload: string): Promise<boolean> => {
+    const now = Date.now()
+    if (payload === lastProcessedPayload && now - lastProcessedAt < 1200) return
+
+    lastProcessedPayload = payload
+    lastProcessedAt = now
+    console.log('[scanner] detected payload:', payload)
+
+    const { index: matchedIndex, finalUrl } = await resolvePointIndexFromPayloadWithRedirect(payload)
+    if (finalUrl && finalUrl !== payload) {
+      console.log('[scanner] payload resolved redirect:', finalUrl)
+    }
+
+    if (matchedIndex === null) {
+      showAlert('Этот QR-код не из маршрута. Найдите код текущей точки и попробуйте снова.')
+      showStatus('QR-код не распознан как точка маршрута')
+      console.log('[scanner] payload rejected: not part of route')
+      return false
+    }
+
+    if (expectedPointIndex !== null && matchedIndex !== expectedPointIndex) {
+      showAlert(
+        `Это QR-код другой точки маршрута. Нужен код точки ${expectedPointIndex + 1}.`
+      )
+      showStatus('Нужен QR-код следующей точки маршрута')
+      console.log('[scanner] payload rejected: expected index', expectedPointIndex, 'received', matchedIndex)
+      return false
+    }
+
     stopScanner()
 
-    if (matchedIndex >= 0) {
-      viewedPoints.add(points[matchedIndex].id)
-      saveViewed(viewedPoints)
-      state.currentPointIndex = matchedIndex
-      state.screen = 'pointContent'
-      state.currentContentIndex = 0
-      rerender()
-    } else {
-      showStatus('QR-код считан, но точка маршрута не найдена. Попробуйте другой код.')
-    }
+    viewedPoints.add(points[matchedIndex].id)
+    saveViewed(viewedPoints)
+    state.currentPointIndex = matchedIndex
+    state.scannerExpectedPointIndex = null
+    state.scannerOrigin = null
+    state.screen = 'pointContent'
+    state.currentContentIndex = 0
+    console.log('[scanner] payload accepted, opening point', matchedIndex)
+    rerender()
+
+    return true
   }
 
   const startScan = async () => {
@@ -66,6 +136,7 @@ export const renderScanner = (): RenderResult => {
 
       if (!detectorClass || !supportsQr) {
         showStatus('Распознавание QR-кодов не поддерживается в этом браузере')
+        console.warn('[scanner] BarcodeDetector missing or QR not supported', detectorFormats)
         return
       }
 
@@ -73,6 +144,7 @@ export const renderScanner = (): RenderResult => {
         video: { facingMode: 'environment' },
         audio: false,
       })
+      console.log('[scanner] camera stream started')
       video.srcObject = stream
 
       const detector = new detectorClass({ formats: ['qr_code'] })
@@ -84,9 +156,9 @@ export const renderScanner = (): RenderResult => {
           try {
             const codes: BarcodeDetectorResult[] = await detector.detect(video)
             if (codes.length > 0) {
-              showStatus('QR-код найден! Открываем точку маршрута…')
-              handleScan(codes[0].rawValue)
-              return
+              showStatus('QR-код найден! Проверяем ссылку…')
+              const accepted = await handleScan(codes[0].rawValue)
+              if (accepted) return
             }
 
             showStatus('Наведите камеру на QR-код')
@@ -100,6 +172,7 @@ export const renderScanner = (): RenderResult => {
       }
 
       await video.play()
+      console.log('[scanner] video playback started')
       showStatus('Камера включена. Наведите её на QR-код.')
       scanFrame()
     } catch (error) {
@@ -109,7 +182,11 @@ export const renderScanner = (): RenderResult => {
   }
 
   wrapper.querySelector<HTMLButtonElement>('.scanner__close')?.addEventListener('click', () => {
-    state.screen = 'nextPoint'
+    const returnScreen = state.scannerOrigin ?? 'nextPoint'
+    state.scannerExpectedPointIndex = null
+    state.scannerOrigin = null
+    state.screen = returnScreen
+    console.log('[scanner] closed; returning to screen', returnScreen)
     rerender()
   })
 

@@ -313,6 +313,14 @@ export const renderOnboardingSlide = (): RenderResult => {
 
 export const renderHeadphonesPrompt = (): RenderResult => {
     const goNext = () => {
+        if (state.deepLinkPointIndex !== null) {
+            state.screen = 'pointContent'
+            state.currentContentIndex = 0
+            state.deepLinkPointIndex = null
+            rerender()
+            return
+        }
+
         state.screen = 'routeModePrompt'
         rerender()
     }
