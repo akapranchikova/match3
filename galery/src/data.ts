@@ -9,6 +9,7 @@ import onboardingGolosLogo from './assets/onboarding-golos-logo.svg'
 import boardingPhoto1 from './assets/boarding-1/photo-1.png'
 import boardingPhoto2 from './assets/boarding-1/photo-2.png'
 import boardingPhoto3 from './assets/boarding-1/photo-3.png'
+import point1Video from './assets/points/1/point-1.mp4'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 
@@ -123,46 +124,10 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
     body: 'Текст',
     sections: [
       {
-        heading: 'История места',
+        heading: 'Создание и история галереи',
         type: 'video',
         src: sampleVideoSrc,
-        // poster: pointPlaceholder,
-        subtitles: sampleSubtitle,
-      },
-      {
-        heading: 'Кадры экспедиции',
-        type: 'cards',
-        cards: [
-          {
-            title: 'Скалистый берег',
-            text: 'История места и кадры экспедиции — перелистывайте карточки, чтобы узнать детали.',
-            image:
-              'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
-            alt: 'Скала у берега моря',
-          },
-          {
-            title: 'Вид на море',
-            text: 'Маршрут продолжается вдоль воды, где легко представить древнее море Перми.',
-            image:
-              'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
-            alt: 'Закат над морем',
-          },
-          {
-            title: 'Артефакты',
-            text: 'Редкие находки, которые формируют основу коллекции новой галереи.',
-            image:
-              'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80',
-            alt: 'Человек держит артефакт',
-          },
-        ],
-      },
-      {
-        heading: 'Аудиогид галереи',
-        type: 'audio',
-        src: guideIntroAudio,
-        artwork: voiceIllustration,
-        background: guideBackground,
-        subtitles: sampleSubtitle,
+        subtitles: [],
       },
     ],
   },

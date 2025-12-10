@@ -453,8 +453,8 @@ export const renderPointContent = () => {
       rerender()
     })
 
-    hint.appendChild(soundToggle)
     hint.appendChild(finishButton)
+    hint.appendChild(soundToggle)
   } else {
     const hintIcon = document.createElement('span')
     hintIcon.className = 'content-hint__icon'

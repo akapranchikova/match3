@@ -1318,8 +1318,8 @@ main,
 }
 
 .content-header__title {
-    font-size: 26px;
-    letter-spacing: -0.2px;
+    font-size: 20px;
+    margin-bottom: 16px;
 }
 
 .content-slider {
@@ -1564,7 +1564,6 @@ main,
 
 .content-hint--final {
     grid-template-columns: auto auto;
-    align-items: stretch;
     gap: 8px;
     opacity: 1;
 }
@@ -1583,11 +1582,11 @@ main,
 }
 
 .content-hint__sound {
-    justify-self: start;
+    justify-self: end;
 }
 
 .content-hint__finish {
-    justify-self: end;
+    justify-self: start;
 }
 .route-card__status {
     font-size: 12px;
