@@ -16,23 +16,41 @@ export const renderScanner = (): RenderResult => {
   wrapper.innerHTML = `
     <div class="scanner__preview scanner__preview--fullscreen">
       <video class="scanner__video" playsinline muted autoplay></video>
-      <div class="scanner__frame"></div>
-      <div class="scanner__alert" role="alert" hidden>
-        <div class="scanner__alert-content">
-          <p class="scanner__alert-title">QR-код не подошёл</p>
-          <p class="scanner__alert-message"></p>
+      <div class="scanner__frame" aria-hidden="true">
+        <div class="scanner__frame-box">
+          <span class="scanner__frame-corner scanner__frame-corner--tl"></span>
+          <span class="scanner__frame-corner scanner__frame-corner--tr"></span>
+          <span class="scanner__frame-corner scanner__frame-corner--bl"></span>
+          <span class="scanner__frame-corner scanner__frame-corner--br"></span>
         </div>
       </div>
-      <button class="scanner__close" type="button" aria-label="Закрыть сканер">×</button>
+      <div class="scanner__hint">
+        <p class="scanner__hint-text">Отсканируйте QR-код для активации контента</p>
+      </div>
+      <div class="scanner__alert" role="alert" hidden>
+        <div class="scanner__alert-content">
+          <p class="scanner__alert-message"></p>
+          <div class="scanner__alert-actions" hidden>
+            <button class="button primary scanner__alert-map" type="button">Открыть карту</button>
+          </div>
+        </div>
+      </div>
+      <button class="scanner__close button icon-button" type="button" aria-label="Закрыть сканер">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#E2E2E2"/>
+</svg>
+
+</button>
     </div>
-    <p class="scanner__status visually-hidden">Запрашиваем доступ к камере…</p>
   `
 
   const video = wrapper.querySelector<HTMLVideoElement>('.scanner__video')
   const preview = wrapper.querySelector<HTMLDivElement>('.scanner__preview')
-  const status = wrapper.querySelector<HTMLParagraphElement>('.scanner__status')
   const alert = wrapper.querySelector<HTMLDivElement>('.scanner__alert')
   const alertMessage = wrapper.querySelector<HTMLParagraphElement>('.scanner__alert-message')
+  const alertActions = wrapper.querySelector<HTMLDivElement>('.scanner__alert-actions')
+  const alertMapButton = wrapper.querySelector<HTMLButtonElement>('.scanner__alert-map')
+  const hint = wrapper.querySelector<HTMLDivElement>('.scanner__hint')
 
   let active = true
   let stream: MediaStream | null = null
@@ -63,13 +81,6 @@ export const renderScanner = (): RenderResult => {
     }
   }
 
-  const showStatus = (message: string) => {
-    console.log('[scanner] status:', message)
-    if (!status) return
-    status.textContent = message
-    status.classList.remove('visually-hidden')
-  }
-
   const setLoading = (value: boolean) => {
     if (!preview) return
 
@@ -81,20 +92,29 @@ export const renderScanner = (): RenderResult => {
     alert.hidden = true
     alert.classList.remove('scanner__alert--visible')
     alertHideTimeout = null
+    if (hint) hint.hidden = false
   }
 
-  const showAlert = (message: string) => {
+  const showAlert = (
+    message: string,
+    options: { showMapButton?: boolean; autoHide?: boolean } = {}
+  ) => {
     if (!alert || !alertMessage) return
+    const { showMapButton = false, autoHide = !showMapButton } = options
+
     alertMessage.textContent = message
     alert.hidden = false
     alert.classList.add('scanner__alert--visible')
+    if (hint) hint.hidden = true
+    if (alertActions) alertActions.hidden = !showMapButton
+    if (alertMapButton) alertMapButton.hidden = !showMapButton
     console.log('[scanner] show alert:', message)
 
     if (alertHideTimeout) {
       window.clearTimeout(alertHideTimeout)
     }
 
-    alertHideTimeout = window.setTimeout(() => hideAlert(), 3200)
+    alertHideTimeout = autoHide ? window.setTimeout(() => hideAlert(), 3200) : null
   }
 
   const handleScan = async (payload: string): Promise<boolean> => {
@@ -111,18 +131,22 @@ export const renderScanner = (): RenderResult => {
     }
 
     if (matchedIndex === null) {
-      showAlert('Этот QR-код не из маршрута. Найдите код текущей точки и попробуйте снова.')
-      showStatus('QR-код не распознан как точка маршрута')
+      showAlert('Этот QR-код не относится к маршруту', { showMapButton: true, autoHide: false })
       console.log('[scanner] payload rejected: not part of route')
       return false
     }
 
-    if (expectedPointIndex !== null && matchedIndex !== expectedPointIndex) {
+    if (expectedPointIndex !== null && matchedIndex < expectedPointIndex) {
+      showAlert('Эта часть маршрута уже пройдена', { showMapButton: true, autoHide: false })
+      console.log('[scanner] payload rejected: point already completed')
+      return false
+    }
+
+    if (expectedPointIndex !== null && matchedIndex > expectedPointIndex) {
       showAlert(
-        `Это QR-код другой точки маршрута. Нужен код точки ${expectedPointIndex + 1}.`
+        'Это не текущая точка маршрута. Нужная расположена в другом месте',
+        { showMapButton: true, autoHide: false }
       )
-      showStatus('Нужен QR-код следующей точки маршрута')
-      console.log('[scanner] payload rejected: expected index', expectedPointIndex, 'received', matchedIndex)
       return false
     }
 
@@ -144,14 +168,12 @@ export const renderScanner = (): RenderResult => {
   const startScan = async () => {
     try {
       setLoading(true)
-      showStatus('Запрашиваем доступ к камере…')
 
       const detectorClass = (window as Window & { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector
       const detectorFormats = (await detectorClass?.getSupportedFormats?.()) || []
       const supportsQr = detectorFormats.includes('qr_code')
 
       if (!detectorClass || !supportsQr) {
-        showStatus('Встроенное распознавание QR недоступно, включаем резервный сканер…')
         console.warn('[scanner] BarcodeDetector missing or QR not supported', detectorFormats)
 
         const qrScannerModule = await import(
@@ -165,7 +187,6 @@ export const renderScanner = (): RenderResult => {
           qrScannerModule?.default ?? (qrScannerModule as { QrScanner?: unknown })?.QrScanner ?? qrScannerModule
 
         if (!QrScanner || !video) {
-          showStatus('Не удалось загрузить резервный сканер')
           setLoading(false)
           return
         }
@@ -184,12 +205,6 @@ export const renderScanner = (): RenderResult => {
 
             const payload = typeof result === 'string' ? result : result?.data
             if (!payload) return
-
-            showStatus('QR-код найден! Проверяем ссылку…')
-            const accepted = await handleScan(payload)
-            if (!accepted) {
-              showStatus('Наведите камеру на QR-код')
-            }
           },
           {
             preferredCamera: 'environment',
@@ -201,7 +216,6 @@ export const renderScanner = (): RenderResult => {
         await qrScanner.start()
         stream = (video.srcObject as MediaStream | null) ?? null
 
-        showStatus('Камера включена. Наведите её на QR-код.')
         setLoading(false)
         return
       }
@@ -222,15 +236,12 @@ export const renderScanner = (): RenderResult => {
           try {
             const codes: BarcodeDetectorResult[] = await detector.detect(video)
             if (codes.length > 0) {
-              showStatus('QR-код найден! Проверяем ссылку…')
               const accepted = await handleScan(codes[0].rawValue)
               if (accepted) return
             }
 
-            showStatus('Наведите камеру на QR-код')
           } catch (err) {
             console.error('Ошибка распознавания', err)
-            showStatus('Не удалось распознать QR-код, попробуйте ещё раз')
           }
         }
 
@@ -238,16 +249,27 @@ export const renderScanner = (): RenderResult => {
       }
 
       await video.play()
-      console.log('[scanner] video playback started')
-      showStatus('Камера включена. Наведите её на QR-код.')
       setLoading(false)
       scanFrame()
     } catch (error) {
-      console.error('Не удалось запустить сканер', error)
-      showStatus('Не удалось открыть камеру. Проверьте разрешения браузера и попробуйте ещё раз.')
       setLoading(false)
     }
   }
+
+  alertMapButton?.addEventListener('click', () => {
+    const targetPoint = points[expectedPointIndex] ?? points[state.currentPointIndex]
+
+    if (targetPoint) {
+      state.currentFloor = targetPoint.map.floor
+    }
+
+    state.scannerExpectedPointIndex = null
+    state.scannerOrigin = null
+    state.screen = 'map'
+
+    console.log('[scanner] map opened from alert for point', targetPoint?.id ?? 'unknown')
+    rerender()
+  })
 
   wrapper.querySelector<HTMLButtonElement>('.scanner__close')?.addEventListener('click', () => {
     const returnScreen = state.scannerOrigin ?? 'nextPoint'
