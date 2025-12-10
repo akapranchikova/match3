@@ -189,7 +189,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Археологические находки',
         type: 'models',
-        hint: 'Коснитесь и проведите, чтобы вращать объект',
+        hint: 'Коснитесь и проведите,<br> чтобы вращать объект',
         models: [
           {
             title: 'Чаша от курительной трубки',

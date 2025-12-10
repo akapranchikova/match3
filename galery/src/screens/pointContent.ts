@@ -282,9 +282,15 @@ const renderModelsSection = (section: ModelsContent) => {
   container.className = 'content-panel content-panel--models'
 
   if (section.hint) {
-    const hint = document.createElement('p')
+    const hint = document.createElement('div')
     hint.className = 'content-models__hint'
-    hint.textContent = section.hint
+    hint.innerHTML = `
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16.466 7.5C15.643 4.237 13.952 2 12 2C9.239 2 7 6.477 7 12C7 17.523 9.239 22 12 22C12.3427 21.9987 12.676 21.932 13 21.8M15.194 13.707L19.008 15.567L17.148 19.381" stroke="#E2E2E2" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M19 15.57C17.196 16.455 14.726 17 12 17C6.477 17 2 14.761 2 12C2 9.239 6.477 7 12 7C16.838 7 20.873 8.718 21.8 11" stroke="#E2E2E2" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+
+<span>${section.hint}</span>`
     container.appendChild(hint)
   }
 
