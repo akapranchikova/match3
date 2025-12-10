@@ -319,6 +319,8 @@ export const renderNextPoint = (): HTMLElement => {
   })
 
   card.querySelector<HTMLButtonElement>('[data-action="scan"]')?.addEventListener('click', () => {
+    state.scannerExpectedPointIndex = state.currentPointIndex
+    state.scannerOrigin = state.screen
     state.screen = 'cameraPermission'
     rerender()
   })
