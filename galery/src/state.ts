@@ -30,6 +30,7 @@ const deepLinkRequiresHeadphones = deepLinkPointIndex !== null && isExternalRefe
 
 export const state: AppState = {
   screen: 'loader',
+  routeMode: 'guide',
   slideIndex: 0,
   currentPointIndex: deepLinkPointIndex ?? 0,
   currentFloor: 1,

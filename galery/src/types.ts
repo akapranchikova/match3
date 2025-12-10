@@ -55,6 +55,7 @@ export interface OnboardingSlide {
 
 export interface AppState {
   screen: AppScreen
+  routeMode: 'guide' | 'solo'
   slideIndex: number
   currentPointIndex: number
   currentFloor: number

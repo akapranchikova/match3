@@ -368,6 +368,7 @@ export const renderRouteModePrompt = (): RenderResult => {
                 imageClassName: 'option-card__image-wrap--voice',
                 variant: 'primary',
                 onSelect: () => {
+                    state.routeMode = 'guide'
                     state.screen = 'guideIntro'
                     rerender()
                 },
@@ -378,6 +379,7 @@ export const renderRouteModePrompt = (): RenderResult => {
                 imageAlt: 'Самостоятельное прохождение',
                 variant: 'secondary',
                 onSelect: () => {
+                    state.routeMode = 'solo'
                     state.screen = 'routeList'
                     rerender()
                 },

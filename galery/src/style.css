@@ -1319,6 +1319,8 @@ main,
     display: flex;
     flex-direction: column;
     gap: 2px;
+    position: relative;
+    padding-right: 52px;
     z-index: 1;
 }
 
@@ -1331,6 +1333,25 @@ main,
 .content-header__title {
     font-size: 20px;
     margin-bottom: 16px;
+}
+
+.content-header__close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.36);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+    border: 1px solid rgba(226, 226, 226, 1);
+}
+
+.content-header__close svg {
+    display: block;
 }
 
 .content-slider {
