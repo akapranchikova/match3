@@ -2,7 +2,7 @@ import { pointContentConfigs, points } from '../data'
 import { rerender } from '../navigation'
 import { state } from '../state'
 import { saveSoundEnabled } from '../storage'
-import { AudioContent, CardsContent, PointContentSection, VideoContent } from '../types'
+import { AudioContent, CardsContent, ModelsContent, PointContentSection, VideoContent } from '../types'
 import { navigateToNextPoint } from './pointFlow'
 import logoList from '../assets/logo-list.svg'
 
@@ -277,6 +277,127 @@ const renderCardsSection = (section: CardsContent) => {
   return container
 }
 
+const renderModelsSection = (section: ModelsContent) => {
+  const container = document.createElement('div')
+  container.className = 'content-panel content-panel--models'
+
+  if (section.hint) {
+    const hint = document.createElement('p')
+    hint.className = 'content-models__hint'
+    hint.textContent = section.hint
+    container.appendChild(hint)
+  }
+
+  const viewport = document.createElement('div')
+  viewport.className = 'content-models'
+
+  const track = document.createElement('div')
+  track.className = 'content-models__track'
+
+  const controls = document.createElement('div')
+  controls.className = 'content-models__controls'
+
+  const prev = document.createElement('button')
+  prev.className = 'content-cards__nav content-cards__nav--prev'
+  prev.setAttribute('aria-label', 'Предыдущая модель')
+  prev.innerHTML = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7.825 13L13.425 18.6L12 20L4 12L12 4L13.425 5.4L7.825 11L20 11V13L7.825 13Z" fill="#E2E2E2"/>
+    </svg>
+  `
+
+  const next = document.createElement('button')
+  next.className = 'content-cards__nav content-cards__nav--next'
+  next.setAttribute('aria-label', 'Следующая модель')
+  next.innerHTML = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7.825 13L13.425 18.6L12 20L4 12L12 4L13.425 5.4L7.825 11L20 11V13L7.825 13Z" fill="#E2E2E2"/>
+    </svg>
+  `
+
+  const dots = document.createElement('div')
+  dots.className = 'content-cards__dots content-models__dots'
+
+  let activeIndex = 0
+
+  const updateActive = () => {
+    const cards = Array.from(track.children) as HTMLElement[]
+    cards.forEach((card, index) => {
+      const isActive = index === activeIndex
+      card.classList.toggle('is-active', isActive)
+      card.classList.toggle('is-hidden', !isActive)
+    })
+
+    Array.from(dots.children).forEach((dot, index) => {
+      dot.classList.toggle('is-active', index === activeIndex)
+    })
+  }
+
+  const goToIndex = (index: number) => {
+    activeIndex = (index + section.models.length) % section.models.length
+    updateActive()
+  }
+
+  const goPrev = () => goToIndex(activeIndex - 1)
+  const goNext = () => goToIndex(activeIndex + 1)
+
+  section.models.forEach((model) => {
+    const card = document.createElement('article')
+    card.className = 'content-model'
+
+    const viewer = document.createElement('model-viewer') as HTMLElement
+    viewer.className = 'content-model__viewer'
+    viewer.setAttribute('src', model.src)
+    viewer.setAttribute('camera-controls', '')
+    viewer.setAttribute('interaction-prompt', 'none')
+    viewer.setAttribute('disable-zoom', '')
+    viewer.setAttribute('shadow-intensity', '0.65')
+    viewer.setAttribute('ar', '')
+    viewer.setAttribute('alt', model.alt || model.title)
+
+    const info = document.createElement('div')
+    info.className = 'content-model__info'
+    info.innerHTML = `
+      <h3 class="content-model__title">${model.title}</h3>
+    `
+
+    card.appendChild(viewer)
+    card.appendChild(info)
+    track.appendChild(card)
+  })
+
+  section.models.forEach((_, index) => {
+    const dot = document.createElement('span')
+    dot.className = 'content-cards__dot'
+    dots.appendChild(dot)
+    dot.addEventListener('click', () => goToIndex(index))
+  })
+
+  prev.addEventListener('click', goPrev)
+  next.addEventListener('click', goNext)
+
+  controls.appendChild(prev)
+  controls.appendChild(next)
+
+  viewport.appendChild(track)
+  viewport.appendChild(controls)
+
+  container.appendChild(viewport)
+
+  if (section.description) {
+    const description = document.createElement('p')
+    description.className = 'content-models__description'
+    description.textContent = section.description
+    container.appendChild(description)
+  }
+
+  container.appendChild(dots)
+
+  updateActive()
+
+  return container
+}
+
 const renderAudioSection = (section: AudioContent) => {
   const container = document.createElement('div')
   container.className = 'content-panel content-panel--guide card--guide'
@@ -321,6 +442,7 @@ const renderAudioSection = (section: AudioContent) => {
 const renderSection = (section: PointContentSection) => {
   if (section.type === 'video') return renderVideoSection(section)
   if (section.type === 'cards') return renderCardsSection(section)
+  if (section.type === 'models') return renderModelsSection(section)
   return renderAudioSection(section)
 }
 

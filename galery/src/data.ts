@@ -10,6 +10,9 @@ import boardingPhoto1 from './assets/boarding-1/photo-1.png'
 import boardingPhoto2 from './assets/boarding-1/photo-2.png'
 import boardingPhoto3 from './assets/boarding-1/photo-3.png'
 import point1Video from './assets/points/1/point-1.mp4'
+import pipeModel from './assets/points/5/Out_smoke-tube.glb?url'
+import tileModel from './assets/points/5/Out_stove-pile.glb?url'
+import potModel from './assets/points/5/Out_ceramic-pot.glb?url'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 
@@ -176,6 +179,34 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         artwork: voiceIllustration,
         background: guideBackground,
         subtitles: sampleSubtitle,
+      },
+    ],
+  },
+  railway: {
+    heading: 'Археологические находки',
+    body: 'Небольшая подборка 3D-моделей артефактов из раскопок.',
+    sections: [
+      {
+        heading: 'Археологические находки',
+        type: 'models',
+        hint: 'Коснитесь и проведите, чтобы вращать объект',
+        models: [
+          {
+            title: 'Чаша от курительной трубки',
+            src: pipeModel,
+            alt: '3D-модель фрагмента трубки',
+          },
+          {
+            title: 'Печной изразец',
+            src: tileModel,
+            alt: '3D-модель печного изразца',
+          },
+          {
+            title: 'Керамический горшок',
+            src: potModel,
+            alt: '3D-модель глиняного горшка',
+          },
+        ],
       },
     ],
   },

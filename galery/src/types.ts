@@ -67,7 +67,7 @@ export interface AppState {
   scannerOrigin: AppScreen | null
 }
 
-export type PointContentKind = 'video' | 'cards' | 'audio'
+export type PointContentKind = 'video' | 'cards' | 'audio' | 'models'
 
 export interface VideoContent {
   type: 'video'
@@ -97,7 +97,19 @@ export interface AudioContent {
   heading: string
 }
 
-export type PointContentSection = VideoContent | CardsContent | AudioContent
+export interface ModelsContent {
+  type: 'models'
+  heading: string
+  hint?: string
+  description?: string
+  models: {
+    title: string
+    src: string
+    alt?: string
+  }[]
+}
+
+export type PointContentSection = VideoContent | CardsContent | AudioContent | ModelsContent
 
 export interface PointContentConfig {
   heading: string
