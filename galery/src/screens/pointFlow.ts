@@ -1,11 +1,12 @@
 import { points } from '../data'
 import { rerender } from '../navigation'
-import { saveSoundEnabled, saveViewed } from '../storage'
+import { saveCameraPermissionGranted, saveSoundEnabled, saveViewed } from '../storage'
 import { state, viewedPoints } from '../state'
 import { createButton } from '../ui'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import routePreview from '../assets/onboarding-photo.svg'
 import { loadSrtSubtitles, SubtitleCue } from '../subtitles'
+import { hasCameraPermission } from '../permissions'
 
 const pointProgressHeadings = [
   {
@@ -382,10 +383,20 @@ export const renderNextPoint = (): HTMLElement => {
     rerender()
   })
 
-  card.querySelector<HTMLButtonElement>('[data-action="scan"]')?.addEventListener('click', () => {
+  card.querySelector<HTMLButtonElement>('[data-action="scan"]')?.addEventListener('click', async () => {
     state.scannerExpectedPointIndex = state.currentPointIndex
     state.scannerOrigin = state.screen
-    state.screen = 'cameraPermission'
+
+    const permissionGranted = await hasCameraPermission(state.cameraPermissionGranted)
+
+    if (permissionGranted) {
+      state.cameraPermissionGranted = true
+      saveCameraPermissionGranted()
+      state.screen = 'scanner'
+    } else {
+      state.screen = 'cameraPermission'
+    }
+
     rerender()
   })
 

@@ -1,5 +1,10 @@
 import { initialMapPositions } from './data'
-import { loadOnboardingCompleted, loadSoundEnabled, loadViewed } from './storage'
+import {
+  loadCameraPermissionGranted,
+  loadOnboardingCompleted,
+  loadSoundEnabled,
+  loadViewed,
+} from './storage'
 import { AppState, RenderCleanup } from './types'
 import { resolvePointIndexFromLocation } from './qr'
 
@@ -7,6 +12,7 @@ import { resolvePointIndexFromLocation } from './qr'
 const soundEnabled = loadSoundEnabled()
 const onboardingCompleted = loadOnboardingCompleted()
 const deepLinkPointIndex = resolvePointIndexFromLocation(window.location)
+const cameraPermissionGranted = loadCameraPermissionGranted()
 
 export const state: AppState = {
   screen: 'loader',
@@ -20,6 +26,7 @@ export const state: AppState = {
   deepLinkPointIndex,
   scannerExpectedPointIndex: null,
   scannerOrigin: null,
+  cameraPermissionGranted,
 }
 
 export let viewedPoints = loadViewed()

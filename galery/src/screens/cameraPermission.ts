@@ -3,6 +3,8 @@ import { rerender } from '../navigation'
 import { state } from '../state'
 import { createButton } from '../ui'
 import { RenderResult } from '../types'
+import { hasCameraPermission } from '../permissions'
+import { saveCameraPermissionGranted } from '../storage'
 
 export const renderCameraPermission = (): RenderResult => {
   const section = document.createElement('section')
@@ -35,6 +37,15 @@ export const renderCameraPermission = (): RenderResult => {
     }
   }
 
+  hasCameraPermission(state.cameraPermissionGranted).then((granted) => {
+    if (!granted) return
+
+    state.cameraPermissionGranted = true
+    saveCameraPermissionGranted()
+    state.screen = 'scanner'
+    rerender()
+  })
+
   button.addEventListener('click', async () => {
     if (!navigator.mediaDevices?.getUserMedia) {
       showStatus('Ваш браузер не поддерживает запрос камеры')
@@ -52,6 +63,8 @@ export const renderCameraPermission = (): RenderResult => {
 
       stream.getTracks().forEach((track) => track.stop())
 
+      state.cameraPermissionGranted = true
+      saveCameraPermissionGranted()
       state.screen = 'scanner'
       rerender()
     } catch (error) {

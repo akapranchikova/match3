@@ -65,6 +65,7 @@ export interface AppState {
   deepLinkPointIndex: number | null
   scannerExpectedPointIndex: number | null
   scannerOrigin: AppScreen | null
+  cameraPermissionGranted: boolean
 }
 
 export type PointContentKind = 'video' | 'cards' | 'audio' | 'models'

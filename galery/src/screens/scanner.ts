@@ -29,6 +29,7 @@ export const renderScanner = (): RenderResult => {
   `
 
   const video = wrapper.querySelector<HTMLVideoElement>('.scanner__video')
+  const preview = wrapper.querySelector<HTMLDivElement>('.scanner__preview')
   const status = wrapper.querySelector<HTMLParagraphElement>('.scanner__status')
   const alert = wrapper.querySelector<HTMLDivElement>('.scanner__alert')
   const alertMessage = wrapper.querySelector<HTMLParagraphElement>('.scanner__alert-message')
@@ -61,6 +62,12 @@ export const renderScanner = (): RenderResult => {
     if (!status) return
     status.textContent = message
     status.classList.remove('visually-hidden')
+  }
+
+  const setLoading = (value: boolean) => {
+    if (!preview) return
+
+    preview.classList.toggle('scanner__preview--loading', value)
   }
 
   const hideAlert = () => {
@@ -130,6 +137,9 @@ export const renderScanner = (): RenderResult => {
 
   const startScan = async () => {
     try {
+      setLoading(true)
+      showStatus('Запрашиваем доступ к камере…')
+
       const detectorClass = (window as Window & { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector
       const detectorFormats = (await detectorClass?.getSupportedFormats?.()) || []
       const supportsQr = detectorFormats.includes('qr_code')
@@ -137,6 +147,7 @@ export const renderScanner = (): RenderResult => {
       if (!detectorClass || !supportsQr) {
         showStatus('Распознавание QR-кодов не поддерживается в этом браузере')
         console.warn('[scanner] BarcodeDetector missing or QR not supported', detectorFormats)
+        setLoading(false)
         return
       }
 
@@ -174,10 +185,12 @@ export const renderScanner = (): RenderResult => {
       await video.play()
       console.log('[scanner] video playback started')
       showStatus('Камера включена. Наведите её на QR-код.')
+      setLoading(false)
       scanFrame()
     } catch (error) {
       console.error('Не удалось запустить сканер', error)
       showStatus('Не удалось открыть камеру. Проверьте разрешения браузера и попробуйте ещё раз.')
+      setLoading(false)
     }
   }
 
