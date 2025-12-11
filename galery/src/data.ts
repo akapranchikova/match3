@@ -17,6 +17,26 @@ import potModel from './assets/points/5/Out_ceramic-pot.glb?url'
 export const STORAGE_KEY = 'gallery-viewed-points'
 export { guideIntroAudio }
 
+const guideVoiceAssets: Record<
+  string,
+  { audio?: string; subtitles?: string }
+> = {
+  history: {
+    audio: new URL('./assets/audio/Переход к точке 1..mp3', import.meta.url).href,
+    subtitles: new URL('./assets/audio/Переход к точке 1..srt', import.meta.url).href,
+  },
+  'perm-period': {
+    audio: new URL(
+      './assets/points/2/Переход между точками 1 и 2..mp3',
+      import.meta.url,
+    ).href,
+    subtitles: new URL(
+      './assets/points/2/Переход между точками 1 и 2..srt',
+      import.meta.url,
+    ).href,
+  },
+}
+
 export const points: RoutePoint[] = [
   {
     id: 'history',
@@ -32,6 +52,14 @@ export const points: RoutePoint[] = [
       'кто финансировал строительство и какие архитекторы задали стиль',
       'как галерея открывалась для горожан и какие традиции сохранились до сегодня',
     ],
+    guide: {
+      heading: 'Точка 1. Создание и история галереи',
+      subtitle: 'Старт маршрута у гардероба',
+      caption: 'На 1 этаже около гардероба',
+      audio: guideVoiceAssets.history.audio,
+      subtitles: guideVoiceAssets.history.subtitles,
+    },
+    qrSuffix: 'z604DazV',
     map: { floor: 1, x: 28, y: 80 },
   },
   {
@@ -48,6 +76,14 @@ export const points: RoutePoint[] = [
       'как пермский период повлиял на название региона и символику выставки',
       'почему образ «моря» стал главной метафорой вступления',
     ],
+    guide: {
+      heading: 'Точка 2. Пермское море и геология',
+      subtitle: 'Продолжайте маршрут в экспозиции о пермском периоде',
+      caption: 'История пермского периода и артефакты, которые нашли неподалёку.',
+      audio: guideVoiceAssets['perm-period'].audio,
+      subtitles: guideVoiceAssets['perm-period'].subtitles,
+    },
+    qrSuffix: 'nkA6Epda',
     map: { floor: 1, x: 56, y: 62 },
   },
   {
@@ -64,6 +100,12 @@ export const points: RoutePoint[] = [
       'как менялась жизнь посёлка после появления предприятия',
       'какие детали интерьера напоминают о промышленном прошлом',
     ],
+    guide: {
+      heading: 'Точка 3. Медеплавильный завод',
+      subtitle: 'Поднимитесь на второй этаж к индустриальной истории',
+      caption: 'Как промышленность повлияла на развитие территории и людей.',
+    },
+    qrSuffix: 'eO3JtVwB',
     map: { floor: 2, x: 74, y: 34 },
   },
   {
@@ -80,6 +122,12 @@ export const points: RoutePoint[] = [
       'что археологи искали в первую очередь и почему',
       'как находки влияют на современные представления об истории Перми',
     ],
+    guide: {
+      heading: 'Точка 4. Железная дорога — будущий завод Шпагина',
+      subtitle: 'Исследуйте историю транспортного узла на втором этаже',
+      caption: 'Находки и открытия, которые легли в основу экспозиции.',
+    },
+    qrSuffix: 's6K6u2tH',
     map: { floor: 2, x: 68, y: 38 },
   },
   {
@@ -96,6 +144,12 @@ export const points: RoutePoint[] = [
       'как железная дорога помогла появиться заводу Шпагина и новым профессиям',
       'почему железнодорожные мотивы стали визуальным кодом современного пространства',
     ],
+    guide: {
+      heading: 'Точка 5. История археологических раскопок',
+      subtitle: 'Откройте третью точку на верхнем уровне маршрута',
+      caption: 'Как железная дорога изменила экономику места и городскую ткань.',
+    },
+    qrSuffix: 'QsnwmPTq',
     map: { floor: 3, x: 38, y: 54 },
   },
   {
@@ -112,6 +166,12 @@ export const points: RoutePoint[] = [
       'где узнать о ближайших событиях и новых выставках',
       'какие зоны отдыха и фото-точки стоит посетить перед уходом',
     ],
+    guide: {
+      heading: 'Точка 6. Финал маршрута',
+      subtitle: 'Завершение путешествия и сбор впечатлений',
+      caption: 'Завершение маршрута и приглашение поделиться впечатлениями.',
+    },
+    qrSuffix: 'MQkDEzW7',
     map: { floor: 3, x: 46, y: 72 },
   },
 ]

@@ -1,6 +1,6 @@
 import { onboardingSlides } from '../data'
 import { rerender } from '../navigation'
-import { state } from '../state'
+import { getFirstUnviewedPointIndex, state } from '../state'
 import { saveOnboardingCompleted, saveSoundEnabled } from '../storage'
 import { createButton } from '../ui'
 import { RenderResult } from '../types'
@@ -625,7 +625,7 @@ export const renderGuideIntro = (): RenderResult => {
 
     const start = createButton('Начать маршрут')
     start.addEventListener('click', () => {
-        state.currentPointIndex = 0
+        state.currentPointIndex = getFirstUnviewedPointIndex()
         state.screen = 'nextPoint'
         rerender()
     })

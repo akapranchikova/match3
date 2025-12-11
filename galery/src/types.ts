@@ -31,6 +31,14 @@ export interface RoutePoint {
   photoAlt?: string
   longDescription?: string
   highlights?: string[]
+  guide?: {
+    heading?: string
+    subtitle?: string
+    caption?: string
+    audio?: string
+    subtitles?: string
+  }
+  qrSuffix?: string
   map: MapPoint
 }
 

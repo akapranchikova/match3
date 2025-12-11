@@ -1,6 +1,6 @@
 import { points } from '../data'
 import { rerender } from '../navigation'
-import { state, viewedPoints } from '../state'
+import { getFirstUnviewedPointIndex, state, viewedPoints } from '../state'
 import { createButton } from '../ui'
 import timelineImage1 from '../assets/timeline-01.svg'
 import timelineImage2 from '../assets/timeline-01.svg'
@@ -75,8 +75,7 @@ export const renderRouteList = (): HTMLElement => {
     })
   })
 
-  const firstUnviewedPointIndex = points.findIndex((point) => !viewedPoints.has(point.id))
-  const nextPointIndex = firstUnviewedPointIndex === -1 ? state.currentPointIndex : firstUnviewedPointIndex
+  const nextPointIndex = getFirstUnviewedPointIndex()
 
   const cta = createButton('Продолжить маршрут с Гидом')
   cta.addEventListener('click', () => {

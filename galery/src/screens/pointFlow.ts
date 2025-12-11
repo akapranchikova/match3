@@ -54,35 +54,6 @@ const getPointProgressHeading = (completedPoints: number) => {
   return pointProgressHeadings[headingIndex] || pointProgressHeadings[0]
 }
 
-const transitionAssets: Record<number, { audio: string; subtitles: string }> = {
-  1: {
-    audio: '../assets/audio/Переход к точке 1..mp3',
-    subtitles: '../assets/audio/Переход к точке 1..srt',
-  },
-  2: {
-    audio: '../assets/points/2/Переход между точками 1 и 2..mp3',
-    subtitles: '../assets/points/2/Переход между точками 1 и 2..srt',
-  },
-}
-
-const getTransitionAssetUrl = (
-  pointNumber: number,
-  type: 'audio' | 'subtitles',
-): string | null => {
-  const assets = transitionAssets[pointNumber]
-
-  if (assets) {
-    const assetPath = type === 'audio' ? assets.audio : assets.subtitles
-    return new URL(assetPath, import.meta.url).href
-  }
-
-  if (type === 'audio') {
-    return guideIntroAudio
-  }
-
-  return null
-}
-
 const mapArrowSvg = `
   <svg width="26" height="61" viewBox="0 0 26 61" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M1.07031 0C7.78825 0.957574 13.9441 4.28102 18.4307 9.37207C22.9172 14.4632 25.4398 20.9883 25.5449 27.7734C25.65 34.5584 23.3313 41.1581 19.0049 46.3857C14.8078 51.4569 8.98814 54.9134 2.54102 56.1797L7.66992 59.1406L7.16992 60.0068L0.613281 56.2217L4.39844 49.665L5.26465 50.165L2.3584 55.1963C8.57536 53.973 14.1867 50.6396 18.2344 45.749C22.4092 40.7048 24.6473 34.336 24.5459 27.7891C24.4445 21.242 22.0098 14.9457 17.6807 10.0332C13.3516 5.12079 7.41186 1.91426 0.929688 0.990234L1.07031 0Z" fill="#E2E2E2"/>
@@ -268,14 +239,17 @@ export const renderNextPoint = (): RenderResult => {
   const point = points[state.currentPointIndex]
   const completedPoints = viewedPoints.size
   const progressHeading = getPointProgressHeading(completedPoints)
+  const headingText = progressHeading.title
+  const subtitleText = progressHeading.subtitle
+  const caption = point.guide?.caption || point.description
   const card = document.createElement('section')
   card.className = 'card card--point card--next'
   const cleanups: (() => void)[] = []
   card.innerHTML = `
     <div class="point-layout__header">
       <div>
-        <p class="point-layout__eyebrow">${progressHeading.title}</p>
-        <h1 class="point-layout__title">${progressHeading.subtitle}</h1>
+        <p class="point-layout__eyebrow">${headingText}</p>
+        <h1 class="point-layout__title">${subtitleText}</h1>
       </div>
       <button class="button icon-button primary route-button" data-action="route" aria-label="Продолжить без гида">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -294,7 +268,7 @@ export const renderNextPoint = (): RenderResult => {
         </button>
 
         <div class="point-visual__placeholder" role="img" aria-label="${point.photoAlt || `Превью точки «${point.title}»`}"></div>
-        <p class="point-visual__caption">${point.description}</p>
+        <p class="point-visual__caption">${caption}</p>
       </div>
     </article>
     <div class="point-layout__actions point-layout__actions--inline">
@@ -310,7 +284,6 @@ export const renderNextPoint = (): RenderResult => {
     </div>
   `
 
-  const pointNumber = state.currentPointIndex + 1
   let footerAudio: HTMLAudioElement | null = null
 
   const footerVoice = card.querySelector<HTMLDivElement>('.footer__voice')
@@ -330,8 +303,8 @@ export const renderNextPoint = (): RenderResult => {
 
     subtitleWrapper?.appendChild(subtitleText)
 
-    const audioSrc = getTransitionAssetUrl(pointNumber, 'audio') ?? guideIntroAudio
-    const subtitlesUrl = getTransitionAssetUrl(pointNumber, 'subtitles')
+    const audioSrc = point.guide?.audio ?? guideIntroAudio
+    const subtitlesUrl = point.guide?.subtitles ?? null
 
     footerAudio = document.createElement('audio')
     footerAudio.className = 'footer__audio'

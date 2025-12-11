@@ -1,4 +1,4 @@
-import { initialMapPositions } from './data'
+import { initialMapPositions, points } from './data'
 import {
   loadCameraPermissionGranted,
   loadOnboardingCompleted,
@@ -15,6 +15,25 @@ const onboardingCompleted = loadOnboardingCompleted()
 const deepLinkPointIndex = resolvePointIndexFromLocation(window.location)
 const cameraPermissionGranted = loadCameraPermissionGranted()
 const nextPointHintsCompleted = loadNextPointHintsCompleted()
+export let viewedPoints = loadViewed()
+
+export const resolveNextPointIndex = (): number => {
+  if (deepLinkPointIndex !== null) return deepLinkPointIndex
+
+  const firstIncompleteIndex = points.findIndex((point) => !viewedPoints.has(point.id))
+
+  if (firstIncompleteIndex !== -1) return firstIncompleteIndex
+
+  return Math.max(points.length - 1, 0)
+}
+
+export const getFirstUnviewedPointIndex = (): number => {
+  const firstIncompleteIndex = points.findIndex((point) => !viewedPoints.has(point.id))
+
+  if (firstIncompleteIndex !== -1) return firstIncompleteIndex
+
+  return Math.max(points.length - 1, 0)
+}
 
 const isExternalReferrer = (): boolean => {
   if (!document.referrer) return true
@@ -34,7 +53,7 @@ export const state: AppState = {
   screen: 'loader',
   routeMode: 'guide',
   slideIndex: 0,
-  currentPointIndex: deepLinkPointIndex ?? 0,
+  currentPointIndex: resolveNextPointIndex(),
   currentFloor: 1,
   mapPositions: { ...initialMapPositions },
   currentContentIndex: 0,
@@ -47,8 +66,6 @@ export const state: AppState = {
   cameraPermissionGranted,
   nextPointHintsCompleted,
 }
-
-export let viewedPoints = loadViewed()
 
 let teardown: RenderCleanup | null = null
 

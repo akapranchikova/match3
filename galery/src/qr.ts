@@ -3,15 +3,14 @@ import { points } from './data'
 const ALLOWED_HOSTS = new Set(['permgal.4app.pro', 'localhost', '127.0.0.1', '0.0.0.0'])
 
 // Map of known aggregator URL suffixes to zero-based point indices.
-// Add new entries here when issuing QR links through the aggregator service.
-const AGGREGATOR_SUFFIX_TO_POINT = new Map<string, number>([
-  ['z604DazV', 0],
-  ['nkA6Epda', 1],
-  ['eO3JtVwB', 2],
-  ['s6K6u2tH', 3],
-  ['QsnwmPTq', 4],
-  ['MQkDEzW7', 5],
-])
+// Add new entries via RoutePoint.qrSuffix in data.ts.
+const AGGREGATOR_SUFFIX_TO_POINT = new Map<string, number>(
+  points
+    .map<[string, number] | null>((point, index) =>
+      point.qrSuffix ? [point.qrSuffix, index] : null,
+    )
+    .filter((entry): entry is [string, number] => Boolean(entry)),
+)
 
 const extractAggregatorSuffix = (payload: string): string | null => {
   try {
