@@ -126,7 +126,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
     body: 'Текст',
     sections: [
       {
-        heading: 'Создание и история галереи',
+        heading: 'Создание и история галереи',
         type: 'video',
         src: sampleVideoSrc,
         subtitles: sampleSubtitle,
@@ -138,14 +138,20 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
     body: 'Текст',
     sections: [
       {
-        heading: 'Вступление о пермском море',
+        heading: 'Пермское море',
         type: 'video',
         src: sampleVideoSrc,
         poster: pointPlaceholder,
         subtitles: sampleSubtitle,
       },
       {
-        heading: 'Карточки с фактами',
+        heading: 'Пермский период',
+        type: 'video',
+        src: sampleVideoSrc,
+        subtitles: sampleSubtitle,
+      },
+      {
+        heading: 'Геология',
         type: 'cards',
         cards: [
           {
@@ -171,12 +177,46 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
           },
         ],
       },
+    ],
+  },
+  'metal-plant': {
+    heading: 'Заголовок',
+    body: 'Текст',
+    sections: [
       {
-        heading: 'Истории моря',
-        type: 'audio',
-        src: guideIntroAudio,
-        artwork: voiceIllustration,
-        background: guideBackground,
+        heading: 'Выбор места для завода',
+        type: 'video',
+        src: sampleVideoSrc,
+        subtitles: sampleSubtitle,
+      },
+      {
+        heading: 'Строительство медеплавильного завода',
+        type: 'video',
+        src: sampleVideoSrc,
+        subtitles: sampleSubtitle,
+      },
+      {
+        heading: 'Заводской посёлок',
+        type: 'video',
+        src: sampleVideoSrc,
+        subtitles: sampleSubtitle,
+      },
+    ],
+  },
+  excavation: {
+    heading: 'Заголовок',
+    body: 'Текст',
+    sections: [
+      {
+        heading: 'Железнодорожные мастерские',
+        type: 'video',
+        src: sampleVideoSrc,
+        subtitles: sampleSubtitle,
+      },
+      {
+        heading: 'Бронепоезда',
+        type: 'video',
+        src: sampleVideoSrc,
         subtitles: sampleSubtitle,
       },
     ],
@@ -189,7 +229,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         heading: 'Археологические находки',
         type: 'models',
         hint: 'Коснитесь и проведите,<br> чтобы вращать объект',
-          subtitles: sampleSubtitle,
+        subtitles: sampleSubtitle,
         models: [
           {
             title: 'Чаша от курительной трубки',
@@ -205,6 +245,45 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
             title: 'Керамический горшок',
             src: potModel,
             alt: '3D-модель глиняного горшка',
+          },
+        ],
+      },
+      {
+        heading: 'Соликамский тракт',
+        type: 'video',
+        src: sampleVideoSrc,
+        subtitles: sampleSubtitle,
+      },
+    ],
+  },
+  final: {
+    heading: 'Заголовок',
+    body: 'Текст',
+    sections: [
+      {
+        heading: 'Финал',
+        type: 'cards',
+        cards: [
+          {
+            title: 'Поделиться впечатлениями',
+            text: 'Оставьте отзыв о маршруте или предложите новые сюжеты для галереи.',
+            image:
+              'https://images.unsplash.com/photo-1515165562835-c4c7100e0c05?auto=format&fit=crop&w=1200&q=80',
+            alt: 'Человек заполняет форму обратной связи',
+          },
+          {
+            title: 'Запланировать визит',
+            text: 'Узнайте расписание будущих выставок и событий галереи.',
+            image:
+              'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1200&q=80',
+            alt: 'Календарь мероприятий',
+          },
+          {
+            title: 'Найти зоны отдыха',
+            text: 'Посмотрите, где можно сделать паузу, перекусить или купить сувениры.',
+            image:
+              'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
+            alt: 'Зона отдыха с креслами',
           },
         ],
       },
