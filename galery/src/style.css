@@ -999,6 +999,38 @@ main,
     text-align: center;
 }
 
+.subtitle-animate-in {
+    animation: subtitle-enter 0.3s ease-in-out;
+}
+
+.subtitle-animate-out {
+    animation: subtitle-exit 0.3s ease-in-out;
+}
+
+@keyframes subtitle-enter {
+    from {
+        transform: translateY(18px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes subtitle-exit {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(-18px);
+        opacity: 0;
+    }
+}
+
 .guide__subtitle-word {
     opacity: 0.35;
     transition: opacity 0.2s ease;

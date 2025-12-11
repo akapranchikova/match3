@@ -443,6 +443,44 @@ export const renderGuideIntro = (): RenderResult => {
     subtitleText.className = 'guide__subtitle-text'
     subtitleText.textContent = ''
 
+    const subtitleAnimationClasses = ['subtitle-animate-in', 'subtitle-animate-out'] as const
+
+    let isSubtitleVisible = false
+    let isSubtitleAnimatingOut = false
+
+    const playSubtitleAnimation = (className: (typeof subtitleAnimationClasses)[number]) => {
+        subtitleAnimationClasses.forEach((animationClass) => subtitleText.classList.remove(animationClass))
+
+        void subtitleText.offsetWidth
+        subtitleText.classList.add(className)
+    }
+
+    const animateSubtitleIn = () => {
+        isSubtitleAnimatingOut = false
+        isSubtitleVisible = true
+        playSubtitleAnimation('subtitle-animate-in')
+    }
+
+    const animateSubtitleOut = (onFinish?: () => void) => {
+        if (isSubtitleAnimatingOut || !isSubtitleVisible) {
+            if (onFinish) onFinish()
+            return
+        }
+
+        isSubtitleAnimatingOut = true
+        playSubtitleAnimation('subtitle-animate-out')
+
+        if (!onFinish) return
+
+        const handleAnimationEnd = () => {
+            subtitleText.removeEventListener('animationend', handleAnimationEnd)
+            isSubtitleAnimatingOut = false
+            onFinish()
+        }
+
+        subtitleText.addEventListener('animationend', handleAnimationEnd)
+    }
+
     intro.appendChild(subtitleFill)
     intro.appendChild(subtitleText)
     const subtitleCurrent = intro
@@ -450,11 +488,28 @@ export const renderGuideIntro = (): RenderResult => {
     let introSubtitles = cachedIntroSubtitles || introSubtitlesFallback
     let activeCueIndex: number | null = null
     let revealedWordCount = 0
+    let hasStarted = false
+
+    const clearSubtitleContent = () => {
+        subtitleText.replaceChildren()
+        subtitleText.textContent = ''
+        subtitleCurrent.classList.remove('guide__subtitle--visible')
+        isSubtitleVisible = false
+        isSubtitleAnimatingOut = false
+    }
+
+    const hideSubtitle = () => {
+        if (!(subtitleText.textContent || '').trim().length) {
+            clearSubtitleContent()
+            return
+        }
+
+        animateSubtitleOut(clearSubtitleContent)
+    }
 
     const resetSubtitleState = () => {
         subtitleFill.style.setProperty('--progress', '0%')
-        subtitleText.textContent = ''
-        subtitleCurrent.classList.remove('guide__subtitle--visible')
+        hideSubtitle()
         activeCueIndex = null
         revealedWordCount = 0
     }
@@ -490,16 +545,74 @@ export const renderGuideIntro = (): RenderResult => {
     const showFinalCue = () => {
         if (!introSubtitles.length) return
 
-        const lastCue = introSubtitles[introSubtitles.length - 1]
-        activeCueIndex = introSubtitles.length - 1
+        const lastCueIndex = introSubtitles.length - 1
+        const lastCue = introSubtitles[lastCueIndex]
+        const isAlreadyShowingLastCue =
+            activeCueIndex === lastCueIndex &&
+            subtitleText.childElementCount === lastCue.words.length &&
+            isSubtitleVisible
+
+        if (isAlreadyShowingLastCue) {
+            subtitleFill.style.setProperty('--progress', '100%')
+            subtitleCurrent.classList.add('guide__subtitle--visible')
+            return
+        }
+
+        activeCueIndex = lastCueIndex
         revealedWordCount = lastCue.words.length
         renderWords(lastCue.words, lastCue.words.length)
         subtitleFill.style.setProperty('--progress', '100%')
         subtitleCurrent.classList.add('guide__subtitle--visible')
+        animateSubtitleIn()
+    }
+
+    const areCuesEqual = (a: SubtitleCue[], b: SubtitleCue[]) => {
+        if (a.length !== b.length) return false
+
+        return a.every((cue, index) => {
+            const other = b[index]
+            if (!other) return false
+
+            const hasDifferentTiming = cue.start !== other.start || cue.end !== other.end
+            const hasDifferentWordCount = cue.words.length !== other.words.length
+
+            if (hasDifferentTiming || hasDifferentWordCount) {
+                return false
+            }
+
+            return cue.words.every((word, wordIndex) => {
+                const otherWord = other.words[wordIndex]
+                return otherWord?.text === word.text && otherWord?.start === word.start
+            })
+        })
     }
 
     const setSubtitles = (subtitles: SubtitleCue[]) => {
+        if (areCuesEqual(introSubtitles, subtitles)) return
+
+        const wasShowingActiveCue = hasStarted && isSubtitleVisible && activeCueIndex !== null
+
         introSubtitles = subtitles
+
+        if (!introSubtitles.length) {
+            resetSubtitleState()
+            return
+        }
+
+        if (wasShowingActiveCue && activeCueIndex !== null) {
+            const activeCue = introSubtitles[activeCueIndex]
+            if (activeCue) {
+                renderWords(activeCue.words, Math.min(revealedWordCount, activeCue.words.length))
+                const activeCueDuration = Math.max(0.001, activeCue.end - activeCue.start)
+                const progress = Math.min(1, Math.max(0, (audio.currentTime - activeCue.start) / activeCueDuration))
+                subtitleFill.style.setProperty('--progress', `${progress * 100}%`)
+                subtitleCurrent.classList.add('guide__subtitle--visible')
+                isSubtitleAnimatingOut = false
+                isSubtitleVisible = true
+                return
+            }
+        }
+
         resetSubtitleState()
 
         if (introSubtitles.length) {
@@ -528,6 +641,7 @@ export const renderGuideIntro = (): RenderResult => {
                 revealedWordCount = visibleWords
                 renderWords(activeCue.words, visibleWords)
                 subtitleCurrent.classList.add('guide__subtitle--visible')
+                animateSubtitleIn()
             } else if (visibleWords !== revealedWordCount) {
                 revealedWordCount = visibleWords
                 renderWords(activeCue.words, visibleWords)
@@ -542,7 +656,6 @@ export const renderGuideIntro = (): RenderResult => {
         }
     }
 
-    let hasStarted = false
     const tryPlay = () => {
         if (hasStarted) return
         audio

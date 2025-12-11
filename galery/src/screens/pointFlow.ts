@@ -293,10 +293,67 @@ export const renderNextPoint = (): RenderResult => {
     subtitleText.className = 'footer__subtitle-text'
     const defaultSubtitleMessage = ''
 
+    const subtitleAnimationClasses = ['subtitle-animate-in', 'subtitle-animate-out'] as const
+
+    let isSubtitleVisible = false
+    let isSubtitleAnimatingOut = false
+
+    const playSubtitleAnimation = (className: (typeof subtitleAnimationClasses)[number]) => {
+      subtitleAnimationClasses.forEach((animationClass) => subtitleText.classList.remove(animationClass))
+
+      void subtitleText.offsetWidth
+      subtitleText.classList.add(className)
+    }
+
+    const animateSubtitleIn = () => {
+      isSubtitleAnimatingOut = false
+      isSubtitleVisible = true
+      playSubtitleAnimation('subtitle-animate-in')
+    }
+
+    const animateSubtitleOut = (onFinish?: () => void) => {
+      if (isSubtitleAnimatingOut || !isSubtitleVisible) {
+        if (onFinish) onFinish()
+        return
+      }
+
+      isSubtitleAnimatingOut = true
+      playSubtitleAnimation('subtitle-animate-out')
+
+      if (!onFinish) return
+
+      const handleAnimationEnd = () => {
+        subtitleText.removeEventListener('animationend', handleAnimationEnd)
+        isSubtitleAnimatingOut = false
+        onFinish()
+      }
+
+      subtitleText.addEventListener('animationend', handleAnimationEnd)
+    }
+
     const renderDefaultSubtitle = () => {
       subtitleText.replaceChildren()
       subtitleText.textContent = defaultSubtitleMessage
       subtitleWrapper?.classList.remove('footer__subtitles--visible')
+      isSubtitleVisible = false
+      isSubtitleAnimatingOut = false
+    }
+
+    const clearSubtitleContent = () => {
+      subtitleText.replaceChildren()
+      subtitleText.textContent = defaultSubtitleMessage
+      subtitleWrapper?.classList.remove('footer__subtitles--visible')
+      isSubtitleVisible = false
+      isSubtitleAnimatingOut = false
+    }
+
+    const hideSubtitle = () => {
+      if (!(subtitleText.textContent || '').trim().length) {
+        clearSubtitleContent()
+        return
+      }
+
+      animateSubtitleOut(clearSubtitleContent)
     }
 
     renderDefaultSubtitle()
@@ -348,17 +405,29 @@ export const renderNextPoint = (): RenderResult => {
     const resetSubtitleState = () => {
       activeCueIndex = null
       revealedWordCount = 0
-      renderDefaultSubtitle()
+      hideSubtitle()
     }
 
     const showFinalCue = () => {
       if (!footerCues.length) return
 
-      const lastCue = footerCues[footerCues.length - 1]
-      activeCueIndex = footerCues.length - 1
+      const lastCueIndex = footerCues.length - 1
+      const lastCue = footerCues[lastCueIndex]
+      const isAlreadyShowingLastCue =
+        activeCueIndex === lastCueIndex &&
+        subtitleText.childElementCount === lastCue.words.length &&
+        isSubtitleVisible
+
+      if (isAlreadyShowingLastCue) {
+        subtitleWrapper?.classList.add('footer__subtitles--visible')
+        return
+      }
+
+      activeCueIndex = lastCueIndex
       revealedWordCount = lastCue.words.length
       renderWords(lastCue.words, lastCue.words.length)
       subtitleWrapper?.classList.add('footer__subtitles--visible')
+      animateSubtitleIn()
     }
 
     const updateSubtitles = () => {
@@ -379,6 +448,7 @@ export const renderNextPoint = (): RenderResult => {
           activeCueIndex = activeIndexNext
           revealedWordCount = visibleWords
           renderWords(activeCue.words, visibleWords)
+          animateSubtitleIn()
         } else if (visibleWords !== revealedWordCount) {
           revealedWordCount = visibleWords
           renderWords(activeCue.words, visibleWords)
