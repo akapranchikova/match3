@@ -1,4 +1,4 @@
-import { points } from '../data'
+import { guideIntroAudio, points } from '../data'
 import { rerender } from '../navigation'
 import {
   saveCameraPermissionGranted,
@@ -65,7 +65,10 @@ const transitionAssets: Record<number, { audio: string; subtitles: string }> = {
   },
 }
 
-const getTransitionAssetUrl = (pointNumber: number, type: 'audio' | 'subtitles') => {
+const getTransitionAssetUrl = (
+  pointNumber: number,
+  type: 'audio' | 'subtitles',
+): string | null => {
   const assets = transitionAssets[pointNumber]
 
   if (assets) {
@@ -73,9 +76,11 @@ const getTransitionAssetUrl = (pointNumber: number, type: 'audio' | 'subtitles')
     return new URL(assetPath, import.meta.url).href
   }
 
-  const extension = type === 'audio' ? 'mp3' : 'srt'
+  if (type === 'audio') {
+    return guideIntroAudio
+  }
 
-  return new URL(`../assets/audio/Переход к точке ${pointNumber}..${extension}`, import.meta.url).href
+  return null
 }
 
 const mapArrowSvg = `
@@ -325,7 +330,7 @@ export const renderNextPoint = (): RenderResult => {
 
     subtitleWrapper?.appendChild(subtitleText)
 
-    const audioSrc = getTransitionAssetUrl(pointNumber, 'audio')
+    const audioSrc = getTransitionAssetUrl(pointNumber, 'audio') ?? guideIntroAudio
     const subtitlesUrl = getTransitionAssetUrl(pointNumber, 'subtitles')
 
     footerAudio = document.createElement('audio')
@@ -419,10 +424,12 @@ export const renderNextPoint = (): RenderResult => {
     footerAudio.addEventListener('play', updateSubtitles)
     footerAudio.addEventListener('ended', showFinalCue)
 
-    loadSrtSubtitles(subtitlesUrl).then((cues) => {
-      footerCues = cues
-      updateSubtitles()
-    })
+    if (subtitlesUrl) {
+      loadSrtSubtitles(subtitlesUrl).then((cues) => {
+        footerCues = cues
+        updateSubtitles()
+      })
+    }
 
       footerVoice.appendChild(footerAudio)
       if (state.soundEnabled) {

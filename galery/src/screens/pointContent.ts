@@ -509,6 +509,7 @@ export const renderPointContent = () => {
       media.muted = muted
     })
     updateSoundToggle()
+    syncMediaState()
   }
 
   const syncMediaState = () => {

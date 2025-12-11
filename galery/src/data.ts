@@ -15,6 +15,7 @@ import tileModel from './assets/points/5/Out_stove-pile.glb?url'
 import potModel from './assets/points/5/Out_ceramic-pot.glb?url'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
+export { guideIntroAudio }
 
 export const points: RoutePoint[] = [
   {
