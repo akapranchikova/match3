@@ -343,7 +343,6 @@ const renderModelsSection = (section: ModelsContent) => {
     viewer.setAttribute('interaction-prompt', 'none')
     viewer.setAttribute('disable-zoom', '')
     viewer.setAttribute('shadow-intensity', '0.65')
-    viewer.setAttribute('ar', '')
     viewer.setAttribute('alt', model.alt || model.title)
 
     const info = document.createElement('div')
