@@ -3,6 +3,7 @@ import { rerender } from '../navigation'
 import { saveViewed } from '../storage'
 import { state, viewedPoints } from '../state'
 import { resolvePointIndexFromPayloadWithRedirect } from '../qr'
+import { openMapOverlay } from './map'
 import {
   BarcodeDetectorConstructor,
   BarcodeDetectorResult,
@@ -265,10 +266,13 @@ export const renderScanner = (): RenderResult => {
 
     state.scannerExpectedPointIndex = null
     state.scannerOrigin = null
-    state.screen = 'map'
 
     console.log('[scanner] map opened from alert for point', targetPoint?.id ?? 'unknown')
-    rerender()
+    openMapOverlay({
+      onMarkerSelect: () => {
+        state.screen = 'nextPoint'
+      },
+    })
   })
 
   wrapper.querySelector<HTMLButtonElement>('.scanner__close')?.addEventListener('click', () => {

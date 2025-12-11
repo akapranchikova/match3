@@ -56,6 +56,11 @@ body {
     color: #e5e7eb;
 }
 
+.map-overlay-open {
+    overscroll-behavior: none;
+    touch-action: none;
+}
+
 body::before {
     content: '';
     position: fixed;
@@ -2118,6 +2123,8 @@ main,
     backdrop-filter: blur(10px);
     width: 100%;
     z-index: 30;
+    overscroll-behavior: contain;
+    touch-action: none;
 }
 
 .map-screen__backdrop {

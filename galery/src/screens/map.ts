@@ -5,7 +5,20 @@ import floorPlanFirst from '../assets/floor-1.svg?raw'
 import floorPlanSecond from '../assets/floor-2.svg?raw'
 import floorPlanThird from '../assets/floor-3.svg?raw'
 
-export const renderMap = (): HTMLElement => {
+type RenderMapOptions = {
+    onClose?: () => void
+    onFloorChange?: () => void
+    onMarkerSelect?: (index: number) => void
+}
+
+const MAP_OVERLAY_CLASS = 'map-overlay-open'
+
+const removeExistingMap = () => {
+    document.body.classList.remove(MAP_OVERLAY_CLASS)
+    document.querySelector<HTMLElement>('.map-overlay-host')?.remove()
+}
+
+export const renderMap = (options?: RenderMapOptions): HTMLElement => {
     const point = points[state.currentPointIndex]
     const floors = Array.from(new Set(points.map((item) => item.map.floor))).sort((a, b) => a - b)
     const activeFloor = floors.includes(state.currentFloor) ? state.currentFloor : point.map.floor
@@ -94,8 +107,13 @@ export const renderMap = (): HTMLElement => {
             event.stopPropagation()
             const originalIndex = Number(marker.dataset.index)
             state.currentPointIndex = originalIndex
-            state.screen = 'nextPoint'
-            rerender()
+
+            if (options?.onMarkerSelect) {
+                options.onMarkerSelect(originalIndex)
+            } else {
+                state.screen = 'nextPoint'
+                rerender()
+            }
         })
     })
 
@@ -106,11 +124,21 @@ export const renderMap = (): HTMLElement => {
             if (!state.mapPositions[floor]) {
                 state.mapPositions[floor] = initialMapPositions[floor] || {x: 0, y: 0}
             }
-            rerender()
+
+            if (options?.onFloorChange) {
+                options.onFloorChange()
+            } else {
+                rerender()
+            }
         })
     })
 
     const closeMap = () => {
+        if (options?.onClose) {
+            options.onClose()
+            return
+        }
+
         state.screen = 'nextPoint'
         rerender()
     }
@@ -120,6 +148,9 @@ export const renderMap = (): HTMLElement => {
         let startY = 0
         let currentY = 0
         let dragging = false
+
+        // Swipe sensitivity: tweak CLOSE_DISTANCE_PX to change how far a finger must travel to dismiss.
+        const CLOSE_DISTANCE_PX = 120
 
         const resetTransform = () => {
             mapSheet.style.transition = ''
@@ -134,6 +165,7 @@ export const renderMap = (): HTMLElement => {
 
         const moveDrag = (y: number) => {
             if (!dragging) return
+            // Drag offset is clamped so the sheet doesn't stretch too far during the swipe gesture
             currentY = Math.max(0, y - startY)
             mapSheet.style.transform = `translateY(${Math.min(currentY, 260)}px)`
         }
@@ -141,7 +173,7 @@ export const renderMap = (): HTMLElement => {
         const endDrag = () => {
             if (!dragging) return
             dragging = false
-            const shouldClose = currentY > 120
+            const shouldClose = currentY > CLOSE_DISTANCE_PX
             mapSheet.style.transition = 'transform 0.25s ease'
 
             if (shouldClose) {
@@ -156,13 +188,24 @@ export const renderMap = (): HTMLElement => {
             }
         }
 
-        mapSheet.addEventListener('touchstart', (event) => {
-            startDrag(event.touches[0]?.clientY || 0)
-        })
+        mapSheet.addEventListener(
+            'touchstart',
+            (event) => {
+                // preventDefault stops Chrome pull-to-refresh when the sheet is dragged from the top edge
+                event.preventDefault()
+                startDrag(event.touches[0]?.clientY || 0)
+            },
+            {passive: false},
+        )
 
-        mapSheet.addEventListener('touchmove', (event) => {
-            moveDrag(event.touches[0]?.clientY || 0)
-        })
+        mapSheet.addEventListener(
+            'touchmove',
+            (event) => {
+                event.preventDefault()
+                moveDrag(event.touches[0]?.clientY || 0)
+            },
+            {passive: false},
+        )
 
         mapSheet.addEventListener('touchend', endDrag)
         mapSheet.addEventListener('touchcancel', endDrag)
@@ -182,4 +225,46 @@ export const renderMap = (): HTMLElement => {
     }
 
     return page
+}
+
+type MapOverlayOptions = {
+    onMarkerSelect?: () => void
+}
+
+export const openMapOverlay = (options?: MapOverlayOptions) => {
+    const host = document.createElement('div')
+    host.className = 'map-overlay-host'
+
+    const removeHost = () => {
+        document.body.classList.remove(MAP_OVERLAY_CLASS)
+        host.remove()
+    }
+
+    const renderOverlay = () => {
+        host.innerHTML = ''
+        const mapElement = renderMap({
+            onClose: removeHost,
+            onFloorChange: () => renderOverlay(),
+            onMarkerSelect: () => {
+                removeHost()
+                options?.onMarkerSelect?.()
+                rerender()
+            },
+        })
+
+        host.appendChild(mapElement)
+    }
+
+    removeExistingMap()
+    document.body.classList.add(MAP_OVERLAY_CLASS)
+    host.addEventListener(
+        'touchmove',
+        (event) => {
+            // Prevent touch drags on the overlay from delegating to the browser pull-to-refresh
+            event.preventDefault()
+        },
+        {passive: false},
+    )
+    renderOverlay()
+    document.querySelector('#app')?.appendChild(host)
 }

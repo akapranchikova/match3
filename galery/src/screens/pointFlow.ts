@@ -13,6 +13,7 @@ import routePreview from '../assets/onboarding-photo.svg'
 import { loadSrtSubtitles, SubtitleCue } from '../subtitles'
 import { hasCameraPermission } from '../permissions'
 import { RenderResult } from '../types'
+import { openMapOverlay } from './map'
 
 type HintStep = {
   target: HTMLElement
@@ -473,8 +474,7 @@ export const renderNextPoint = (): RenderResult => {
 
   card.querySelector<HTMLButtonElement>('[data-action="map"]')?.addEventListener('click', () => {
     state.currentFloor = point.map.floor
-    state.screen = 'map'
-    rerender()
+    openMapOverlay()
   })
 
   card.querySelector<HTMLButtonElement>('[data-action="scan"]')?.addEventListener('click', async () => {
