@@ -1,4 +1,4 @@
-import { guideIntroAudio, points } from '../data'
+import { guideIntroAudio, guideVoiceAssets, points } from '../data'
 import { rerender } from '../navigation'
 import {
   saveCameraPermissionGranted,
@@ -398,8 +398,10 @@ export const renderNextPoint = (): RenderResult => {
 
     subtitleWrapper?.appendChild(subtitleText)
 
-    const audioSrc = point.guide?.audio ?? guideIntroAudio
-    const subtitlesUrl = point.guide?.subtitles ?? null
+    const nextPointVoice = guideVoiceAssets[point.id]
+
+    const audioSrc = nextPointVoice?.audio ?? guideIntroAudio
+    const subtitlesUrl = nextPointVoice?.subtitles ?? null
 
     footerAudio = document.createElement('audio')
     footerAudio.className = 'footer__audio'

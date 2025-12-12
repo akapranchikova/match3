@@ -33,8 +33,27 @@ const renderVideoSection = (section: VideoContent) => {
   video.playsInline = true
   video.src = section.src
   video.poster = section.poster || ''
+  video.muted = true
 
   container.appendChild(video)
+
+  if (section.audio) {
+    const audio = document.createElement('audio')
+    audio.className = 'content-video__audio'
+    audio.controls = false
+    audio.preload = 'auto'
+    audio.src = section.audio
+
+    if (section.subtitlesUrl) {
+      const track = document.createElement('track')
+      track.kind = 'subtitles'
+      track.src = section.subtitlesUrl
+      track.default = true
+      audio.appendChild(track)
+    }
+
+    container.appendChild(audio)
+  }
 
   return container
 }
