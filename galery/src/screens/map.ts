@@ -4,6 +4,7 @@ import {state, viewedPoints} from '../state'
 import floorPlanFirst from '../assets/floor-1.svg?raw'
 import floorPlanSecond from '../assets/floor-2.svg?raw'
 import floorPlanThird from '../assets/floor-3.svg?raw'
+import {RoutePoint} from '../types'
 
 type RenderMapOptions = {
     onClose?: () => void
@@ -12,6 +13,54 @@ type RenderMapOptions = {
 }
 
 const MAP_OVERLAY_CLASS = 'map-overlay-open'
+const MAP_VIEWBOXES: Record<number, {width: number; height: number}> = {
+    1: {width: 224, height: 653},
+    2: {width: 254, height: 643},
+    3: {width: 257, height: 643},
+}
+
+const resolveVisiblePoints = (): RoutePoint[] =>
+    points.filter((item, index) => viewedPoints.has(item.id) || index === state.currentPointIndex)
+
+const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; height: number}) => {
+    const markerLineStart = -104
+    const markerLineEnd = -6
+
+    const markersMarkup = floorPoints
+        .map((item) => {
+            const originalIndex = points.findIndex((original) => original.id === item.id)
+            const isActive = originalIndex === state.currentPointIndex
+            const isComplete = viewedPoints.has(item.id)
+            const label = originalIndex + 1
+            const {x, y} = item.map
+
+            return `
+        <g class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}" data-index="${originalIndex}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="${item.title}">
+          <line class="map__marker-line" x1="${markerLineStart}" y1="0" x2="${markerLineEnd}" y2="0" />
+          <g filter="url(#map-marker-shadow)">
+            <circle class="map__marker-dot" cx="0" cy="0" r="6" />
+          </g>
+          <g transform="translate(-120, 0)">
+          <text class="map__marker-title" x="0" y="0">Точка ${label}</text>
+          ${isComplete ? '<text class="map__marker-label" x="0" y="4">Пройдена</text>' : '<text class="map__marker-label" x="0" y="4">' +  item.title + '</text>'}
+</g>
+          
+        </g>
+      `
+        })
+        .join('')
+
+    return `
+    <svg class="map__markers-layer" viewBox="0 0 ${viewBox.width} ${viewBox.height}" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
+      <defs>
+        <filter id="map-marker-shadow" x="-12" y="-12" width="36" height="36" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#111" flood-opacity="0.35" />
+        </filter>
+      </defs>
+      ${markersMarkup}
+    </svg>
+  `
+}
 
 const removeExistingMap = () => {
     document.body.classList.remove(MAP_OVERLAY_CLASS)
@@ -20,11 +69,8 @@ const removeExistingMap = () => {
 
 export const renderMap = (options?: RenderMapOptions): HTMLElement => {
     const point = points[state.currentPointIndex]
-    const nextPoint = points[state.currentPointIndex + 1]
-
-    const floorOptions = nextPoint ? [point.map.floor, nextPoint.map.floor] : [point.map.floor]
-
-    const floors = Array.from(new Set(floorOptions)).sort((a, b) => a - b)
+    const visiblePoints = resolveVisiblePoints()
+    const floors = Array.from(new Set(visiblePoints.map((item) => item.map.floor))).sort((a, b) => a - b)
     const shouldShowFloors = floors.length > 1
     const activeFloor = floors.includes(state.currentFloor) ? state.currentFloor : point.map.floor
     state.currentFloor = activeFloor
@@ -83,40 +129,37 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
     </section>
   `
 
-    const inner = page.querySelector<HTMLDivElement>('.map__markers')
+    const markersContainer = page.querySelector<HTMLDivElement>('.map__markers')
+    const viewBox = MAP_VIEWBOXES[state.currentFloor]
 
-    points
-        .filter((item) => item.map.floor === state.currentFloor)
-        .forEach((item) => {
-            const originalIndex = points.findIndex((original) => original.id === item.id)
-            const isActive = item.id === point.id
-            const isComplete = viewedPoints.has(item.id)
+    if (markersContainer && viewBox) {
+        const visiblePointsOnFloor = visiblePoints.filter((item) => item.map.floor === state.currentFloor)
+        markersContainer.innerHTML = createMarkersSvg(visiblePointsOnFloor, viewBox)
+    }
 
-            const statusMarkup = isComplete ? '<span class="map__marker-status">Пройдена</span>' : ''
+    const handleMarkerSelect = (originalIndex: number) => {
+        state.currentPointIndex = originalIndex
 
-            inner?.insertAdjacentHTML(
-                'beforeend',
-                `
-        <button class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}" style="left:${item.map.x}%;top:${item.map.y}%;" title="${item.title}" data-index="${originalIndex}">
-          <span class="map__marker-dot"></span>
-          <span class="map__marker-label">${originalIndex + 1}</span>
-          ${statusMarkup}
-        </button>
-      `,
-            )
-        })
+        if (options?.onMarkerSelect) {
+            options.onMarkerSelect(originalIndex)
+        } else {
+            state.screen = 'nextPoint'
+            rerender()
+        }
+    }
 
-    page.querySelectorAll<HTMLButtonElement>('.map__marker').forEach((marker) => {
+    markersContainer?.querySelectorAll<SVGGElement>('.map__marker').forEach((marker) => {
         marker.addEventListener('click', (event) => {
             event.stopPropagation()
             const originalIndex = Number(marker.dataset.index)
-            state.currentPointIndex = originalIndex
+            handleMarkerSelect(originalIndex)
+        })
 
-            if (options?.onMarkerSelect) {
-                options.onMarkerSelect(originalIndex)
-            } else {
-                state.screen = 'nextPoint'
-                rerender()
+        marker.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                const originalIndex = Number(marker.dataset.index)
+                handleMarkerSelect(originalIndex)
             }
         })
     })

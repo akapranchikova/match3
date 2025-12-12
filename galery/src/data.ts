@@ -1,5 +1,5 @@
 import { parseSrt } from './subtitles'
-import { MapPosition, OnboardingSlide, PointContentConfig, RoutePoint } from './types'
+import { MapPoint, MapPosition, OnboardingSlide, PointContentConfig, RoutePoint } from './types'
 import historyIllustration from './assets/onboarding-history.png'
 import voiceIllustration from './assets/onboarding-voice.png'
 import qrIllustration from './assets/onboarding-qr.svg'
@@ -271,6 +271,15 @@ const villagesSubtitles = parseSubtitleLines(villagesSubtitlesRaw)
 const villagesSubtitlesUrl = createSubtitlesUrlFromText(villagesSubtitlesRaw)
 const finalSubtitles = parseSubtitleLines(finalSubtitlesRaw)
 
+const mapPoints: Record<RoutePoint['id'], MapPoint> = {
+  history: { floor: 1, x: 150.72, y: 522.4 },
+  'perm-period': { floor: 1, x: 157.44, y: 264.86 },
+  'metal-plant': { floor: 2, x: 187.96, y: 218.62 },
+  excavation: { floor: 2, x: 172.72, y: 244.34 },
+  railway: { floor: 3, x: 97.66, y: 347.22 },
+  final: { floor: 3, x: 118.22, y: 462.96 },
+}
+
 export const points: RoutePoint[] = [
   {
     id: 'history',
@@ -294,7 +303,7 @@ export const points: RoutePoint[] = [
       subtitles: guideVoiceAssets.history.subtitles,
     },
     qrSuffix: 'z604DazV',
-    map: { floor: 1, x: 28, y: 80 },
+    map: mapPoints.history,
   },
   {
     id: 'perm-period',
@@ -318,7 +327,7 @@ export const points: RoutePoint[] = [
       subtitles: guideVoiceAssets['perm-period'].subtitles,
     },
     qrSuffix: 'nkA6Epda',
-    map: { floor: 1, x: 56, y: 62 },
+    map: mapPoints['perm-period'],
   },
   {
     id: 'metal-plant',
@@ -342,7 +351,7 @@ export const points: RoutePoint[] = [
       subtitles: guideVoiceAssets['metal-plant'].subtitles,
     },
     qrSuffix: 'eO3JtVwB',
-    map: { floor: 2, x: 74, y: 34 },
+    map: mapPoints['metal-plant'],
   },
   {
     id: 'excavation',
@@ -366,7 +375,7 @@ export const points: RoutePoint[] = [
       subtitles: guideVoiceAssets.excavation.subtitles,
     },
     qrSuffix: 's6K6u2tH',
-    map: { floor: 2, x: 68, y: 38 },
+    map: mapPoints.excavation,
   },
   {
     id: 'railway',
@@ -390,7 +399,7 @@ export const points: RoutePoint[] = [
       subtitles: guideVoiceAssets.railway.subtitles,
     },
     qrSuffix: 'QsnwmPTq',
-    map: { floor: 3, x: 38, y: 54 },
+    map: mapPoints.railway,
   },
   {
     id: 'final',
@@ -414,7 +423,7 @@ export const points: RoutePoint[] = [
       subtitles: guideVoiceAssets.final.subtitles,
     },
     qrSuffix: 'MQkDEzW7',
-    map: { floor: 3, x: 46, y: 72 },
+    map: mapPoints.final,
   },
 ]
 

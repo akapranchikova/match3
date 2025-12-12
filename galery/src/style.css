@@ -2365,63 +2365,51 @@ main,
 }
 
 .map__markers {
-    display: none;
+    display: block;
     position: absolute;
     inset: 0;
+    pointer-events: none;
+}
+
+.map__markers-layer {
+    width: 100%;
+    height: 100%;
 }
 
 .map__marker {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    background: rgba(24, 26, 25, 0.98);
-    border: 1px solid rgba(124, 188, 164, 0.35);
-    border-radius: 12px;
-    padding: 6px 8px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    pointer-events: auto;
     cursor: pointer;
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
-    transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    z-index: 2;
 }
 
-.map__marker:hover {
-    transform: translate(-50%, -50%) scale(1.02);
-    border-color: rgba(124, 188, 164, 0.55);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+.map__marker-line {
+    stroke: #e2e2e2;
+    stroke-width: 2;
+    stroke-linecap: round;
 }
 
 .map__marker-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #21cca1, #0f9b78);
-    box-shadow: 0 0 0 8px rgba(33, 204, 161, 0.24);
+    fill: #e2e2e2;
 }
 
-.map__marker-label {
+.map__marker-label, .map__marker-title {
     font-weight: 700;
-    color: #e5e7eb;
+    fill: #e2e2e2;
     font-size: 14px;
 }
+.map__marker-title {
+    font-size: 20px;
+}
 
-.map__marker.is-active {
-    border-color: rgba(33, 204, 161, 0.75);
-    box-shadow: 0 14px 28px rgba(33, 204, 161, 0.28);
+.map__marker.is-active .map__marker-dot,
+ {
+    stroke: #21cca1;
+    fill: #21cca1;
+    background: rgba(226, 226, 226, 1);
+    box-shadow: 0px 0px 12px 4px rgba(159, 252, 201, 1);
 }
 
 .map__marker.is-complete {
-    border-color: rgba(33, 204, 161, 0.85);
-    background: rgba(33, 204, 161, 0.14);
-    box-shadow: 0 14px 26px rgba(16, 185, 129, 0.28);
-}
-
-.map__marker-status {
-    display: block;
-    font-size: 12px;
-    color: #a7f3d0;
-    font-weight: 600;
+    opacity: 0.45;
 }
 
 .hint__icon {
