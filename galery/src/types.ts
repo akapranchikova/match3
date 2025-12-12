@@ -107,6 +107,8 @@ export interface AudioContent {
   src: string
   artwork: string
   background: string
+  backgroundOverlay?: string
+  logo?: string
   subtitles?: string[]
   heading: string
 }

@@ -7,6 +7,7 @@ import pointPlaceholder from './assets/point-placeholder.svg'
 import guideBackground from './assets/guide-background.png'
 import guideIntroAudio from './assets/guide-intro.wav'
 import onboardingGolosLogo from './assets/onboarding-golos-logo.svg'
+import logoList from './assets/logo-list.svg'
 import boardingPhoto1 from './assets/boarding-1/photo-1.png'
 import boardingPhoto2 from './assets/boarding-1/photo-2.png'
 import boardingPhoto3 from './assets/boarding-1/photo-3.png'
@@ -591,34 +592,9 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         src: finalAudioSrc,
         artwork: voiceIllustration,
         background: guideBackground,
+        backgroundOverlay: onboardingGolosLogo,
+        logo: logoList,
         subtitles: finalSubtitles,
-      },
-      {
-        heading: 'Финал',
-        type: 'cards',
-        cards: [
-          {
-            title: 'Поделиться впечатлениями',
-            text: 'Оставьте отзыв о маршруте или предложите новые сюжеты для галереи.',
-            image:
-              'https://images.unsplash.com/photo-1515165562835-c4c7100e0c05?auto=format&fit=crop&w=1200&q=80',
-            alt: 'Человек заполняет форму обратной связи',
-          },
-          {
-            title: 'Запланировать визит',
-            text: 'Узнайте расписание будущих выставок и событий галереи.',
-            image:
-              'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1200&q=80',
-            alt: 'Календарь мероприятий',
-          },
-          {
-            title: 'Найти зоны отдыха',
-            text: 'Посмотрите, где можно сделать паузу, перекусить или купить сувениры.',
-            image:
-              'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
-            alt: 'Зона отдыха с креслами',
-          },
-        ],
       },
     ],
   },

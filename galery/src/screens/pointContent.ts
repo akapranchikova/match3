@@ -466,8 +466,23 @@ const renderAudioSection = (section: AudioContent) => {
   const container = document.createElement('div')
   container.className = 'content-panel content-panel--guide card--guide'
 
+  if (section.backgroundOverlay) {
+    const backgroundOverlay = document.createElement('div')
+    backgroundOverlay.className = 'guide__background-logo'
+    backgroundOverlay.style.backgroundImage = `url(${section.backgroundOverlay})`
+    container.appendChild(backgroundOverlay)
+  }
+
   const content = document.createElement('div')
   content.className = 'guide__content'
+
+  if (section.logo) {
+    const logo = document.createElement('img')
+    logo.className = 'guide__logo'
+    logo.src = section.logo
+    logo.alt = 'Логотип галереи'
+    content.appendChild(logo)
+  }
 
   const hero = document.createElement('div')
   hero.className = 'guide__hero'
@@ -504,8 +519,9 @@ export const renderPointContent = () => {
   const config = pointContentConfigs[point.id] || pointContentConfigs.history
   state.currentContentIndex = Math.min(state.currentContentIndex, config.sections.length - 1)
   const currentSection = config.sections[state.currentContentIndex]
+  const isFinalPoint = point.id === 'final'
   const container = document.createElement('section')
-  container.className = 'card card--content'
+  container.className = isFinalPoint ? 'card card--guide' : 'card card--content'
 
   const contentPositionLabel = `Сюжет ${state.currentContentIndex + 1} из ${config.sections.length}`
 
@@ -733,7 +749,9 @@ export const renderPointContent = () => {
   setMuted(!state.soundEnabled)
   updateActive()
 
-  container.appendChild(header)
+  if (!isFinalPoint) {
+    container.appendChild(header)
+  }
   container.appendChild(slider)
 
   if (currentSection.subtitles?.length) {

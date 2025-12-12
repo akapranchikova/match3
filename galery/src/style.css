@@ -765,9 +765,10 @@ main,
     box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
 }
 
-.card--guide > :not(.guide__background) {
+.card--guide > :not(.guide__background):not(.guide__background-logo) {
     position: relative;
     z-index: 1;
+    width: 100%;
 }
 
 .guide__background {
@@ -778,6 +779,14 @@ main,
     transform: scale(1.12);
     z-index: 0;
     opacity: 0.7;
+}
+
+.guide__background-logo {
+    position: absolute;
+    inset: 0;
+    background: center 25% / 100% auto no-repeat;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .card--options {
@@ -882,7 +891,6 @@ main,
 }
 
 .guide__logo {
-    width: 128px;
     height: auto;
     align-self: center;
 }
@@ -1411,6 +1419,7 @@ main,
 .content-slider {
     flex: 1;
     display: flex;
+    width: 100%;
     flex-direction: column;
     gap: 12px;
 }
@@ -1436,7 +1445,7 @@ main,
 }
 
 .content-panel--guide {
-    padding: 24px 18px 32px;
+    padding: 0px 18px 32px;
     justify-content: center;
     align-items: center;
     text-align: center;
