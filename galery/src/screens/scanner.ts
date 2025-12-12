@@ -1,7 +1,6 @@
 import { points } from '../data'
 import { rerender } from '../navigation'
-import { saveViewed } from '../storage'
-import { state, viewedPoints } from '../state'
+import { state } from '../state'
 import { resolvePointIndexFromPayloadWithRedirect } from '../qr'
 import { openMapOverlay } from './map'
 import {
@@ -153,8 +152,6 @@ export const renderScanner = (): RenderResult => {
 
     stopScanner()
 
-    viewedPoints.add(points[matchedIndex].id)
-    saveViewed(viewedPoints)
     state.currentPointIndex = matchedIndex
     state.scannerExpectedPointIndex = null
     state.scannerOrigin = null
