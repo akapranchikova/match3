@@ -2,6 +2,7 @@ import { pointContentConfigs, points } from '../data'
 import { rerender } from '../navigation'
 import { state } from '../state'
 import { saveSoundEnabled } from '../storage'
+import { loadSrtSubtitles, SubtitleCue, createCueFromText } from '../subtitles'
 import { AudioContent, CardsContent, ModelsContent, PointContentSection, VideoContent } from '../types'
 import { navigateToNextPoint } from './pointFlow'
 import onboardingVoice from '../assets/onboarding-voice.png'
@@ -34,6 +35,7 @@ const renderVideoSection = (section: VideoContent) => {
   video.src = section.src
   video.poster = section.poster || ''
   video.muted = true
+  video.defaultMuted = true
 
   container.appendChild(video)
 
@@ -576,6 +578,12 @@ export const renderPointContent = () => {
     state.soundEnabled = !muted
     saveSoundEnabled(!muted)
     mediaElements.forEach((media) => {
+      if (media instanceof HTMLVideoElement) {
+        media.muted = true
+        media.defaultMuted = true
+        return
+      }
+
       media.muted = muted
     })
     updateSoundToggle()
@@ -588,7 +596,12 @@ export const renderPointContent = () => {
 
     mediaElements.forEach((media) => {
       const isActive = !!activePanel?.contains(media)
-      media.muted = isMuted
+      if (media instanceof HTMLVideoElement) {
+        media.muted = true
+        media.defaultMuted = true
+      } else {
+        media.muted = isMuted
+      }
       if (!isActive) {
         media.pause()
       }
@@ -739,10 +752,168 @@ export const renderPointContent = () => {
 
     const subtitleText = document.createElement('div')
     subtitleText.className = 'content-subtitles__text'
-    subtitleText.innerHTML = currentSection.subtitles.map((line) => `<p>${line}</p>`).join('')
-    subtitleLayout.appendChild(subtitleText)
 
+    subtitleLayout.appendChild(subtitleText)
     container.appendChild(subtitleLayout)
+
+    const subtitleAudio = (stack.children[state.currentContentIndex] as HTMLElement | undefined)?.querySelector(
+      'audio',
+    ) as HTMLAudioElement | null
+
+    const subtitleAnimationClasses = ['subtitle-animate-in', 'subtitle-animate-out'] as const
+    const subtitleFallbackCues: SubtitleCue[] = currentSection.subtitles.map((line, index) =>
+      createCueFromText(line, index * 3, index * 3 + 2.75),
+    )
+
+    let subtitleCues: SubtitleCue[] = []
+    let activeCueIndex: number | null = null
+    let isSubtitleVisible = false
+    let isSubtitleAnimatingOut = false
+
+    const playSubtitleAnimation = (className: (typeof subtitleAnimationClasses)[number]) => {
+      subtitleAnimationClasses.forEach((animationClass) => subtitleText.classList.remove(animationClass))
+
+      void subtitleText.offsetWidth
+      subtitleText.classList.add(className)
+    }
+
+    const animateSubtitleIn = () => {
+      isSubtitleAnimatingOut = false
+      isSubtitleVisible = true
+      playSubtitleAnimation('subtitle-animate-in')
+    }
+
+    const animateSubtitleOut = (onFinish?: () => void) => {
+      if (isSubtitleAnimatingOut || !isSubtitleVisible) {
+        if (onFinish) onFinish()
+        return
+      }
+
+      isSubtitleAnimatingOut = true
+      playSubtitleAnimation('subtitle-animate-out')
+
+      if (!onFinish) return
+
+      const handleAnimationEnd = () => {
+        subtitleText.removeEventListener('animationend', handleAnimationEnd)
+        isSubtitleAnimatingOut = false
+        onFinish()
+      }
+
+      subtitleText.addEventListener('animationend', handleAnimationEnd)
+    }
+
+    const renderCueLines = (cue: SubtitleCue | null) => {
+      subtitleText.replaceChildren()
+
+      if (!cue) return
+
+      cue.text.split(/\r?\n/).forEach((line) => {
+        const paragraph = document.createElement('p')
+        paragraph.textContent = line
+        subtitleText.appendChild(paragraph)
+      })
+    }
+
+    const clearSubtitleContent = () => {
+      subtitleText.replaceChildren()
+      isSubtitleVisible = false
+      isSubtitleAnimatingOut = false
+    }
+
+    const hideSubtitle = () => {
+      if (!subtitleText.childElementCount) {
+        clearSubtitleContent()
+        return
+      }
+
+      animateSubtitleOut(clearSubtitleContent)
+    }
+
+    const findActiveCueIndex = (current: number) =>
+      subtitleCues.findIndex((cue, index) => {
+        const isLastCue = index === subtitleCues.length - 1
+        const cueEnd = isLastCue ? cue.end + 0.15 : cue.end
+        return current >= cue.start && current < cueEnd
+      })
+
+    const showFinalCue = () => {
+      if (!subtitleCues.length) return
+
+      const lastCueIndex = subtitleCues.length - 1
+      const lastCue = subtitleCues[lastCueIndex]
+      const isAlreadyShowingLastCue =
+        activeCueIndex === lastCueIndex && subtitleText.childElementCount > 0 && isSubtitleVisible
+
+      if (isAlreadyShowingLastCue) {
+        return
+      }
+
+      activeCueIndex = lastCueIndex
+      renderCueLines(lastCue)
+      animateSubtitleIn()
+    }
+
+    const updateSubtitles = () => {
+      if (!subtitleAudio) {
+        return
+      }
+
+      if (!subtitleCues.length) {
+        hideSubtitle()
+        return
+      }
+
+      const current = subtitleAudio.currentTime
+      const activeIndexNext = findActiveCueIndex(current)
+
+      if (activeIndexNext !== -1) {
+        const activeCue = subtitleCues[activeIndexNext]
+        const cueChanged = activeCueIndex !== activeIndexNext
+
+        if (cueChanged) {
+          activeCueIndex = activeIndexNext
+          renderCueLines(activeCue)
+          animateSubtitleIn()
+        }
+      } else if (subtitleAudio.ended) {
+        showFinalCue()
+      } else {
+        hideSubtitle()
+      }
+    }
+
+    const setSubtitles = (cues: SubtitleCue[]) => {
+      subtitleCues = cues.length ? cues : subtitleFallbackCues
+      activeCueIndex = null
+
+      if (!subtitleCues.length) {
+        clearSubtitleContent()
+        return
+      }
+
+      renderCueLines(subtitleCues[0])
+      animateSubtitleIn()
+      updateSubtitles()
+    }
+
+    if (currentSection.subtitlesUrl) {
+      loadSrtSubtitles(currentSection.subtitlesUrl, subtitleFallbackCues).then(setSubtitles)
+    } else {
+      setSubtitles(subtitleFallbackCues)
+    }
+
+    subtitleAudio?.addEventListener('timeupdate', updateSubtitles)
+    subtitleAudio?.addEventListener('seeked', updateSubtitles)
+    subtitleAudio?.addEventListener('play', updateSubtitles)
+    subtitleAudio?.addEventListener('ended', showFinalCue)
+
+    cleanupCallbacks.push(() => {
+      subtitleAudio?.removeEventListener('timeupdate', updateSubtitles)
+      subtitleAudio?.removeEventListener('seeked', updateSubtitles)
+      subtitleAudio?.removeEventListener('play', updateSubtitles)
+      subtitleAudio?.removeEventListener('ended', showFinalCue)
+    })
   }
   container.appendChild(hint)
 

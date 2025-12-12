@@ -10,9 +10,9 @@ import onboardingGolosLogo from './assets/onboarding-golos-logo.svg'
 import boardingPhoto1 from './assets/boarding-1/photo-1.png'
 import boardingPhoto2 from './assets/boarding-1/photo-2.png'
 import boardingPhoto3 from './assets/boarding-1/photo-3.png'
-import historySubtitlesRaw from './assets/points/1. Создание и история галереи/2. Создание и история галереи.srt?raw'
-import permSeaSubtitlesRaw from './assets/points/2.1 Пермское море, пермский период и геология/3. Пермское море.srt?raw'
-import permPeriodSubtitlesRaw from './assets/points/2.1 Пермское море, пермский период и геология/4. Пермский период.srt?raw'
+import historySubtitlesRaw from './assets/points/1. Создание и история галереи/2. Создание и история галереи.txt?raw'
+import permSeaSubtitlesRaw from './assets/points/2.1 Пермское море, пермский период и геология/3. Пермское море.txt?raw'
+import permPeriodSubtitlesRaw from './assets/points/2.1 Пермское море, пермский период и геология/4. Пермский период.txt?raw'
 import metalPlantLocationSubtitlesRaw from './assets/points/3.1 Медеплавильный завод и история посёлка/6. Выбор места для завода.txt?raw'
 import metalPlantConstructionSubtitlesRaw from './assets/points/3.1 Медеплавильный завод и история посёлка/7. Строительство медеплавильного завода.txt?raw'
 import metalPlantVillageSubtitlesRaw from './assets/points/3.1 Медеплавильный завод и история посёлка/8. Заводской посёлок.txt?raw'
@@ -21,11 +21,6 @@ import armoredTrainSubtitlesRaw from './assets/points/4.1 Железная до�
 import solikamskyTrackSubtitlesRaw from './assets/points/5. История археологических раскопок/15. Соликамский тракт.txt?raw'
 import villagesSubtitlesRaw from './assets/points/5. История археологических раскопок/16. Деревни вдоль дороги.txt?raw'
 import finalSubtitlesRaw from './assets/points/6. Финал/17. Финал.txt?raw'
-import transitionToPoint3SubtitlesRaw from './assets/points/3.1 Медеплавильный завод и история посёлка/8.1 переход к точке 4.txt?raw'
-import transitionToPoint5SubtitlesRaw from './assets/points/4.1 Железная дорога — будущий завод Шпагина/10.1 переход к точке 5.txt?raw'
-import transitionToPoint6SubtitlesRaw from './assets/points/5. История археологических раскопок/16.1 переход к точке 6.txt?raw'
-import transitionToPoint1SubtitlesRaw from './assets/points/0. Интро - приветствие/1.1 переход к точке 1.txt?raw'
-import defaultVideo from './assets/default.mp4'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 export { guideIntroAudio }
@@ -38,9 +33,10 @@ const splitSubtitleLines = (content: string) =>
 
 const parseSubtitleLines = (content: string) => {
   const parsed = parseSrt(content)
-    .map((cue) => cue.text)
+    .flatMap((cue) => splitSubtitleLines(cue.text))
     .filter(Boolean)
 
+    console.log('parsed', parsed)
   if (parsed.length) return parsed
 
   return splitSubtitleLines(content)
@@ -95,7 +91,7 @@ export const guideVoiceAssets: Record<
       import.meta.url,
     ).href,
     subtitles: new URL(
-      './assets/points/1. Создание и история галереи/2.1 переход к точке 2.srt',
+      './assets/points/1. Создание и история галереи/2.1 переход к точке 2.txt',
       import.meta.url,
     ).href,
   },
@@ -105,7 +101,7 @@ export const guideVoiceAssets: Record<
       import.meta.url,
     ).href,
     subtitles: new URL(
-      './assets/points/2.1 Пермское море, пермский период и геология/5.1 переход к точке 3.srt',
+      './assets/points/2.1 Пермское море, пермский период и геология/5.1 переход к точке 3.txt',
       import.meta.url,
     ).href,
   },
@@ -114,21 +110,30 @@ export const guideVoiceAssets: Record<
       './assets/points/3.1 Медеплавильный завод и история посёлка/8.1 переход к точке 4.mp3',
       import.meta.url,
     ).href,
-    subtitles: createSubtitlesUrlFromText(transitionToPoint3SubtitlesRaw),
+    subtitles: new URL(
+        './assets/points/3.1 Медеплавильный завод и история посёлка/8.1 переход к точке 4.txt',
+        import.meta.url,
+    ).href,
   },
   railway: {
     audio: new URL(
       './assets/points/4.1 Железная дорога — будущий завод Шпагина/10.1 переход к точке 5.mp3',
       import.meta.url,
     ).href,
-    subtitles: createSubtitlesUrlFromText(transitionToPoint5SubtitlesRaw),
+    subtitles: new URL(
+        './assets/points/4.1 Железная дорога — будущий завод Шпагина/10.1 переход к точке 5.txt',
+        import.meta.url,
+    ).href,
   },
   final: {
     audio: new URL(
       './assets/points/5. История археологических раскопок/16.1 переход к точке 6.mp3',
       import.meta.url,
     ).href,
-    subtitles: createSubtitlesUrlFromText(transitionToPoint6SubtitlesRaw),
+    subtitles: new URL(
+        './assets/points/5. История археологических раскопок/16.1 переход к точке 6.txt',
+        import.meta.url,
+    ).href,
   },
 }
 

@@ -110,7 +110,7 @@ h2 {
 }
 
 p {
-    color: #d1d5db;
+    color: rgba(226, 226, 226, 1);
     font-size: 15px;
     margin-bottom: 16px;
 }
@@ -1490,7 +1490,7 @@ main,
     color: #e2e2e2;
     font-size: 14px;
     line-height: 1.35;
-    opacity: 0.72;
+    /*opacity: 0.72;*/
 }
 
 .content-subtitles__text p {
