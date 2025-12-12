@@ -10,6 +10,7 @@ import boardingPhoto1 from './assets/boarding-1/photo-1.png'
 import boardingPhoto2 from './assets/boarding-1/photo-2.png'
 import boardingPhoto3 from './assets/boarding-1/photo-3.png'
 import point1Video from './assets/points/1/point-1.mp4'
+import defaultVideo from './assets/default.mp4'
 import pipeModel from './assets/points/5/Out_smoke-tube.glb?url'
 import tileModel from './assets/points/5/Out_stove-pile.glb?url'
 import potModel from './assets/points/5/Out_ceramic-pot.glb?url'
@@ -176,7 +177,6 @@ export const points: RoutePoint[] = [
   },
 ]
 
-const sampleVideoSrc = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'
 const sampleSubtitle = [
   'Это место для субтитров, где будет текст Голоса.'
 ]
@@ -189,7 +189,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Создание и история галереи',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         subtitles: sampleSubtitle,
       },
     ],
@@ -201,14 +201,14 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Пермское море',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         poster: pointPlaceholder,
         subtitles: sampleSubtitle,
       },
       {
         heading: 'Пермский период',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         subtitles: sampleSubtitle,
       },
       {
@@ -247,19 +247,19 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Выбор места для завода',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         subtitles: sampleSubtitle,
       },
       {
         heading: 'Строительство медеплавильного завода',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         subtitles: sampleSubtitle,
       },
       {
         heading: 'Заводской посёлок',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         subtitles: sampleSubtitle,
       },
     ],
@@ -271,13 +271,13 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Железнодорожные мастерские',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         subtitles: sampleSubtitle,
       },
       {
         heading: 'Бронепоезда',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         subtitles: sampleSubtitle,
       },
     ],
@@ -312,13 +312,13 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Соликамский тракт',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         subtitles: sampleSubtitle,
       },
       {
         heading: 'Деревни вдоль дороги',
         type: 'video',
-        src: sampleVideoSrc,
+        src: defaultVideo,
         subtitles: sampleSubtitle,
       },
     ],
