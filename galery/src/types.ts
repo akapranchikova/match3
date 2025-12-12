@@ -8,6 +8,7 @@ export type AppScreen =
   | 'pointContent'
   | 'infoComplete'
   | 'nextPoint'
+  | 'routeComplete'
   | 'routeList'
   | 'cameraPermission'
   | 'scanner'

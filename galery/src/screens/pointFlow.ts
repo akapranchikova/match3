@@ -155,7 +155,7 @@ export const handleFinishPoint = () => {
   }
 
   if (isRouteCompleted()) {
-    state.screen = 'routeList'
+    state.screen = 'routeComplete'
     return
   }
 
@@ -171,7 +171,7 @@ export const navigateToNextPoint = () => {
   }
 
   if (isRouteCompleted()) {
-    state.screen = 'routeList'
+    state.screen = 'routeComplete'
     return
   }
 
@@ -606,6 +606,270 @@ export const renderNextPoint = (): RenderResult => {
       element: card,
       cleanup: () => cleanups.forEach((fn) => fn()),
     }
+  }
+
+  return card
+}
+
+export const renderRouteComplete = (): RenderResult => {
+  const point = points[state.currentPointIndex]
+  const headingText = 'Отличная работа!'
+  const subtitleText = 'Вы открыли все карточки маршрута'
+  const caption = point.guide?.caption || point.description
+
+  const card = document.createElement('section')
+  card.className = 'card card--point card--next card--complete'
+
+  card.innerHTML = `
+    <div class="point-layout__header">
+      <div>
+        <p class="point-layout__eyebrow">${headingText}</p>
+        <h1 class="point-layout__title">${subtitleText}</h1>
+      </div>
+    </div>
+    <article class="point-visual">
+      <div class="point-visual__frame">
+        <div class="point-visual__placeholder" role="img" aria-label="${
+          point.photoAlt || `Превью точки «${point.title}»`
+        }"></div>
+        <p class="point-visual__caption">${caption}</p>
+      </div>
+    </article>
+    <div class="point-layout__route footer">
+      <div class="footer__voice">
+        <img src="${onboardingVoice}" alt="voice-img" class="footer__voice__image">
+        <div class="footer__subtitles" aria-live="polite"></div>
+      </div>
+      <div class="footer__button"></div>
+    </div>
+  `
+
+  let footerAudio: HTMLAudioElement | null = null
+
+  const finishButton = createButton('Завершить')
+  finishButton.addEventListener('click', () => {
+    state.screen = 'routeList'
+    rerender()
+  })
+
+  const footerVoice = card.querySelector<HTMLDivElement>('.footer__voice')
+  if (footerVoice) {
+    const subtitleWrapper = footerVoice.querySelector<HTMLDivElement>('.footer__subtitles')
+    const subtitleText = document.createElement('p')
+    subtitleText.className = 'footer__subtitle-text'
+    const defaultSubtitleMessage = ''
+
+    const subtitleAnimationClasses = ['subtitle-animate-in', 'subtitle-animate-out'] as const
+
+    let isSubtitleVisible = false
+    let isSubtitleAnimatingOut = false
+
+    const playSubtitleAnimation = (className: (typeof subtitleAnimationClasses)[number]) => {
+      subtitleText.classList.remove(...subtitleAnimationClasses)
+      subtitleText.getBoundingClientRect()
+      subtitleText.classList.add(className)
+    }
+
+    const animateSubtitleIn = () => {
+      isSubtitleAnimatingOut = false
+      isSubtitleVisible = true
+      playSubtitleAnimation('subtitle-animate-in')
+    }
+
+    const renderFinishButton = () => {
+      subtitleText.replaceChildren()
+        footerVoice?.classList.add('footer__subtitles--visible')
+        footerVoice?.replaceChildren(finishButton)
+    }
+
+    const animateSubtitleOut = (onFinish?: () => void) => {
+      if (isSubtitleAnimatingOut || !isSubtitleVisible) {
+        if (onFinish) onFinish()
+        return
+      }
+
+      isSubtitleAnimatingOut = true
+      playSubtitleAnimation('subtitle-animate-out')
+
+      if (!onFinish) return
+
+      const handleAnimationEnd = () => {
+        subtitleText.removeEventListener('animationend', handleAnimationEnd)
+        isSubtitleAnimatingOut = false
+        onFinish()
+      }
+
+      subtitleText.addEventListener('animationend', handleAnimationEnd)
+    }
+
+    const renderDefaultSubtitle = () => {
+      subtitleText.replaceChildren()
+      subtitleText.textContent = defaultSubtitleMessage
+      subtitleWrapper?.classList.remove('footer__subtitles--visible')
+      isSubtitleVisible = false
+      isSubtitleAnimatingOut = false
+    }
+
+    const hideSubtitle = () => {
+      if (!(subtitleText.textContent || '').trim().length) {
+        renderDefaultSubtitle()
+        return
+      }
+
+      animateSubtitleOut(renderDefaultSubtitle)
+    }
+
+    renderDefaultSubtitle()
+
+    subtitleWrapper?.appendChild(subtitleText)
+
+    const completionVoice = guideVoiceAssets.final
+
+    const audioSrc = completionVoice?.audio ?? guideIntroAudio
+    const subtitlesUrl = completionVoice?.subtitles ?? null
+
+    footerAudio = document.createElement('audio')
+    footerAudio.className = 'footer__audio'
+    footerAudio.src = audioSrc
+    footerAudio.preload = 'auto'
+    footerAudio.autoplay = state.soundEnabled
+    footerAudio.muted = !state.soundEnabled
+
+    let footerCues: SubtitleCue[] = []
+    let activeCueIndex: number | null = null
+
+    const subtitleTimeTolerance = 0.15
+
+    const findActiveCueIndex = (current: number) =>
+      footerCues.findIndex((cue) => {
+        const cueStart = Math.max(0, cue.start - subtitleTimeTolerance)
+        const cueEnd = cue.end + subtitleTimeTolerance
+
+        return current >= cueStart && current < cueEnd
+      })
+
+    const renderWords = (words: { text: string }[]) => {
+      subtitleText.replaceChildren()
+
+      if (!words.length) {
+        subtitleText.textContent = defaultSubtitleMessage
+        return
+      }
+
+      words.forEach((word, index) => {
+        const span = document.createElement('span')
+        span.className = 'footer__subtitle-word'
+        span.textContent = `${index > 0 ? ' ' : ''}${word.text}`
+        span.classList.add('footer__subtitle-word--visible')
+
+        subtitleText.appendChild(span)
+      })
+    }
+
+    const resetSubtitleState = () => {
+      activeCueIndex = null
+      hideSubtitle()
+    }
+
+    const transitionToFinish = () => {
+      animateSubtitleOut(renderFinishButton)
+    }
+
+    const updateSubtitles = () => {
+      if (!subtitleWrapper || !footerCues.length) {
+        renderDefaultSubtitle()
+        return
+      }
+
+      const current = footerAudio?.currentTime || 0
+      const activeIndexNext = findActiveCueIndex(current)
+
+      if (activeIndexNext !== -1) {
+        const activeCue = footerCues[activeIndexNext]
+        const cueElapsed = current - activeCue.start
+
+        if (activeCueIndex !== activeIndexNext) {
+          activeCueIndex = activeIndexNext
+          renderWords(activeCue.words)
+          animateSubtitleIn()
+        }
+
+        const totalCueDuration = activeCue.end - activeCue.start
+        const cueProgress = totalCueDuration > 0 ? cueElapsed / totalCueDuration : 0
+
+        subtitleText.querySelectorAll<HTMLSpanElement>('.footer__subtitle-word').forEach((wordEl, index) => {
+          const revealThreshold = (index + 1) / (activeCue.words.length || 1)
+          if (cueProgress >= revealThreshold) {
+            wordEl.classList.add('footer__subtitle-word--visible')
+          }
+        })
+
+        subtitleWrapper.classList.add('footer__subtitles--visible')
+      } else if (footerAudio?.ended) {
+        transitionToFinish()
+      } else {
+        resetSubtitleState()
+      }
+    }
+
+    footerAudio.addEventListener('timeupdate', updateSubtitles)
+    footerAudio.addEventListener('seeked', updateSubtitles)
+    footerAudio.addEventListener('play', updateSubtitles)
+    footerAudio.addEventListener('ended', transitionToFinish)
+
+    if (subtitlesUrl) {
+      loadSrtSubtitles(subtitlesUrl).then((cues) => {
+        footerCues = cues
+        updateSubtitles()
+      })
+    }
+
+    footerVoice.appendChild(footerAudio)
+    if (state.soundEnabled) {
+      footerAudio
+        .play()
+        .then(() => updateSubtitles())
+        .catch(() => transitionToFinish())
+    }
+  }
+
+  const footerButton = card.querySelector<HTMLDivElement>('.footer__button')
+  if (footerButton) {
+    let isMuted = !state.soundEnabled
+
+    const updateSoundToggle = () => {
+      soundToggle.innerHTML = isMuted
+        ? `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.4 16L14 14.6L16.6 12L14 9.4L15.4 8L18 10.6L20.6 8L22 9.4L19.4 12L22 14.6L20.6 16L18 13.4L15.4 16ZM3 15L3 9H7L12 4L12 20L7 15H3ZM10 8.85L7.85 11H5L5 13H7.85L10 15.15L10 8.85Z" fill="#E2E2E2"/>
+</svg>
+`
+        : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 20.9141L6.08594 15H2L2 9H6.08594L12 3.08594L12 20.9141ZM14 3.22754C14.4922 3.33984 14.9758 3.49145 15.4443 3.68555C16.5361 4.13784 17.5286 4.8001 18.3643 5.63574C19.1999 6.47139 19.8622 7.46386 20.3145 8.55566C20.7667 9.64759 21 10.8181 21 12L20.9893 12.4424C20.9385 13.4732 20.7102 14.4888 20.3145 15.4443C19.8622 16.5361 19.1999 17.5286 18.3643 18.3643C17.5286 19.1999 16.5361 19.8622 15.4443 20.3145C14.9758 20.5085 14.4921 20.6592 14 20.7715L14 18.7061C14.2296 18.6375 14.4565 18.5588 14.6787 18.4668C15.528 18.115 16.3002 17.6002 16.9502 16.9502C17.6002 16.3002 18.115 15.528 18.4668 14.6787C18.8186 13.8294 19 12.9193 19 12C19 11.0807 18.8186 10.1706 18.4668 9.32129C18.115 8.47204 17.6002 7.6998 16.9502 7.0498C16.3002 6.39981 15.528 5.88499 14.6787 5.5332C14.4564 5.44112 14.2297 5.36151 14 5.29297V3.22754ZM14 7.41895C14.5722 7.66881 15.0932 8.02293 15.5352 8.46484C15.9994 8.92914 16.3679 9.48029 16.6191 10.0869C16.8704 10.6935 17 11.3435 17 12C17 12.6565 16.8704 13.3065 16.6191 13.9131C16.3679 14.5197 15.9994 15.0709 15.5352 15.5352C15.0933 15.977 14.5721 16.3302 14 16.5801V14.2305C14.0405 14.1942 14.0826 14.1596 14.1211 14.1211C14.3996 13.8426 14.6207 13.5123 14.7715 13.1484C14.9222 12.7845 15 12.394 15 12C15 11.606 14.9222 11.2155 14.7715 10.8516C14.6207 10.4877 14.3996 10.1574 14.1211 9.87891C14.0824 9.84023 14.0406 9.80499 14 9.76855L14 7.41895ZM6.91406 11H4L4 13H6.91406L10 16.0859L10 7.91406L6.91406 11Z" fill="#D9D9D9"/>
+</svg>
+`
+      soundToggle.setAttribute('aria-pressed', String(!isMuted))
+      soundToggle.setAttribute('aria-label', isMuted ? 'Включить звук' : 'Выключить звук')
+      if (footerAudio) {
+        footerAudio.muted = isMuted
+        if (!isMuted) {
+          footerAudio.play().catch(() => {})
+        }
+      }
+    }
+
+    const soundToggle = document.createElement('button')
+    soundToggle.type = 'button'
+    soundToggle.className = 'button primary icon-button'
+    soundToggle.addEventListener('click', () => {
+      isMuted = !isMuted
+      state.soundEnabled = !isMuted
+      saveSoundEnabled(!isMuted)
+      updateSoundToggle()
+    })
+
+    updateSoundToggle()
+    footerButton.replaceChildren(soundToggle)
   }
 
   return card

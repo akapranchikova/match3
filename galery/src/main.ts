@@ -8,7 +8,12 @@ import {
   renderOnboardingSlide,
   renderRouteModePrompt,
 } from './screens/onboarding'
-import { renderInfoComplete, renderNextPoint, renderPointInfo } from './screens/pointFlow'
+import {
+  renderInfoComplete,
+  renderNextPoint,
+  renderPointInfo,
+  renderRouteComplete,
+} from './screens/pointFlow'
 import { renderMap } from './screens/map'
 import { renderRouteList } from './screens/route'
 import { renderScanner } from './screens/scanner'
@@ -33,6 +38,7 @@ const screenRenderers: Record<AppScreen, () => RenderResult> = {
   pointContent: renderPointContent,
   infoComplete: renderInfoComplete,
   nextPoint: renderNextPoint,
+  routeComplete: renderRouteComplete,
   routeList: renderRouteList,
   cameraPermission: renderCameraPermission,
   scanner: renderScanner,
