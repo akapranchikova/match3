@@ -148,6 +148,12 @@ const markPointAsViewed = () => {
 
 export const handleFinishPoint = () => {
   markPointAsViewed()
+
+  if (state.routeMode === 'solo') {
+    state.screen = 'routeList'
+    return
+  }
+
   if (isRouteCompleted()) {
     state.screen = 'routeList'
     return
@@ -158,6 +164,11 @@ export const handleFinishPoint = () => {
 
 export const navigateToNextPoint = () => {
   markPointAsViewed()
+
+  if (state.routeMode === 'solo') {
+    state.screen = 'routeList'
+    return
+  }
 
   if (isRouteCompleted()) {
     state.screen = 'routeList'
