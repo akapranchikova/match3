@@ -315,12 +315,26 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         src: sampleVideoSrc,
         subtitles: sampleSubtitle,
       },
+      {
+        heading: 'Деревни вдоль дороги',
+        type: 'video',
+        src: sampleVideoSrc,
+        subtitles: sampleSubtitle,
+      },
     ],
   },
   final: {
     heading: 'Заголовок',
     body: 'Текст',
     sections: [
+      {
+        heading: 'Голос финала',
+        type: 'audio',
+        src: guideIntroAudio,
+        artwork: voiceIllustration,
+        background: guideBackground,
+        subtitles: sampleSubtitle,
+      },
       {
         heading: 'Финал',
         type: 'cards',
