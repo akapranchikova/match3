@@ -2347,6 +2347,9 @@ main,
     flex-direction: column;
     gap: 4px;
 }
+.map__preview-info.done {
+    opacity: 0.5;
+}
 
 .map__preview-label {
     display: inline-flex;

@@ -276,12 +276,12 @@ const villagesSubtitlesUrl = createSubtitlesUrlFromText(villagesSubtitlesRaw)
 const finalSubtitles = parseSubtitleLines(finalSubtitlesRaw)
 
 const mapPoints: Record<RoutePoint['id'], MapPoint> = {
-    history: {floor: 1, x: 150.72, y: 522.4, htmlY: 333,},
-    'perm-period': {floor: 1, x: 157.44, y: 264.86, htmlY: 100},
-    'metal-plant': {floor: 2, x: 158.96, y: 555.62, htmlY: 317},
-    excavation: {floor: 2, x: 125.72, y: 434.34, htmlY: 263},
-    railway: {floor: 3, x: 167.66, y: 398.22, htmlY: 230},
-    final: {floor: 3, x: 244.22, y: 192.96, htmlY: 40},
+    history: {floor: 1, x: 150.72, y: 522.4, htmlY: 333, htmlDone: 463},
+    'perm-period': {floor: 1, x: 157.44, y: 264.86, htmlY: 100, htmlDone: 222},
+    'metal-plant': {floor: 2, x: 158.96, y: 555.62, htmlY: 317, htmlDone: 503},
+    excavation: {floor: 2, x: 125.72, y: 434.34, htmlY: 263, htmlDone: 389},
+    railway: {floor: 3, x: 167.66, y: 398.22, htmlY: 230,  htmlDone: 350},
+    final: {floor: 3, x: 244.22, y: 192.96, htmlY: 40,  htmlDone: 130},
 }
 
 export const points: RoutePoint[] = [

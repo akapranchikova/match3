@@ -22,6 +22,32 @@ const MAP_VIEWBOXES: Record<number, {width: number; height: number}> = {
 const resolveVisiblePoints = (): RoutePoint[] =>
     points.filter((item, index) => viewedPoints.has(item.id) || index === state.currentPointIndex)
 
+const createPreviewMarkup = (point: RoutePoint, originalIndex: number, isComplete: boolean, isActive: boolean) => {
+    if (isComplete && !isActive) {
+        console.log(point.map.htmlY);
+        return `
+      <aside class="map__preview" aria-label="Точка ${originalIndex + 1} пройдена" style="top:${point.map.htmlDone}px">
+        <div class="map__preview-info done">
+        <div class="map__preview-label">Точка ${originalIndex + 1}</div>
+          <div class="map__preview-title">Пройдена</div>
+        </div>
+      </aside>
+    `
+    }
+
+    return `
+    <aside class="map__preview${isActive ? ' is-active' : ''}" aria-label="Фото точки ${originalIndex + 1}" style="top:${point.map.htmlY}px">
+      <div class="map__preview-media">
+        <img src="${point.photo}" alt="${point.photoAlt || point.title}" loading="lazy" />
+      </div>
+      <div class="map__preview-info">
+        <span class="map__preview-label">Точка ${originalIndex + 1}</span>
+        <p class="map__preview-title">${point.title}</p>
+      </div>
+    </aside>
+  `
+}
+
 const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; height: number}) => {
     const markerLineEnd = -6
 
@@ -32,7 +58,7 @@ const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; he
             const isComplete = viewedPoints.has(item.id)
             const label = originalIndex + 1
             const {x, y} = item.map
-            const markerLineStart =  (x - 75 ) * -1;
+            const markerLineStart =  (x - 55 ) * -1;
 
 
             return `
@@ -41,9 +67,6 @@ const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; he
           <g filter="url(#map-marker-shadow)">
             <circle class="map__marker-dot" cx="0" cy="0" r="6" />
           </g>
-          ${isComplete ? '' +
-                '       <g transform="translate(-180, 0)"><text class="map__marker-title" x="0" y="5">Точка ' + label + '</text> <text class="map__marker-label" x="0" y="26">Пройдена</text></g>' : ''}
-   
         </g>
       `
         })
@@ -104,17 +127,16 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
             .join('')}</div>`
         : `<span class="map__floor-label">Этаж ${state.currentFloor}</span>`
 
-    const previewMarkup = point.map.floor === state.currentFloor ? `
-      <aside class="map__preview" aria-label="Фото точки ${state.currentPointIndex + 1}" style="top:${point.map.htmlY}px">
-        <div class="map__preview-media">
-          <img src="${point.photo}" alt="${point.photoAlt || point.title}" loading="lazy" />
-        </div>
-        <div class="map__preview-info">
-          <span class="map__preview-label">Точка ${state.currentPointIndex + 1}</span>
-          <p class="map__preview-title">${point.title}</p>
-        </div>
-      </aside>
-    ` : ''
+    const previewsMarkup = visiblePoints
+        .filter((item) => item.map.floor === state.currentFloor)
+        .map((item) => {
+            const originalIndex = points.findIndex((original) => original.id === item.id)
+            const isActive = originalIndex === state.currentPointIndex
+            const isComplete = viewedPoints.has(item.id)
+
+            return createPreviewMarkup(item, originalIndex, isComplete, isActive)
+        })
+        .join('')
 
     const page = document.createElement('div')
     page.className = 'map-screen'
@@ -129,7 +151,7 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
         </div>
       </div>
       <div class="map__viewport">
-        ${previewMarkup}
+        ${previewsMarkup}
         <div class="map__floor-toggle">${floorsMarkup}</div>
         <div class="map__inner">
           <div class="map__grid"></div>
