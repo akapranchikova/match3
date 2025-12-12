@@ -5,6 +5,7 @@ import {
   loadNextPointHintsCompleted,
   loadSoundEnabled,
   loadViewed,
+  saveViewed,
 } from './storage'
 import { AppState, RenderCleanup } from './types'
 import { resolvePointIndexFromLocation } from './qr'
@@ -16,6 +17,15 @@ const deepLinkPointIndex = resolvePointIndexFromLocation(window.location)
 const cameraPermissionGranted = loadCameraPermissionGranted()
 const nextPointHintsCompleted = loadNextPointHintsCompleted()
 export let viewedPoints = loadViewed()
+
+export const isRouteCompleted = (): boolean => viewedPoints.size >= points.length
+
+export const resetProgress = () => {
+  viewedPoints = new Set()
+  saveViewed(viewedPoints)
+  state.currentPointIndex = 0
+  state.currentContentIndex = 0
+}
 
 export const resolveNextPointIndex = (): number => {
   if (deepLinkPointIndex !== null) return deepLinkPointIndex

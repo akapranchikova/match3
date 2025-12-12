@@ -6,7 +6,7 @@ import {
   saveSoundEnabled,
   saveViewed,
 } from '../storage'
-import { state, viewedPoints } from '../state'
+import { isRouteCompleted, resetProgress, state, viewedPoints } from '../state'
 import { createButton } from '../ui'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import routePreview from '../assets/onboarding-photo.svg'
@@ -50,6 +50,13 @@ const pointProgressHeadings = [
 ]
 
 const getPointProgressHeading = (completedPoints: number) => {
+  if (completedPoints >= points.length) {
+    return {
+      title: `Пройдено ${points.length} из ${points.length} точек`,
+      subtitle: 'Маршрут завершён',
+    }
+  }
+
   const headingIndex = Math.min(completedPoints, pointProgressHeadings.length - 1)
   return pointProgressHeadings[headingIndex] || pointProgressHeadings[0]
 }
@@ -141,11 +148,22 @@ const markPointAsViewed = () => {
 
 export const handleFinishPoint = () => {
   markPointAsViewed()
+  if (isRouteCompleted()) {
+    state.screen = 'routeList'
+    return
+  }
+
   state.screen = 'infoComplete'
 }
 
 export const navigateToNextPoint = () => {
   markPointAsViewed()
+
+  if (isRouteCompleted()) {
+    state.screen = 'routeList'
+    return
+  }
+
   const nextIndex = Math.min(state.currentPointIndex + 1, points.length - 1)
   state.currentPointIndex = nextIndex
   state.screen = 'nextPoint'
@@ -200,7 +218,8 @@ export const renderPointInfo = (): HTMLElement => {
 export const renderInfoComplete = (): HTMLElement => {
   const completedPoints = viewedPoints.size
   const heading = getPointProgressHeading(completedPoints)
-  const remaining = points.length - completedPoints
+  const remaining = Math.max(points.length - completedPoints, 0)
+  const routeCompleted = isRouteCompleted()
 
   document.title = heading.title
 
@@ -210,23 +229,42 @@ export const renderInfoComplete = (): HTMLElement => {
     <div class="modal">
       <p class="modal__eyebrow">${heading.title}</p>
       <h2 class="modal__title">${heading.subtitle}</h2>
-      <p>${remaining > 0 ? `Впереди ещё ${remaining} истории` : 'Вы посмотрели все точки маршрута.'}</p>
+      <p>
+        ${
+          remaining > 0
+            ? `Впереди ещё ${remaining} истории`
+            : 'Вы посмотрели все точки маршрута. Можно выбрать эпоху и изучить контент.'
+        }
+      </p>
     </div>
   `
 
   const modal = overlay.querySelector<HTMLDivElement>('.modal')
 
-  const primary = createButton('Да, узнать, где следующая точка')
+  const primary = createButton(routeCompleted ? 'Перейти к выбору эпохи' : 'Да, узнать, где следующая точка')
   primary.addEventListener('click', () => {
-    const nextIndex = Math.min(state.currentPointIndex + 1, points.length - 1)
-    state.currentPointIndex = nextIndex
-    state.screen = 'nextPoint'
+    if (routeCompleted) {
+      state.screen = 'routeList'
+    } else {
+      const nextIndex = Math.min(state.currentPointIndex + 1, points.length - 1)
+      state.currentPointIndex = nextIndex
+      state.screen = 'nextPoint'
+    }
     rerender()
   })
 
-  const secondary = createButton('Нет, открыть весь маршрут', 'secondary')
+  const secondary = createButton(
+    routeCompleted ? 'Пройти маршрут с Гидом заново' : 'Нет, открыть весь маршрут',
+    'secondary',
+  )
   secondary.addEventListener('click', () => {
-    state.screen = 'routeList'
+    if (routeCompleted) {
+      resetProgress()
+      state.routeMode = 'guide'
+      state.screen = 'nextPoint'
+    } else {
+      state.screen = 'routeList'
+    }
     rerender()
   })
 
