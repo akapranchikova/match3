@@ -77,10 +77,6 @@ const renderCardsSection = (section: CardsContent) => {
       <div class="content-card__image-wrapper">
         <img class="content-card__image" src="${card.image}" alt="${card.alt || card.title}">
       </div>
-      <div class="content-card__body">
-        <h3 class="content-card__title">${card.title}</h3>
-        <p class="content-card__text">${card.text}</p>
-      </div>
     `
     track.appendChild(cardEl)
   })

@@ -147,6 +147,10 @@ const historyAudioSrc = new URL(
 ).href
 const geologyCardImages = [
   new URL(
+    './assets/points/2.1 Пермское море, пермский период и геология/5. Геология card.png',
+    import.meta.url,
+  ).href,
+  new URL(
     './assets/points/2.1 Пермское море, пермский период и геология/5. Геология card-1.png',
     import.meta.url,
   ).href,
@@ -469,6 +473,12 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
             title: 'Современность',
             text: 'Как образ моря стал метафорой всей экспозиции и визуального кода.',
             image: geologyCardImages[2],
+            alt: 'Современное переосмысление моря',
+          },
+          {
+            title: 'Современность',
+            text: 'Как образ моря стал метафорой всей экспозиции и визуального кода.',
+            image: geologyCardImages[3],
             alt: 'Современное переосмысление моря',
           },
         ],
