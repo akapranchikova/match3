@@ -1080,6 +1080,14 @@ main,
     font-feature-settings: 'pnum' on, 'lnum' on;
     color: #E2E2E2;
     transition: background-color 0.15s ease, transform 0.1s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.button:focus,
+.button:focus-visible {
+    outline: none;
 }
 
 .card--onboarding .button {
