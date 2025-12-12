@@ -1,3 +1,4 @@
+import { parseSrt } from './subtitles'
 import { MapPosition, OnboardingSlide, PointContentConfig, RoutePoint } from './types'
 import historyIllustration from './assets/onboarding-history.png'
 import voiceIllustration from './assets/onboarding-voice.png'
@@ -9,34 +10,261 @@ import onboardingGolosLogo from './assets/onboarding-golos-logo.svg'
 import boardingPhoto1 from './assets/boarding-1/photo-1.png'
 import boardingPhoto2 from './assets/boarding-1/photo-2.png'
 import boardingPhoto3 from './assets/boarding-1/photo-3.png'
-import point1Video from './assets/points/1/point-1.mp4'
-import defaultVideo from './assets/default.mp4'
-import pipeModel from './assets/points/5/Out_smoke-tube.glb?url'
-import tileModel from './assets/points/5/Out_stove-pile.glb?url'
-import potModel from './assets/points/5/Out_ceramic-pot.glb?url'
+import historySubtitlesRaw from './assets/points/1. Создание и история галереи/2. Создание и история галереи.txt?raw'
+import permSeaSubtitlesRaw from './assets/points/2.1 Пермское море, пермский период и геология/3. Пермское море.txt?raw'
+import permPeriodSubtitlesRaw from './assets/points/2.1 Пермское море, пермский период и геология/4. Пермский период.txt?raw'
+import metalPlantLocationSubtitlesRaw from './assets/points/3.1 Медеплавильный завод и история посёлка/6. Выбор места для завода.txt?raw'
+import metalPlantConstructionSubtitlesRaw from './assets/points/3.1 Медеплавильный завод и история посёлка/7. Строительство медеплавильного завода.txt?raw'
+import metalPlantVillageSubtitlesRaw from './assets/points/3.1 Медеплавильный завод и история посёлка/8. Заводской посёлок.txt?raw'
+import workshopSubtitlesRaw from './assets/points/4.1 Железная дорога — будущий завод Шпагина/9. Железнодорожные мастерские.txt?raw'
+import armoredTrainSubtitlesRaw from './assets/points/4.1 Железная дорога — будущий завод Шпагина/10. Бронепоезда.txt?raw'
+import solikamskyTrackSubtitlesRaw from './assets/points/5. История археологических раскопок/15. Соликамский тракт.txt?raw'
+import villagesSubtitlesRaw from './assets/points/5. История археологических раскопок/16. Деревни вдоль дороги.txt?raw'
+import finalSubtitlesRaw from './assets/points/6. Финал/17. Финал.txt?raw'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 export { guideIntroAudio }
 
-const guideVoiceAssets: Record<
+const splitSubtitleLines = (content: string) =>
+  content
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+const parseSubtitleLines = (content: string) => {
+  const parsed = parseSrt(content)
+    .flatMap((cue) => splitSubtitleLines(cue.text))
+    .filter(Boolean)
+
+    console.log('parsed', parsed)
+  if (parsed.length) return parsed
+
+  return splitSubtitleLines(content)
+}
+
+const formatTimecode = (value: number) => {
+  const hours = Math.floor(value / 3600)
+  const minutes = Math.floor((value % 3600) / 60)
+  const seconds = Math.floor(value % 60)
+
+  return [hours, minutes, seconds]
+    .map((part) => part.toString().padStart(2, '0'))
+    .join(':')
+    .concat(',000')
+}
+
+const createSubtitlesUrlFromText = (content: string) => {
+  const parsed = parseSrt(content)
+  if (parsed.length) {
+    return URL.createObjectURL(new Blob([content], { type: 'text/plain' }))
+  }
+
+  const lines = splitSubtitleLines(content)
+  if (!lines.length) return undefined
+
+  const srtContent = lines
+    .map(
+      (line, index) => `${index + 1}\n${formatTimecode(index * 4)} --> ${formatTimecode(index * 4 + 3)}\n${line}`,
+    )
+    .join('\n\n')
+
+  return URL.createObjectURL(new Blob([srtContent], { type: 'text/plain' }))
+}
+
+export const guideVoiceAssets: Record<
   string,
   { audio?: string; subtitles?: string }
 > = {
   history: {
-    audio: new URL('./assets/audio/Переход к точке 1..mp3', import.meta.url).href,
-    subtitles: new URL('./assets/audio/Переход к точке 1..srt', import.meta.url).href,
+    audio: new URL(
+      './assets/points/0. Интро - приветствие/1.1 переход к точке 1.mp3',
+      import.meta.url,
+    ).href,
+    subtitles:new URL(
+        './assets/points/0. Интро - приветствие/1.1 переход к точке 1.txt',
+        import.meta.url,
+    ).href,
   },
   'perm-period': {
     audio: new URL(
-      './assets/points/2/Переход между точками 1 и 2..mp3',
+      './assets/points/1. Создание и история галереи/2.1 переход к точке 2.mp3',
       import.meta.url,
     ).href,
     subtitles: new URL(
-      './assets/points/2/Переход между точками 1 и 2..srt',
+      './assets/points/1. Создание и история галереи/2.1 переход к точке 2.txt',
       import.meta.url,
     ).href,
   },
+  'metal-plant': {
+    audio: new URL(
+      './assets/points/2.1 Пермское море, пермский период и геология/5.1 переход к точке 3.mp3',
+      import.meta.url,
+    ).href,
+    subtitles: new URL(
+      './assets/points/2.1 Пермское море, пермский период и геология/5.1 переход к точке 3.txt',
+      import.meta.url,
+    ).href,
+  },
+  excavation: {
+    audio: new URL(
+      './assets/points/3.1 Медеплавильный завод и история посёлка/8.1 переход к точке 4.mp3',
+      import.meta.url,
+    ).href,
+    subtitles: new URL(
+        './assets/points/3.1 Медеплавильный завод и история посёлка/8.1 переход к точке 4.txt',
+        import.meta.url,
+    ).href,
+  },
+  railway: {
+    audio: new URL(
+      './assets/points/4.1 Железная дорога — будущий завод Шпагина/10.1 переход к точке 5.mp3',
+      import.meta.url,
+    ).href,
+    subtitles: new URL(
+        './assets/points/4.1 Железная дорога — будущий завод Шпагина/10.1 переход к точке 5.txt',
+        import.meta.url,
+    ).href,
+  },
+  final: {
+    audio: new URL(
+      './assets/points/5. История археологических раскопок/16.1 переход к точке 6.mp3',
+      import.meta.url,
+    ).href,
+    subtitles: new URL(
+        './assets/points/5. История археологических раскопок/16.1 переход к точке 6.txt',
+        import.meta.url,
+    ).href,
+  },
 }
+
+const historyVideoSrc = new URL(
+  './assets/points/1. Создание и история галереи/2. Создание и история галереи.mp4',
+  import.meta.url,
+).href
+const historyAudioSrc = new URL(
+  './assets/points/1. Создание и история галереи/2. Создание и история галереи.mp3',
+  import.meta.url,
+).href
+const geologyCardImages = [
+  new URL(
+    './assets/points/2.1 Пермское море, пермский период и геология/5. Геология card-1.png',
+    import.meta.url,
+  ).href,
+  new URL(
+    './assets/points/2.1 Пермское море, пермский период и геология/5. Геология card-2.png',
+    import.meta.url,
+  ).href,
+  new URL(
+    './assets/points/2.1 Пермское море, пермский период и геология/5. Геология card-3.png',
+    import.meta.url,
+  ).href,
+]
+const permSeaVideoSrc = new URL(
+  './assets/points/2.1 Пермское море, пермский период и геология/3. Пермское море.mp4',
+  import.meta.url,
+).href
+const permSeaAudioSrc = new URL(
+  './assets/points/2.1 Пермское море, пермский период и геология/3. Пермское море.mp3',
+  import.meta.url,
+).href
+const permPeriodVideoSrc = new URL(
+  './assets/points/2.1 Пермское море, пермский период и геология/4. Пермский период.mp4',
+  import.meta.url,
+).href
+const permPeriodAudioSrc = new URL(
+  './assets/points/2.1 Пермское море, пермский период и геология/4. Пермский период.mp3',
+  import.meta.url,
+).href
+const metalPlantLocationVideoSrc = new URL(
+  './assets/points/3.1 Медеплавильный завод и история посёлка/6. Выбор места для завода.mp4',
+  import.meta.url,
+).href
+const metalPlantLocationAudioSrc = new URL(
+  './assets/points/3.1 Медеплавильный завод и история посёлка/6. Выбор места для завода.mp3',
+  import.meta.url,
+).href
+const metalPlantConstructionVideoSrc = new URL(
+  './assets/points/3.1 Медеплавильный завод и история посёлка/7. Строительство медеплавильного завода.mp4',
+  import.meta.url,
+).href
+const metalPlantConstructionAudioSrc = new URL(
+  './assets/points/3.1 Медеплавильный завод и история посёлка/7. Строительство медеплавильного завода.mp3',
+  import.meta.url,
+).href
+const metalPlantVillageVideoSrc = new URL(
+  './assets/points/3.1 Медеплавильный завод и история посёлка/8. Заводской посёлок.mp4',
+  import.meta.url,
+).href
+const metalPlantVillageAudioSrc = new URL(
+  './assets/points/3.1 Медеплавильный завод и история посёлка/8. Заводской посёлок.mp3',
+  import.meta.url,
+).href
+const workshopVideoSrc = new URL(
+  './assets/points/4.1 Железная дорога — будущий завод Шпагина/9. Железнодорожные мастерские.mp4',
+  import.meta.url,
+).href
+const workshopAudioSrc = new URL(
+  './assets/points/4.1 Железная дорога — будущий завод Шпагина/9. Железнодорожные мастерские.mp3',
+  import.meta.url,
+).href
+const armoredTrainsVideoSrc = new URL(
+  './assets/points/4.1 Железная дорога — будущий завод Шпагина/10. Бронепоезда.mp4',
+  import.meta.url,
+).href
+const armoredTrainsAudioSrc = new URL(
+  './assets/points/4.1 Железная дорога — будущий завод Шпагина/10. Бронепоезда.mp3',
+  import.meta.url,
+).href
+const pipeModel = new URL(
+  './assets/points/5. История археологических раскопок/12. Чаша от курительной трубки.glb',
+  import.meta.url,
+).href
+const tileModel = new URL(
+  './assets/points/5. История археологических раскопок/13. Печной изразец.glb',
+  import.meta.url,
+).href
+const potModel = new URL(
+  './assets/points/5. История археологических раскопок/14. Керамический горшок.glb',
+  import.meta.url,
+).href
+const solikamskyTrackVideoSrc = new URL(
+  './assets/points/5. История археологических раскопок/15. Соликамский тракт.mp4',
+  import.meta.url,
+).href
+const solikamskyTrackAudioSrc = new URL(
+  './assets/points/5. История археологических раскопок/15. Соликамский тракт.mp3',
+  import.meta.url,
+).href
+const villagesVideoSrc = new URL(
+  './assets/points/5. История археологических раскопок/16. Деревни вдоль дороги.mp4',
+  import.meta.url,
+).href
+const villagesAudioSrc = new URL(
+  './assets/points/5. История археологических раскопок/16. Деревни вдоль дороги.mp3',
+  import.meta.url,
+).href
+const finalAudioSrc = new URL('./assets/points/6. Финал/17. Финал.mp3', import.meta.url).href
+const historySubtitles = parseSubtitleLines(historySubtitlesRaw)
+const historySubtitlesUrl = createSubtitlesUrlFromText(historySubtitlesRaw)
+const permSeaSubtitles = parseSubtitleLines(permSeaSubtitlesRaw)
+const permSeaSubtitlesUrl = createSubtitlesUrlFromText(permSeaSubtitlesRaw)
+const permPeriodSubtitles = parseSubtitleLines(permPeriodSubtitlesRaw)
+const permPeriodSubtitlesUrl = createSubtitlesUrlFromText(permPeriodSubtitlesRaw)
+const metalPlantLocationSubtitles = parseSubtitleLines(metalPlantLocationSubtitlesRaw)
+const metalPlantLocationSubtitlesUrl = createSubtitlesUrlFromText(metalPlantLocationSubtitlesRaw)
+const metalPlantConstructionSubtitles = parseSubtitleLines(metalPlantConstructionSubtitlesRaw)
+const metalPlantConstructionSubtitlesUrl = createSubtitlesUrlFromText(metalPlantConstructionSubtitlesRaw)
+const metalPlantVillageSubtitles = parseSubtitleLines(metalPlantVillageSubtitlesRaw)
+const metalPlantVillageSubtitlesUrl = createSubtitlesUrlFromText(metalPlantVillageSubtitlesRaw)
+const workshopSubtitles = parseSubtitleLines(workshopSubtitlesRaw)
+const workshopSubtitlesUrl = createSubtitlesUrlFromText(workshopSubtitlesRaw)
+const armoredTrainSubtitles = parseSubtitleLines(armoredTrainSubtitlesRaw)
+const armoredTrainSubtitlesUrl = createSubtitlesUrlFromText(armoredTrainSubtitlesRaw)
+const solikamskyTrackSubtitles = parseSubtitleLines(solikamskyTrackSubtitlesRaw)
+const solikamskyTrackSubtitlesUrl = createSubtitlesUrlFromText(solikamskyTrackSubtitlesRaw)
+const villagesSubtitles = parseSubtitleLines(villagesSubtitlesRaw)
+const villagesSubtitlesUrl = createSubtitlesUrlFromText(villagesSubtitlesRaw)
+const finalSubtitles = parseSubtitleLines(finalSubtitlesRaw)
 
 export const points: RoutePoint[] = [
   {
@@ -105,6 +333,8 @@ export const points: RoutePoint[] = [
       heading: 'Точка 3. Медеплавильный завод',
       subtitle: 'Поднимитесь на второй этаж к индустриальной истории',
       caption: 'Как промышленность повлияла на развитие территории и людей.',
+      audio: guideVoiceAssets['metal-plant'].audio,
+      subtitles: guideVoiceAssets['metal-plant'].subtitles,
     },
     qrSuffix: 'eO3JtVwB',
     map: { floor: 2, x: 74, y: 34 },
@@ -127,6 +357,8 @@ export const points: RoutePoint[] = [
       heading: 'Точка 4. Железная дорога — будущий завод Шпагина',
       subtitle: 'Исследуйте историю транспортного узла на втором этаже',
       caption: 'Находки и открытия, которые легли в основу экспозиции.',
+      audio: guideVoiceAssets.excavation.audio,
+      subtitles: guideVoiceAssets.excavation.subtitles,
     },
     qrSuffix: 's6K6u2tH',
     map: { floor: 2, x: 68, y: 38 },
@@ -149,6 +381,8 @@ export const points: RoutePoint[] = [
       heading: 'Точка 5. История археологических раскопок',
       subtitle: 'Откройте третью точку на верхнем уровне маршрута',
       caption: 'Как железная дорога изменила экономику места и городскую ткань.',
+      audio: guideVoiceAssets.railway.audio,
+      subtitles: guideVoiceAssets.railway.subtitles,
     },
     qrSuffix: 'QsnwmPTq',
     map: { floor: 3, x: 38, y: 54 },
@@ -171,26 +405,26 @@ export const points: RoutePoint[] = [
       heading: 'Точка 6. Финал маршрута',
       subtitle: 'Завершение путешествия и сбор впечатлений',
       caption: 'Завершение маршрута и приглашение поделиться впечатлениями.',
+      audio: guideVoiceAssets.final.audio,
+      subtitles: guideVoiceAssets.final.subtitles,
     },
     qrSuffix: 'MQkDEzW7',
     map: { floor: 3, x: 46, y: 72 },
   },
 ]
 
-const sampleSubtitle = [
-  'Это место для субтитров, где будет текст Голоса.'
-]
-
 export const pointContentConfigs: Record<string, PointContentConfig> = {
   history: {
-    heading: 'Заголовок',
-    body: 'Текст',
+    heading: 'Создание и история галереи',
+    body: 'Знакомство с пространством и основной идеей галереи.',
     sections: [
       {
         heading: 'Создание и история галереи',
         type: 'video',
-        src: defaultVideo,
-        subtitles: sampleSubtitle,
+        src: historyVideoSrc,
+        audio: historyAudioSrc,
+        subtitlesUrl: historySubtitlesUrl,
+        subtitles: historySubtitles,
       },
     ],
   },
@@ -201,15 +435,19 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Пермское море',
         type: 'video',
-        src: defaultVideo,
+        src: permSeaVideoSrc,
+        audio: permSeaAudioSrc,
         poster: pointPlaceholder,
-        subtitles: sampleSubtitle,
+        subtitlesUrl: permSeaSubtitlesUrl,
+        subtitles: permSeaSubtitles,
       },
       {
         heading: 'Пермский период',
         type: 'video',
-        src: defaultVideo,
-        subtitles: sampleSubtitle,
+        src: permPeriodVideoSrc,
+        audio: permPeriodAudioSrc,
+        subtitlesUrl: permPeriodSubtitlesUrl,
+        subtitles: permPeriodSubtitles,
       },
       {
         heading: 'Геология',
@@ -218,23 +456,20 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
           {
             title: 'Пермское море',
             text: 'История древнего моря и рельефов, которые сформировали ландшафт.',
-            image:
-              'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
-            alt: 'Скалы у воды',
+            image: geologyCardImages[0],
+            alt: 'Скалы Пермского моря',
           },
           {
             title: 'Следы эпохи',
             text: 'Кадры находок археологов и интерпретации научной группы.',
-            image:
-              'https://images.unsplash.com/photo-1517824748781-84db05733291?auto=format&fit=crop&w=1200&q=80',
-            alt: 'Каменные слои',
+            image: geologyCardImages[1],
+            alt: 'Слои породы пермского периода',
           },
           {
             title: 'Современность',
             text: 'Как образ моря стал метафорой всей экспозиции и визуального кода.',
-            image:
-              'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80',
-            alt: 'Береговая линия',
+            image: geologyCardImages[2],
+            alt: 'Современное переосмысление моря',
           },
         ],
       },
@@ -247,20 +482,26 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Выбор места для завода',
         type: 'video',
-        src: defaultVideo,
-        subtitles: sampleSubtitle,
+        src: metalPlantLocationVideoSrc,
+        audio: metalPlantLocationAudioSrc,
+        subtitlesUrl: metalPlantLocationSubtitlesUrl,
+        subtitles: metalPlantLocationSubtitles,
       },
       {
         heading: 'Строительство медеплавильного завода',
         type: 'video',
-        src: defaultVideo,
-        subtitles: sampleSubtitle,
+        src: metalPlantConstructionVideoSrc,
+        audio: metalPlantConstructionAudioSrc,
+        subtitlesUrl: metalPlantConstructionSubtitlesUrl,
+        subtitles: metalPlantConstructionSubtitles,
       },
       {
         heading: 'Заводской посёлок',
         type: 'video',
-        src: defaultVideo,
-        subtitles: sampleSubtitle,
+        src: metalPlantVillageVideoSrc,
+        audio: metalPlantVillageAudioSrc,
+        subtitlesUrl: metalPlantVillageSubtitlesUrl,
+        subtitles: metalPlantVillageSubtitles,
       },
     ],
   },
@@ -271,14 +512,18 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Железнодорожные мастерские',
         type: 'video',
-        src: defaultVideo,
-        subtitles: sampleSubtitle,
+        src: workshopVideoSrc,
+        audio: workshopAudioSrc,
+        subtitlesUrl: workshopSubtitlesUrl,
+        subtitles: workshopSubtitles,
       },
       {
         heading: 'Бронепоезда',
         type: 'video',
-        src: defaultVideo,
-        subtitles: sampleSubtitle,
+        src: armoredTrainsVideoSrc,
+        audio: armoredTrainsAudioSrc,
+        subtitlesUrl: armoredTrainSubtitlesUrl,
+        subtitles: armoredTrainSubtitles,
       },
     ],
   },
@@ -290,7 +535,6 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         heading: 'Археологические находки',
         type: 'models',
         hint: 'Коснитесь и проведите,<br> чтобы вращать объект',
-        subtitles: sampleSubtitle,
         models: [
           {
             title: 'Чаша от курительной трубки',
@@ -312,28 +556,32 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
       {
         heading: 'Соликамский тракт',
         type: 'video',
-        src: defaultVideo,
-        subtitles: sampleSubtitle,
+        src: solikamskyTrackVideoSrc,
+        audio: solikamskyTrackAudioSrc,
+        subtitlesUrl: solikamskyTrackSubtitlesUrl,
+        subtitles: solikamskyTrackSubtitles,
       },
       {
         heading: 'Деревни вдоль дороги',
         type: 'video',
-        src: defaultVideo,
-        subtitles: sampleSubtitle,
+        src: villagesVideoSrc,
+        audio: villagesAudioSrc,
+        subtitlesUrl: villagesSubtitlesUrl,
+        subtitles: villagesSubtitles,
       },
     ],
   },
   final: {
-    heading: 'Заголовок',
-    body: 'Текст',
+    heading: 'Финал маршрута',
+    body: 'Завершение истории и приглашение к финальным активностям.',
     sections: [
       {
         heading: 'Голос финала',
         type: 'audio',
-        src: guideIntroAudio,
+        src: finalAudioSrc,
         artwork: voiceIllustration,
         background: guideBackground,
-        subtitles: sampleSubtitle,
+        subtitles: finalSubtitles,
       },
       {
         heading: 'Финал',

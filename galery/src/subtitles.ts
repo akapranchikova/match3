@@ -54,7 +54,7 @@ const parseSrtBlock = (block: string): SubtitleCue | null => {
 
     const start = parseTimecode(startRaw)
     const end = parseTimecode(endRaw)
-    const text = lines.slice(timeLineIndex + 1).join(' ')
+    const text = lines.slice(timeLineIndex + 1).join('\n')
 
     return {
         start,

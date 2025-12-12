@@ -84,6 +84,8 @@ export type PointContentKind = 'video' | 'cards' | 'audio' | 'models'
 export interface VideoContent {
   type: 'video'
   src: string
+  audio?: string
+  subtitlesUrl?: string
   poster?: string
   subtitles?: string[]
   heading: string
