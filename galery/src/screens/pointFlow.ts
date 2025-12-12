@@ -410,7 +410,6 @@ export const renderNextPoint = (): RenderResult => {
 
     let footerCues: SubtitleCue[] = []
     let activeCueIndex: number | null = null
-    let revealedWordCount = 0
 
     const findActiveCueIndex = (current: number) =>
       footerCues.findIndex((cue, index) => {
@@ -419,7 +418,7 @@ export const renderNextPoint = (): RenderResult => {
         return current >= cue.start && current < cueEnd
       })
 
-    const renderWords = (words: { text: string }[], visibleCount: number) => {
+    const renderWords = (words: { text: string }[]) => {
       subtitleText.replaceChildren()
 
       if (!words.length) {
@@ -431,10 +430,7 @@ export const renderNextPoint = (): RenderResult => {
         const span = document.createElement('span')
         span.className = 'footer__subtitle-word'
         span.textContent = `${index > 0 ? ' ' : ''}${word.text}`
-
-        if (index < visibleCount) {
-          span.classList.add('footer__subtitle-word--visible')
-        }
+        span.classList.add('footer__subtitle-word--visible')
 
         subtitleText.appendChild(span)
       })
@@ -442,7 +438,6 @@ export const renderNextPoint = (): RenderResult => {
 
     const resetSubtitleState = () => {
       activeCueIndex = null
-      revealedWordCount = 0
       hideSubtitle()
     }
 
@@ -462,8 +457,7 @@ export const renderNextPoint = (): RenderResult => {
       }
 
       activeCueIndex = lastCueIndex
-      revealedWordCount = lastCue.words.length
-      renderWords(lastCue.words, lastCue.words.length)
+      renderWords(lastCue.words)
       subtitleWrapper?.classList.add('footer__subtitles--visible')
       animateSubtitleIn()
     }
@@ -480,16 +474,11 @@ export const renderNextPoint = (): RenderResult => {
       if (activeIndexNext !== -1) {
         const activeCue = footerCues[activeIndexNext]
         const cueElapsed = current - activeCue.start
-        const visibleWords = activeCue.words.filter((word) => cueElapsed >= word.start).length
 
         if (activeCueIndex !== activeIndexNext) {
           activeCueIndex = activeIndexNext
-          revealedWordCount = visibleWords
-          renderWords(activeCue.words, visibleWords)
+          renderWords(activeCue.words)
           animateSubtitleIn()
-        } else if (visibleWords !== revealedWordCount) {
-          revealedWordCount = visibleWords
-          renderWords(activeCue.words, visibleWords)
         }
 
         subtitleWrapper.classList.add('footer__subtitles--visible')
