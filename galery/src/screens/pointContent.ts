@@ -830,11 +830,14 @@ export const renderPointContent = () => {
       animateSubtitleOut(clearSubtitleContent)
     }
 
+    const subtitleTimeTolerance = 0.15
+
     const findActiveCueIndex = (current: number) =>
-      subtitleCues.findIndex((cue, index) => {
-        const isLastCue = index === subtitleCues.length - 1
-        const cueEnd = isLastCue ? cue.end + 0.15 : cue.end
-        return current >= cue.start && current < cueEnd
+      subtitleCues.findIndex((cue) => {
+        const cueStart = Math.max(0, cue.start - subtitleTimeTolerance)
+        const cueEnd = cue.end + subtitleTimeTolerance
+
+        return current >= cueStart && current < cueEnd
       })
 
     const showFinalCue = () => {

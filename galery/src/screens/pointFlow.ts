@@ -413,11 +413,14 @@ export const renderNextPoint = (): RenderResult => {
     let footerCues: SubtitleCue[] = []
     let activeCueIndex: number | null = null
 
+    const subtitleTimeTolerance = 0.15
+
     const findActiveCueIndex = (current: number) =>
-      footerCues.findIndex((cue, index) => {
-        const isLastCue = index === footerCues.length - 1
-        const cueEnd = isLastCue ? cue.end + 0.15 : cue.end
-        return current >= cue.start && current < cueEnd
+      footerCues.findIndex((cue) => {
+        const cueStart = Math.max(0, cue.start - subtitleTimeTolerance)
+        const cueEnd = cue.end + subtitleTimeTolerance
+
+        return current >= cueStart && current < cueEnd
       })
 
     const renderWords = (words: { text: string }[]) => {
