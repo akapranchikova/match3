@@ -716,6 +716,13 @@ main,
     z-index: 10;
     transform: rotate(-7deg) translateX(-12px);
 }
+.photo-collage__card--back-left img {
+    object-position: -50px;
+}
+
+.photo-collage__card--front img {
+    object-position: -133px -40px;
+}
 
 .photo-collage__card--back-right {
     bottom: 13px;

@@ -2,18 +2,20 @@ import { points } from '../data'
 import { rerender } from '../navigation'
 import { getFirstUnviewedPointIndex, isRouteCompleted, resetProgress, state, viewedPoints } from '../state'
 import { createButton } from '../ui'
-import timelineImage1 from '../assets/timeline-01.svg'
-import timelineImage2 from '../assets/timeline-01.svg'
-import timelineImage3 from '../assets/timeline-01.svg'
-import timelineImage4 from '../assets/timeline-01.svg'
+import routeImage1 from '../assets/route/route-1.png'
+import routeImage2 from '../assets/route/route-2.png'
+import routeImage3 from '../assets/route/route-3.png'
+import routeImage4 from '../assets/route/route-4.png'
+import routeImage5 from '../assets/route/route-5.png'
+import routeImage6 from '../assets/route/route-6.png'
 
 export const renderRouteList = (): HTMLElement => {
-  const timelineImages = [timelineImage1, timelineImage2, timelineImage3, timelineImage4]
+  const timelineImages = [routeImage1, routeImage2, routeImage3, routeImage4, routeImage5, routeImage6]
 
   const container = document.createElement('div')
   container.className = 'route route--timeline'
 
-  const collageImages = [timelineImage2, timelineImage1]
+  const collageImages = [routeImage1, routeImage2]
 
   container.innerHTML = `
     <header class="route__hero">
