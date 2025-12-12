@@ -2068,6 +2068,10 @@ main,
     pointer-events: auto;
 }
 
+.scanner__alert--animate .scanner__alert-content {
+    animation: scanner-alert-shake 0.6s ease;
+}
+
 .scanner__alert-message {
     margin: 0;
     text-align: center;
@@ -2079,6 +2083,40 @@ main,
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+@keyframes scanner-alert-shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    15% {
+        transform: translateX(-8px);
+    }
+
+    30% {
+        transform: translateX(8px);
+    }
+
+    45% {
+        transform: translateX(-6px);
+    }
+
+    60% {
+        transform: translateX(6px);
+    }
+
+    75% {
+        transform: translateX(-4px);
+    }
+
+    90% {
+        transform: translateX(4px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
 
 .scanner__hint {

@@ -91,6 +91,7 @@ export const renderScanner = (): RenderResult => {
     if (!alert) return
     alert.hidden = true
     alert.classList.remove('scanner__alert--visible')
+    alert.classList.remove('scanner__alert--animate')
     alertHideTimeout = null
     if (hint) hint.hidden = false
   }
@@ -104,7 +105,11 @@ export const renderScanner = (): RenderResult => {
 
     alertMessage.textContent = message
     alert.hidden = false
+    alert.classList.remove('scanner__alert--animate')
+    // Force reflow to restart animation
+    void alert.offsetWidth
     alert.classList.add('scanner__alert--visible')
+    alert.classList.add('scanner__alert--animate')
     if (hint) hint.hidden = true
     if (alertActions) alertActions.hidden = !showMapButton
     if (alertMapButton) alertMapButton.hidden = !showMapButton
