@@ -2317,6 +2317,51 @@ main,
     overflow: hidden;
 }
 
+.map__preview {
+    position: absolute;
+    top: 56px;
+    left: 8px;
+    z-index: 5;
+    width: 168px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    pointer-events: none;
+}
+
+.map__preview-media {
+    overflow: hidden;
+}
+
+.map__preview-media img {
+    display: block;
+    height: 116px;
+    width: 116px;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.map__preview-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.map__preview-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 20px;
+    color: #e2e2e2;
+    font-family: 'SB Sans Display Semibold', sans-serif;
+}
+
+.map__preview-title {
+    font-size: 14px;
+    color: #e2e2e2;
+}
+
 .map__inner {
     transition: none;
     overflow: hidden;

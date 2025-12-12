@@ -21,6 +21,7 @@ export interface MapPosition {
 
 export interface MapPoint extends MapPosition {
   floor: number
+    htmlY: number
 }
 
 export interface RoutePoint {

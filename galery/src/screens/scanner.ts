@@ -113,7 +113,6 @@ export const renderScanner = (): RenderResult => {
     if (hint) hint.hidden = true
     if (alertActions) alertActions.hidden = !showMapButton
     if (alertMapButton) alertMapButton.hidden = !showMapButton
-    console.log('[scanner] show alert:', message)
 
     if (alertHideTimeout) {
       window.clearTimeout(alertHideTimeout)
@@ -128,7 +127,6 @@ export const renderScanner = (): RenderResult => {
 
     lastProcessedPayload = payload
     lastProcessedAt = now
-    console.log('[scanner] detected payload:', payload)
 
     const { index: matchedIndex, finalUrl } = await resolvePointIndexFromPayloadWithRedirect(payload)
     if (finalUrl && finalUrl !== payload) {

@@ -3,7 +3,6 @@ import { MapPoint, MapPosition, OnboardingSlide, PointContentConfig, RoutePoint 
 import historyIllustration from './assets/onboarding-history.png'
 import voiceIllustration from './assets/onboarding-voice.png'
 import qrIllustration from './assets/onboarding-qr.svg'
-import pointPlaceholder from './assets/point-placeholder.svg'
 import guideBackground from './assets/guide-background.png'
 import guideIntroAudio from './assets/guide-intro.wav'
 import onboardingGolosLogo from './assets/onboarding-golos-logo.svg'
@@ -22,6 +21,12 @@ import armoredTrainSubtitlesRaw from './assets/points/4.1 Железная до�
 import solikamskyTrackSubtitlesRaw from './assets/points/5. История археологических раскопок/15. Соликамский тракт.txt?raw'
 import villagesSubtitlesRaw from './assets/points/5. История археологических раскопок/16. Деревни вдоль дороги.txt?raw'
 import finalSubtitlesRaw from './assets/points/6. Финал/17. Финал.txt?raw'
+import routeImage1 from './assets/route/route-1.png'
+import routeImage2 from './assets/route/route-2.png'
+import routeImage3 from './assets/route/route-3.png'
+import routeImage4 from './assets/route/route-4.png'
+import routeImage5 from './assets/route/route-5.png'
+import routeImage6 from './assets/route/route-6.png'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 export { guideIntroAudio }
@@ -37,7 +42,6 @@ const parseSubtitleLines = (content: string) => {
     .flatMap((cue) => splitSubtitleLines(cue.text))
     .filter(Boolean)
 
-    console.log('parsed', parsed)
   if (parsed.length) return parsed
 
   return splitSubtitleLines(content)
@@ -272,12 +276,12 @@ const villagesSubtitlesUrl = createSubtitlesUrlFromText(villagesSubtitlesRaw)
 const finalSubtitles = parseSubtitleLines(finalSubtitlesRaw)
 
 const mapPoints: Record<RoutePoint['id'], MapPoint> = {
-  history: { floor: 1, x: 150.72, y: 522.4 },
-  'perm-period': { floor: 1, x: 157.44, y: 264.86 },
-  'metal-plant': { floor: 2, x: 187.96, y: 218.62 },
-  excavation: { floor: 2, x: 172.72, y: 244.34 },
-  railway: { floor: 3, x: 97.66, y: 347.22 },
-  final: { floor: 3, x: 118.22, y: 462.96 },
+    history: {floor: 1, x: 150.72, y: 522.4, htmlY: 333,},
+    'perm-period': {floor: 1, x: 157.44, y: 264.86, htmlY: 100},
+    'metal-plant': {floor: 2, x: 158.96, y: 555.62, htmlY: 317},
+    excavation: {floor: 2, x: 125.72, y: 434.34, htmlY: 263},
+    railway: {floor: 3, x: 167.66, y: 398.22, htmlY: 230},
+    final: {floor: 3, x: 244.22, y: 192.96, htmlY: 40},
 }
 
 export const points: RoutePoint[] = [
@@ -286,7 +290,7 @@ export const points: RoutePoint[] = [
     title: 'Создание и история галереи',
     description: 'На 1 этаже около гардероба',
     period: '21 век',
-    photo: pointPlaceholder,
+    photo: routeImage1,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Новая галерея выросла на месте, где промышленная история встречается с культурой. Здесь сохранились следы дореволюционного комплекса и его трансформации в современное общественное пространство.',
@@ -310,7 +314,7 @@ export const points: RoutePoint[] = [
     title: 'Пермское море, пермский период,  и геология',
     description: 'История пермского периода и артефакты, которые нашли неподалёку.',
     period: '298 млн лет назад',
-    photo: pointPlaceholder,
+    photo: routeImage2,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Маршрут начинается с древностей: миллионы лет назад на этом месте плескалось море. Экспозиция рассказывает, как оно сформировало ландшафт, а археологи находят здесь следы вымерших существ.',
@@ -334,7 +338,7 @@ export const points: RoutePoint[] = [
     title: 'Медеплавильный завод и история посёлка',
     description: 'Как промышленность повлияла на развитие территории и людей.',
     period: '18 век',
-    photo: pointPlaceholder,
+    photo: routeImage3,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Индустриальная линия маршрута посвящена медеплавильному заводу, вокруг которого вырос посёлок. Здесь рассказывают о первых рабочих артели, их быте и том, как производство меняло экономику края.',
@@ -358,7 +362,7 @@ export const points: RoutePoint[] = [
     title: 'Железная дорога — будущий завод Шпагина',
     description: 'Находки и открытия, которые легли в основу экспозиции.',
     period: '19 век',
-    photo: pointPlaceholder,
+    photo: routeImage4,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Экспозиция показывает, как археологи шаг за шагом собирали фрагменты истории. Это и полевые дневники, и инструменты, и редкие находки, которые помогли восстановить картину жизни ранних жителей.',
@@ -382,7 +386,7 @@ export const points: RoutePoint[] = [
     title: 'История археологических раскопок',
     description: 'Как железная дорога изменила экономику места и городскую ткань.',
     period: '21 век',
-    photo: pointPlaceholder,
+    photo: routeImage5,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Отдельный зал посвящён железной дороге: она связала город с новыми рынками и задала ритм будущему заводу Шпагина. Истории пассажиров и работников железной дороги создают живое ощущение пути.',
@@ -406,7 +410,7 @@ export const points: RoutePoint[] = [
     title: 'Финальная точка',
     description: 'Завершение маршрута и приглашение поделиться впечатлениями.',
     period: '21 век',
-    photo: pointPlaceholder,
+    photo: routeImage6,
     photoAlt: 'Предварительный снимок точки маршрута',
     longDescription:
       'Финал маршрута — пространство для обратной связи и вдохновения. Здесь можно поделиться впечатлениями, узнать о будущих выставках и почувствовать, что история продолжается уже с вашим участием.',
@@ -451,7 +455,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'video',
         src: permSeaVideoSrc,
         audio: permSeaAudioSrc,
-        poster: pointPlaceholder,
+        poster: routeImage2,
         subtitlesUrl: permSeaSubtitlesUrl,
         subtitles: permSeaSubtitles,
       },

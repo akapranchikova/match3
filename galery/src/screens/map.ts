@@ -23,7 +23,6 @@ const resolveVisiblePoints = (): RoutePoint[] =>
     points.filter((item, index) => viewedPoints.has(item.id) || index === state.currentPointIndex)
 
 const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; height: number}) => {
-    const markerLineStart = -104
     const markerLineEnd = -6
 
     const markersMarkup = floorPoints
@@ -33,6 +32,8 @@ const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; he
             const isComplete = viewedPoints.has(item.id)
             const label = originalIndex + 1
             const {x, y} = item.map
+            const markerLineStart =  (x - 75 ) * -1;
+
 
             return `
         <g class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}" data-index="${originalIndex}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="${item.title}">
@@ -40,11 +41,9 @@ const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; he
           <g filter="url(#map-marker-shadow)">
             <circle class="map__marker-dot" cx="0" cy="0" r="6" />
           </g>
-          <g transform="translate(-120, 0)">
-          <text class="map__marker-title" x="0" y="0">Точка ${label}</text>
-          ${isComplete ? '<text class="map__marker-label" x="0" y="4">Пройдена</text>' : '<text class="map__marker-label" x="0" y="4">' +  item.title + '</text>'}
-</g>
-          
+          ${isComplete ? '' +
+                '       <g transform="translate(-180, 0)"><text class="map__marker-title" x="0" y="5">Точка ' + label + '</text> <text class="map__marker-label" x="0" y="26">Пройдена</text></g>' : ''}
+   
         </g>
       `
         })
@@ -70,7 +69,7 @@ const removeExistingMap = () => {
 export const renderMap = (options?: RenderMapOptions): HTMLElement => {
     const point = points[state.currentPointIndex]
     const visiblePoints = resolveVisiblePoints()
-    const floors = Array.from(new Set(visiblePoints.map((item) => item.map.floor))).sort((a, b) => a - b)
+    const floors = Array.from(new Set(visiblePoints.slice(-2).map((item) => item.map.floor))).sort((a, b) => a - b)
     const shouldShowFloors = floors.length > 1
     const activeFloor = floors.includes(state.currentFloor) ? state.currentFloor : point.map.floor
     state.currentFloor = activeFloor
@@ -105,6 +104,18 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
             .join('')}</div>`
         : `<span class="map__floor-label">Этаж ${state.currentFloor}</span>`
 
+    const previewMarkup = point.map.floor === state.currentFloor ? `
+      <aside class="map__preview" aria-label="Фото точки ${state.currentPointIndex + 1}" style="top:${point.map.htmlY}px">
+        <div class="map__preview-media">
+          <img src="${point.photo}" alt="${point.photoAlt || point.title}" loading="lazy" />
+        </div>
+        <div class="map__preview-info">
+          <span class="map__preview-label">Точка ${state.currentPointIndex + 1}</span>
+          <p class="map__preview-title">${point.title}</p>
+        </div>
+      </aside>
+    ` : ''
+
     const page = document.createElement('div')
     page.className = 'map-screen'
     page.innerHTML = `
@@ -118,6 +129,7 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
         </div>
       </div>
       <div class="map__viewport">
+        ${previewMarkup}
         <div class="map__floor-toggle">${floorsMarkup}</div>
         <div class="map__inner">
           <div class="map__grid"></div>
