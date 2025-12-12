@@ -20,9 +20,13 @@ const removeExistingMap = () => {
 
 export const renderMap = (options?: RenderMapOptions): HTMLElement => {
     const point = points[state.currentPointIndex]
-    const floors = Array.from(new Set(points.map((item) => item.map.floor))).sort((a, b) => a - b)
-    const activeFloor = floors.includes(state.currentFloor) ? state.currentFloor : point.map.floor
+    const nextPoint = points[state.currentPointIndex + 1]
+
+    const floorOptions = nextPoint ? [point.map.floor, nextPoint.map.floor] : [point.map.floor]
+
+    const floors = Array.from(new Set(floorOptions)).sort((a, b) => a - b)
     const shouldShowFloors = floors.length > 1
+    const activeFloor = floors.includes(state.currentFloor) ? state.currentFloor : point.map.floor
     state.currentFloor = activeFloor
 
     if (!state.mapPositions[state.currentFloor]) {
@@ -144,7 +148,9 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
     }
 
     const mapSheet = page.querySelector<HTMLElement>('.map')
-    if (mapSheet) {
+    const mapHandle = page.querySelector<HTMLElement>('.map__handle')
+
+    if (mapSheet && mapHandle) {
         let startY = 0
         let currentY = 0
         let dragging = false
@@ -188,7 +194,7 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
             }
         }
 
-        mapSheet.addEventListener(
+        mapHandle.addEventListener(
             'touchstart',
             (event) => {
                 // preventDefault stops Chrome pull-to-refresh when the sheet is dragged from the top edge
@@ -198,30 +204,31 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
             {passive: false},
         )
 
-        mapSheet.addEventListener(
+        window.addEventListener(
             'touchmove',
             (event) => {
+                if (!dragging) return
                 event.preventDefault()
                 moveDrag(event.touches[0]?.clientY || 0)
             },
             {passive: false},
         )
 
-        mapSheet.addEventListener('touchend', endDrag)
-        mapSheet.addEventListener('touchcancel', endDrag)
+        window.addEventListener('touchend', endDrag)
+        window.addEventListener('touchcancel', endDrag)
 
-        mapSheet.addEventListener('mousedown', (event) => {
+        mapHandle.addEventListener('mousedown', (event) => {
             startDrag(event.clientY)
         })
 
-        mapSheet.addEventListener('mousemove', (event) => {
+        window.addEventListener('mousemove', (event) => {
             if (dragging) {
                 moveDrag(event.clientY)
             }
         })
 
-        mapSheet.addEventListener('mouseup', endDrag)
-        mapSheet.addEventListener('mouseleave', endDrag)
+        window.addEventListener('mouseup', endDrag)
+        window.addEventListener('mouseleave', endDrag)
     }
 
     return page
