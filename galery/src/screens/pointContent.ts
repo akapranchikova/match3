@@ -7,6 +7,21 @@ import { navigateToNextPoint } from './pointFlow'
 import onboardingVoice from '../assets/onboarding-voice.png'
 
 const SWIPE_THRESHOLD = 48
+const MODEL_GESTURE_CLASS = 'model-gesture-active'
+
+let activeModelGestures = 0
+
+const lockModelGestureScroll = () => {
+  activeModelGestures += 1
+  document.body.classList.add(MODEL_GESTURE_CLASS)
+}
+
+const releaseModelGestureScroll = () => {
+  activeModelGestures = Math.max(0, activeModelGestures - 1)
+  if (activeModelGestures === 0) {
+    document.body.classList.remove(MODEL_GESTURE_CLASS)
+  }
+}
 
 const renderVideoSection = (section: VideoContent) => {
   const container = document.createElement('div')
@@ -343,6 +358,49 @@ const renderModelsSection = (section: ModelsContent) => {
     viewer.setAttribute('disable-zoom', '')
     viewer.setAttribute('shadow-intensity', '0.65')
     viewer.setAttribute('alt', model.alt || model.title)
+    viewer.style.touchAction = 'none'
+
+    let activeTouches = 0
+
+    const lockIfFirstTouch = () => {
+      if (activeTouches === 0) {
+        lockModelGestureScroll()
+      }
+    }
+
+    const onTouchStart = (event: TouchEvent) => {
+      lockIfFirstTouch()
+      activeTouches = event.touches.length
+
+      if (event.cancelable) {
+        event.preventDefault()
+      }
+
+      event.stopPropagation()
+    }
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (event.cancelable) {
+        event.preventDefault()
+      }
+
+      event.stopPropagation()
+    }
+
+    const onTouchEnd = (event: TouchEvent) => {
+      activeTouches = event.touches.length
+
+      if (activeTouches === 0) {
+        releaseModelGestureScroll()
+      }
+
+      event.stopPropagation()
+    }
+
+    viewer.addEventListener('touchstart', onTouchStart, { passive: false })
+    viewer.addEventListener('touchmove', onTouchMove, { passive: false })
+    viewer.addEventListener('touchend', onTouchEnd)
+    viewer.addEventListener('touchcancel', onTouchEnd)
 
     const info = document.createElement('div')
     info.className = 'content-model__info'
@@ -598,13 +656,27 @@ export const renderPointContent = () => {
 
   let startY = 0
   let isTouching = false
+  let gestureFromModel = false
+
+  const isFromModelViewer = (event: TouchEvent) => {
+    const target = event.target as HTMLElement | null
+    return !!target?.closest('.content-model__viewer')
+  }
 
   const onTouchStart = (event: TouchEvent) => {
+    gestureFromModel = isFromModelViewer(event)
+    if (gestureFromModel) return
+
     startY = event.touches[0].clientY
     isTouching = true
   }
 
   const onTouchEnd = (event: TouchEvent) => {
+    if (gestureFromModel) {
+      gestureFromModel = false
+      return
+    }
+
     if (!isTouching) return
     const deltaY = event.changedTouches[0].clientY - startY
     isTouching = false

@@ -56,7 +56,8 @@ body {
     color: #e5e7eb;
 }
 
-.map-overlay-open {
+.map-overlay-open,
+.model-gesture-active {
     overscroll-behavior: none;
     touch-action: none;
 }
@@ -1557,6 +1558,8 @@ main,
 .content-model__viewer {
     width: 100%;
     height: 220px;
+    overscroll-behavior: contain;
+    touch-action: none;
 }
 
 .content-model__info {
