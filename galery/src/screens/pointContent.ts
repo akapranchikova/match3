@@ -788,6 +788,7 @@ export const renderPointContent = () => {
     hint.appendChild(hintActions)
   }
 
+  let startX = 0
   let startY = 0
   let isTouching = false
   let gestureFromModel = false
@@ -801,8 +802,21 @@ export const renderPointContent = () => {
     gestureFromModel = isFromModelViewer(event)
     if (gestureFromModel) return
 
+    startX = event.touches[0].clientX
     startY = event.touches[0].clientY
     isTouching = true
+  }
+
+  const onTouchMove = (event: TouchEvent) => {
+    if (gestureFromModel || !isTouching) return
+
+    const touch = event.touches[0]
+    const deltaY = touch.clientY - startY
+    const deltaX = touch.clientX - startX
+
+    if (Math.abs(deltaY) > Math.abs(deltaX) && event.cancelable) {
+      event.preventDefault()
+    }
   }
 
   const onTouchEnd = (event: TouchEvent) => {
@@ -825,10 +839,12 @@ export const renderPointContent = () => {
   }
 
   container.addEventListener('touchstart', onTouchStart)
+  container.addEventListener('touchmove', onTouchMove, { passive: false })
   container.addEventListener('touchend', onTouchEnd)
 
   cleanupCallbacks.push(() => {
     container.removeEventListener('touchstart', onTouchStart)
+    container.removeEventListener('touchmove', onTouchMove)
     container.removeEventListener('touchend', onTouchEnd)
   })
 
