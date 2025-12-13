@@ -20,26 +20,33 @@ type RenderMapOptions = MapDataOptions & {
 
 const MAP_OVERLAY_CLASS = 'map-overlay-open'
 const MAP_VIEWBOXES: Record<number, {width: number; height: number}> = {
-    1: {width: 224, height: 653},
-    2: {width: 254, height: 643},
-    3: {width: 257, height: 643},
+    1: {width: 258, height: 652},
+    2: {width: 248, height: 642},
+    3: {width: 248, height: 642},
 }
 
-const resolveVisiblePoints = (mapPoints: RoutePoint[], currentPointIndex: number, applyViewedFilter: boolean): RoutePoint[] =>
-    applyViewedFilter
-        ? mapPoints.filter((item, index) => viewedPoints.has(item.id) || index === currentPointIndex)
-        : mapPoints
+let mapResizeCleanup: (() => void) | null = null
 
-const createPreviewMarkup = (
-    point: RoutePoint,
-    originalIndex: number,
-    isComplete: boolean,
-    isActive: boolean,
-) => {
+const resolveVisiblePoints = (): RoutePoint[] =>
+    points.filter((item, index) => viewedPoints.has(item.id) || index === state.currentPointIndex)
+
+const resolvePreviewTop = (point: RoutePoint, target: 'htmlY' | 'htmlDone') => {
+    const viewBox = MAP_VIEWBOXES[point.map.floor]
+
+    if (!viewBox) return `${point.map[target]}px`
+
+    const percent = (point.map[target] / viewBox.height) * 100
+
+    return `calc(${percent}% + var(--map-vertical-offset, 0px))`
+}
+
+const createPreviewMarkup = (point: RoutePoint, originalIndex: number, isComplete: boolean, isActive: boolean) => {
+    const previewTop = resolvePreviewTop(point, 'htmlY')
+    const donePreviewTop = resolvePreviewTop(point, 'htmlDone')
+
     if (isComplete && !isActive) {
-        console.log(point.map.htmlY);
         return `
-      <aside class="map__preview" aria-label="Точка ${originalIndex + 1} пройдена" style="top:${point.map.htmlDone}px">
+      <aside class="map__preview" aria-label="Точка ${originalIndex + 1} пройдена" style="top:${donePreviewTop}">
         <div class="map__preview-info done">
         <div class="map__preview-label">Точка ${originalIndex + 1}</div>
           <div class="map__preview-title">Пройдена</div>
@@ -49,7 +56,7 @@ const createPreviewMarkup = (
     }
 
     return `
-    <aside class="map__preview${isActive ? ' is-active' : ''}" aria-label="Фото точки ${originalIndex + 1}" style="top:${point.map.htmlY}px">
+    <aside class="map__preview${isActive ? ' is-active' : ''}" aria-label="Фото точки ${originalIndex + 1}" style="top:${previewTop}">
       <div class="map__preview-media">
         <img src="${point.photo}" alt="${point.photoAlt || point.title}" loading="lazy" />
       </div>
@@ -76,12 +83,12 @@ const createMarkersSvg = (
             const isComplete = viewedPoints.has(item.id)
             const label = originalIndex + 1
             const {x, y} = item.map
-            const markerLineStart =  (x - 65 ) * -1;
+            const markerLineStart =  (x - 25 ) * -1;
 
 
             return `
         <g class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}" data-index="${originalIndex}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="${item.title}">
-          <line class="map__marker-line" x1="${markerLineStart}" y1="0" x2="${markerLineEnd}" y2="0" />
+<!--          <line class="map__marker-line" x1="${markerLineStart}" y1="0" x2="${markerLineEnd}" y2="0" />-->
           <g ${isActive ? 'filter="url(#light)"' : ''}>
             <circle cx="0" cy="0" r="6" fill="#E2E2E2" />
           </g>
@@ -112,6 +119,8 @@ const createMarkersSvg = (
 
 const removeExistingMap = () => {
     document.body.classList.remove(MAP_OVERLAY_CLASS)
+    mapResizeCleanup?.()
+    mapResizeCleanup = null
     document.querySelector<HTMLElement>('.map-overlay-host')?.remove()
 }
 
@@ -165,6 +174,9 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
             .join('')}</div>`
         : `<span class="map__floor-label">Этаж ${state.currentFloor}</span>`
 
+    mapResizeCleanup?.()
+    mapResizeCleanup = null
+
     const previewsMarkup = visiblePoints
         .filter((item) => item.map.floor === state.currentFloor)
         .map((item) => {
@@ -211,6 +223,21 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
 
     const markersContainer = page.querySelector<HTMLDivElement>('.map__markers')
     const viewBox = MAP_VIEWBOXES[state.currentFloor]
+    const viewport = page.querySelector<HTMLElement>('.map__viewport')
+
+    const updateViewportOffsets = () => {
+        if (!viewBox || !viewport) return
+
+        const scale = Math.min(viewport.clientWidth / viewBox.width, viewport.clientHeight / viewBox.height)
+        const scaledHeight = viewBox.height * scale
+        const verticalOffset = (viewport.clientHeight - scaledHeight) / 2
+
+        viewport.style.setProperty('--map-vertical-offset', `${verticalOffset}px`)
+    }
+
+    updateViewportOffsets()
+    window.addEventListener('resize', updateViewportOffsets, {passive: true})
+    mapResizeCleanup = () => window.removeEventListener('resize', updateViewportOffsets)
 
     if (markersContainer && viewBox) {
         const visiblePointsOnFloor = visiblePoints.filter((item) => item.map.floor === state.currentFloor)

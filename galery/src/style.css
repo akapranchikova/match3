@@ -2392,6 +2392,7 @@ main,
 
 .map__viewport {
     position: relative;
+    --map-vertical-offset: 0px;
     height: 100%;
     width: 100%;
     overflow: hidden;
@@ -2496,8 +2497,11 @@ main,
 .map__markers {
     display: block;
     position: absolute;
-    height: 643px;
-    inset: 0;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    width: fit-content;
+    right: 0;
     pointer-events: none;
 }
 
