@@ -293,9 +293,16 @@ const renderCardsSection = (section: CardsContent) => {
   return container
 }
 
+type ModelChangeDetail = {
+  audio: HTMLAudioElement | null
+  subtitles?: string[]
+  subtitlesUrl?: string
+}
+
 const renderModelsSection = (section: ModelsContent) => {
   const container = document.createElement('div')
   container.className = 'content-panel content-panel--models'
+
 
   if (section.hint) {
     const hint = document.createElement('div')
@@ -341,6 +348,26 @@ const renderModelsSection = (section: ModelsContent) => {
   dots.className = 'content-cards__dots content-models__dots'
 
   let activeIndex = 0
+  const modelCards: { card: HTMLElement; audio: HTMLAudioElement | null }[] = []
+
+  const dispatchActiveModelChange = () => {
+    const activeModel = section.models[activeIndex]
+    const activeAudio = modelCards[activeIndex]?.audio ?? null
+
+    container.dispatchEvent(
+      new CustomEvent<ModelChangeDetail>('modelchange', {
+        detail: {
+          audio: activeAudio,
+          subtitles: activeModel?.subtitles,
+          subtitlesUrl: activeModel?.subtitlesUrl,
+        },
+      }),
+    )
+  }
+
+  container.addEventListener('request-modelstate', () => {
+    dispatchActiveModelChange()
+  })
 
   const updateActive = () => {
     const cards = Array.from(track.children) as HTMLElement[]
@@ -353,6 +380,25 @@ const renderModelsSection = (section: ModelsContent) => {
     Array.from(dots.children).forEach((dot, index) => {
       dot.classList.toggle('is-active', index === activeIndex)
     })
+
+    modelCards.forEach(({ card, audio }) => {
+      if (!audio) return
+      const isCardActive = card.classList.contains('is-active')
+
+      if (!isCardActive) {
+        audio.pause()
+        audio.currentTime = 0
+      }
+    })
+
+    const activeModelAudio = modelCards.find(({ card }) => card.classList.contains('is-active'))?.audio
+    const isPanelActive = container.closest('.content-stack__item')?.classList.contains('is-active')
+
+    if (activeModelAudio && isPanelActive) {
+      activeModelAudio.play().catch(() => {})
+    }
+
+    dispatchActiveModelChange()
   }
 
   const goToIndex = (index: number) => {
@@ -424,6 +470,29 @@ const renderModelsSection = (section: ModelsContent) => {
     info.innerHTML = `
       <h3 class="content-model__title">${model.title}</h3>
     `
+
+    if (model.audio) {
+      const audio = document.createElement('audio')
+      audio.className = 'guide__audio guide__audio--inline content-model__audio'
+      audio.controls = false
+      audio.preload = 'auto'
+      audio.src = model.audio
+      audio.hidden = true
+      audio.setAttribute('aria-hidden', 'true')
+
+      if (model.subtitlesUrl) {
+        const track = document.createElement('track')
+        track.kind = 'subtitles'
+        track.src = model.subtitlesUrl
+        track.default = true
+        audio.appendChild(track)
+      }
+
+      info.appendChild(audio)
+      modelCards.push({ card, audio })
+    } else {
+      modelCards.push({ card, audio: null })
+    }
 
     card.appendChild(viewer)
     card.appendChild(info)
@@ -605,9 +674,13 @@ export const renderPointContent = () => {
   const syncMediaState = () => {
     clearAutoplay()
     const activePanel = stack.children[state.currentContentIndex] as HTMLElement | undefined
+    const isModelPanel = activePanel?.classList.contains('content-panel--models')
 
     mediaElements.forEach((media) => {
-      const isActive = !!activePanel?.contains(media)
+      const isWithinActivePanel = !!activePanel?.contains(media)
+      const activeModelCard = media.closest('.content-model')
+      const isActive =
+        isWithinActivePanel && (!isModelPanel || activeModelCard?.classList.contains('is-active'))
       if (media instanceof HTMLVideoElement) {
         media.muted = true
         media.defaultMuted = true
@@ -620,7 +693,9 @@ export const renderPointContent = () => {
     })
 
     const activeVideo = activePanel?.querySelector('video') as HTMLVideoElement | null
-    const activeAudio = activePanel?.querySelector('audio') as HTMLAudioElement | null
+    const activeAudio = (isModelPanel
+      ? activePanel?.querySelector('.content-model.is-active audio')
+      : activePanel?.querySelector('audio')) as HTMLAudioElement | null
 
     if (activeVideo) {
       autoplayTimeoutId = window.setTimeout(() => {
@@ -769,7 +844,11 @@ export const renderPointContent = () => {
   }
   container.appendChild(slider)
 
-  if (currentSection.subtitles?.length) {
+  const hasModelSubtitles =
+    currentSection.type === 'models' && currentSection.models.some((model) => model.subtitles?.length)
+  const hasSectionSubtitles = !!currentSection.subtitles?.length || hasModelSubtitles
+
+  if (hasSectionSubtitles) {
     const subtitleLayout = document.createElement('div')
     subtitleLayout.className = 'content-subtitles content-subtitles--voice'
 
@@ -785,15 +864,28 @@ export const renderPointContent = () => {
     subtitleLayout.appendChild(subtitleText)
     container.appendChild(subtitleLayout)
 
-    const subtitleAudio = (stack.children[state.currentContentIndex] as HTMLElement | undefined)?.querySelector(
-      'audio',
-    ) as HTMLAudioElement | null
+    const activePanel = stack.children[state.currentContentIndex] as HTMLElement | undefined
+    const initialModel = currentSection.type === 'models' ? currentSection.models[0] : null
+    const initialSubtitleSource: ModelChangeDetail =
+      currentSection.type === 'models'
+        ? {
+            audio: (activePanel?.querySelector('.content-model audio') as HTMLAudioElement | null) ?? null,
+            subtitles: initialModel?.subtitles,
+            subtitlesUrl: initialModel?.subtitlesUrl,
+          }
+        : {
+            audio: (activePanel?.querySelector('audio') as HTMLAudioElement | null) ?? null,
+            subtitles: currentSection.subtitles,
+            subtitlesUrl: currentSection.subtitlesUrl,
+          }
 
     const subtitleAnimationClasses = ['subtitle-animate-in', 'subtitle-animate-out'] as const
-    const subtitleFallbackCues: SubtitleCue[] = currentSection.subtitles.map((line, index) =>
-      createCueFromText(line, index * 3, index * 3 + 2.75),
-    )
+    const buildFallbackCues = (lines?: string[]) =>
+      (lines || []).map((line, index) => createCueFromText(line, index * 3, index * 3 + 2.75))
 
+    let subtitleAudio: HTMLAudioElement | null = initialSubtitleSource.audio
+    let subtitleFallbackCues: SubtitleCue[] = buildFallbackCues(initialSubtitleSource.subtitles)
+    let currentSubtitlesUrl = initialSubtitleSource.subtitlesUrl
     let subtitleCues: SubtitleCue[] = []
     let activeCueIndex: number | null = null
     let isSubtitleVisible = false
@@ -929,22 +1021,67 @@ export const renderPointContent = () => {
       updateSubtitles()
     }
 
-    if (currentSection.subtitlesUrl) {
-      loadSrtSubtitles(currentSection.subtitlesUrl, subtitleFallbackCues).then(setSubtitles)
-    } else {
-      setSubtitles(subtitleFallbackCues)
-    }
-
-    subtitleAudio?.addEventListener('timeupdate', updateSubtitles)
-    subtitleAudio?.addEventListener('seeked', updateSubtitles)
-    subtitleAudio?.addEventListener('play', updateSubtitles)
-    subtitleAudio?.addEventListener('ended', showFinalCue)
-
-    cleanupCallbacks.push(() => {
+    const detachSubtitleListeners = () => {
       subtitleAudio?.removeEventListener('timeupdate', updateSubtitles)
       subtitleAudio?.removeEventListener('seeked', updateSubtitles)
       subtitleAudio?.removeEventListener('play', updateSubtitles)
       subtitleAudio?.removeEventListener('ended', showFinalCue)
+    }
+
+    const attachSubtitleListeners = () => {
+      subtitleAudio?.addEventListener('timeupdate', updateSubtitles)
+      subtitleAudio?.addEventListener('seeked', updateSubtitles)
+      subtitleAudio?.addEventListener('play', updateSubtitles)
+      subtitleAudio?.addEventListener('ended', showFinalCue)
+    }
+
+    const syncSubtitleAudio = (nextAudio: HTMLAudioElement | null) => {
+      if (subtitleAudio === nextAudio) {
+        return
+      }
+
+      detachSubtitleListeners()
+      subtitleAudio = nextAudio
+      attachSubtitleListeners()
+      updateSubtitles()
+    }
+
+    const setSubtitleSource = (source: ModelChangeDetail) => {
+      subtitleFallbackCues = buildFallbackCues(source.subtitles)
+      currentSubtitlesUrl = source.subtitlesUrl
+      subtitleCues = []
+      activeCueIndex = null
+
+      syncSubtitleAudio(source.audio ?? null)
+
+      if (currentSubtitlesUrl) {
+        loadSrtSubtitles(currentSubtitlesUrl, subtitleFallbackCues).then(setSubtitles)
+      } else {
+        setSubtitles(subtitleFallbackCues)
+      }
+    }
+
+    setSubtitleSource(initialSubtitleSource)
+
+    if (currentSection.type === 'models') {
+      const modelPanel = stack.children[state.currentContentIndex] as HTMLElement | undefined
+
+      const handleModelChange = (event: Event) => {
+        const detail = (event as CustomEvent<ModelChangeDetail>).detail
+        if (!detail) return
+        setSubtitleSource(detail)
+      }
+
+      modelPanel?.addEventListener('modelchange', handleModelChange)
+      modelPanel?.dispatchEvent(new Event('request-modelstate'))
+
+      cleanupCallbacks.push(() => {
+        modelPanel?.removeEventListener('modelchange', handleModelChange)
+      })
+    }
+
+    cleanupCallbacks.push(() => {
+      detachSubtitleListeners()
     })
   }
   container.appendChild(hint)

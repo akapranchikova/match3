@@ -21,6 +21,9 @@ import armoredTrainSubtitlesRaw from './assets/points/4.1 Железная до�
 import solikamskyTrackSubtitlesRaw from './assets/points/5. История археологических раскопок/15. Соликамский тракт.txt?raw'
 import villagesSubtitlesRaw from './assets/points/5. История археологических раскопок/16. Деревни вдоль дороги.txt?raw'
 import finalSubtitlesRaw from './assets/points/6. Финал/17. Финал.txt?raw'
+import pipeModelSubtitlesRaw from './assets/points/5. История археологических раскопок/12. Чаша от курительной трубки.txt?raw'
+import tileModelSubtitlesRaw from './assets/points/5. История археологических раскопок/13. Печной изразец.txt?raw'
+import potModelSubtitlesRaw from './assets/points/5. История археологических раскопок/14. Керамический горшок.txt?raw'
 import routeImage1 from './assets/route/route-1.png'
 import routeImage2 from './assets/route/route-2.png'
 import routeImage3 from './assets/route/route-3.png'
@@ -236,6 +239,18 @@ const potModel = new URL(
   './assets/points/5. История археологических раскопок/14. Керамический горшок.glb',
   import.meta.url,
 ).href
+const pipeModelAudioSrc = new URL(
+  './assets/points/5. История археологических раскопок/12. Чаша от курительной трубки.mp3',
+  import.meta.url,
+).href
+const tileModelAudioSrc = new URL(
+  './assets/points/5. История археологических раскопок/13. Печной изразец.mp3',
+  import.meta.url,
+).href
+const potModelAudioSrc = new URL(
+  './assets/points/5. История археологических раскопок/14. Керамический горшок.mp3',
+  import.meta.url,
+).href
 const solikamskyTrackVideoSrc = new URL(
   './assets/points/5. История археологических раскопок/15. Соликамский тракт.mp4',
   import.meta.url,
@@ -274,6 +289,12 @@ const solikamskyTrackSubtitlesUrl = createSubtitlesUrlFromText(solikamskyTrackSu
 const villagesSubtitles = parseSubtitleLines(villagesSubtitlesRaw)
 const villagesSubtitlesUrl = createSubtitlesUrlFromText(villagesSubtitlesRaw)
 const finalSubtitles = parseSubtitleLines(finalSubtitlesRaw)
+const pipeModelSubtitles = parseSubtitleLines(pipeModelSubtitlesRaw)
+const pipeModelSubtitlesUrl = createSubtitlesUrlFromText(pipeModelSubtitlesRaw)
+const tileModelSubtitles = parseSubtitleLines(tileModelSubtitlesRaw)
+const tileModelSubtitlesUrl = createSubtitlesUrlFromText(tileModelSubtitlesRaw)
+const potModelSubtitles = parseSubtitleLines(potModelSubtitlesRaw)
+const potModelSubtitlesUrl = createSubtitlesUrlFromText(potModelSubtitlesRaw)
 
 const mapPoints: Record<RoutePoint['id'], MapPoint> = {
     history: {floor: 1, x: 150.72, y: 522.4, htmlY: 333, htmlDone: 463},
@@ -564,16 +585,25 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
             title: 'Чаша от курительной трубки',
             src: pipeModel,
             alt: '3D-модель фрагмента трубки',
+            audio: pipeModelAudioSrc,
+            subtitles: pipeModelSubtitles,
+            subtitlesUrl: pipeModelSubtitlesUrl,
           },
           {
             title: 'Печной изразец',
             src: tileModel,
             alt: '3D-модель печного изразца',
+            audio: tileModelAudioSrc,
+            subtitles: tileModelSubtitles,
+            subtitlesUrl: tileModelSubtitlesUrl,
           },
           {
             title: 'Керамический горшок',
             src: potModel,
             alt: '3D-модель глиняного горшка',
+            audio: potModelAudioSrc,
+            subtitles: potModelSubtitles,
+            subtitlesUrl: potModelSubtitlesUrl,
           },
         ],
       },

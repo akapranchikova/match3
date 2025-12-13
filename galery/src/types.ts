@@ -126,6 +126,9 @@ export interface ModelsContent {
     title: string
     src: string
     alt?: string
+    audio?: string
+    subtitlesUrl?: string
+    subtitles?: string[]
   }[]
 }
 
