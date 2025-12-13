@@ -206,6 +206,8 @@ export const renderScanner = (): RenderResult => {
 
             const payload = typeof result === 'string' ? result : result?.data
             if (!payload) return
+
+            await handleScan(payload)
           },
           {
             preferredCamera: 'environment',
