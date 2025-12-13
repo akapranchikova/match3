@@ -10,8 +10,8 @@ import logoList from '../assets/logo-list.svg'
 import guideBackground from '../assets/guide-background.png'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import onboardingHistory from '../assets/onboarding-history.png'
-import guideGreetingAudio from '../assets/audio/0. Приветствие..mp3'
-import guideGreetingSubtitlesUrl from '../assets/audio/0. Приветствие..srt?url'
+import guideGreetingAudio from '../assets/points/0. Интро - приветствие/1.Интро-приветствие.mp3'
+import guideGreetingSubtitlesUrl from '../assets/points/0. Интро - приветствие/1. Интро - приветствие.txt?url'
 import { createCueFromText, loadSrtSubtitles, SubtitleCue } from '../subtitles'
 
 const ONBOARDING_SLIDE_DURATION_MS = 6000
@@ -499,6 +499,7 @@ export const renderGuideIntro = (): RenderResult => {
 
     const hideSubtitle = () => {
         if (!(subtitleText.textContent || '').trim().length) {
+            console.log('clear')
             clearSubtitleContent()
             return
         }
@@ -516,6 +517,7 @@ export const renderGuideIntro = (): RenderResult => {
         subtitleText.replaceChildren()
 
         if (!words.length) {
+            console.log('reset')
             resetSubtitleState()
             return
         }
@@ -526,6 +528,7 @@ export const renderGuideIntro = (): RenderResult => {
             span.textContent = `${index > 0 ? ' ' : ''}${word.text}`
             span.classList.add('guide__subtitle-word--visible')
 
+            console.log(word.text)
             subtitleText.appendChild(span)
         })
     }
@@ -591,6 +594,7 @@ export const renderGuideIntro = (): RenderResult => {
         introSubtitles = subtitles
 
         if (!introSubtitles.length) {
+            console.log('reset 2')
             resetSubtitleState()
             return
         }
@@ -598,6 +602,7 @@ export const renderGuideIntro = (): RenderResult => {
         if (wasShowingActiveCue && activeCueIndex !== null) {
             const activeCue = introSubtitles[activeCueIndex]
             if (activeCue) {
+                console.log(activeCue.words)
                 renderWords(activeCue.words)
                 const activeCueDuration = Math.max(0.001, activeCue.end - activeCue.start)
                 const progress = Math.min(1, Math.max(0, (audio.currentTime - activeCue.start) / activeCueDuration))
@@ -612,6 +617,7 @@ export const renderGuideIntro = (): RenderResult => {
         resetSubtitleState()
 
         if (introSubtitles.length) {
+            console.log('render')
             renderWords(introSubtitles[0].words)
         }
     }

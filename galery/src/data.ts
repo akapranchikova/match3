@@ -86,7 +86,7 @@ export const guideVoiceAssets: Record<
 > = {
   history: {
     audio: new URL(
-      './assets/points/0. Интро - приветствие/1.1 переход к точке 1.mp3',
+      './assets/points/0. Интро - приветствие/1.1-переход-к-точке-1.mp3',
       import.meta.url,
     ).href,
     subtitles:new URL(
@@ -96,7 +96,7 @@ export const guideVoiceAssets: Record<
   },
   'perm-period': {
     audio: new URL(
-      './assets/points/1. Создание и история галереи/2.1 переход к точке 2.mp3',
+      './assets/points/1. Создание и история галереи/2.1-переход-к-точке-2.mp3',
       import.meta.url,
     ).href,
     subtitles: new URL(

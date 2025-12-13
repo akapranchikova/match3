@@ -1,15 +1,14 @@
 @font-face {
     font-family: "TT Fors";
-    src: url("/assets/TT Fors Trial Regular") format("ttf");
+    src: url("/assets/TT Fors Trial Regular.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
-    font-display: swap;
 }
 
 :root {
     --bg: radial-gradient(circle at 15% 20%, #c4573c 0%, #621d1b 26%, #0d111a 60%);
     --card: #1b1f30;
-    --card-art: linear-gradient(145deg, #2a2e38 0%, #121722 100%);
+    --card-art: red;
     --text: #f7f8fb;
     --muted: #d8d7e3;
     --like: #1f7c43;
@@ -97,46 +96,6 @@ body {
     color: #0e0e0e;
 }
 
-.sound-toggle {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(0, 0, 0, 0.24);
-    color: var(--text);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-    z-index: 6;
-}
-
-.sound-toggle:hover {
-    background: rgba(0, 0, 0, 0.4);
-    border-color: rgba(255, 255, 255, 0.3);
-}
-
-.sound-toggle:active {
-    transform: translateY(1px);
-}
-
-.sound-icon {
-    display: none;
-}
-
-.sound-icon.visible {
-    display: block;
-}
-
-.sound-toggle[data-enabled="true"] [data-sound="on"],
-.sound-toggle[data-enabled="false"] [data-sound="off"] {
-    display: block;
-}
-
 .app.tutorial-mode .branding {
     display: flex;
 }
@@ -216,9 +175,8 @@ body {
     position: absolute;
     inset: 0;
     border-radius: 28px;
-    background: var(--card-art), #1a1f2d;
-    background-size: cover;
-    background-position: center;
+    /*background-size: cover;*/
+    /*background-position: center;*/
     box-shadow: var(--shadow);
     padding: 26px 22px 40px;
     overflow: hidden;
@@ -227,6 +185,10 @@ body {
     justify-content: center;
     text-align: center;
     transform-origin: center;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%);
+linear-gradient(180deg, color(display-p3 0.000 0.000 0.000 / 0) 50%, color(display-p3 0.000 0.000 0.000 / 0.7) 100%),
+linear-gradient(0deg, rgba(0, 0, 0, 0) 90.49%, rgba(0, 0, 0, 0.6) 106.58%);
+linear-gradient(0deg, color(display-p3 0.000 0.000 0.000 / 0) 90.49%, color(display-p3 0.000 0.000 0.000 / 0.6) 106.58%);
     transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
     will-change: transform;
 }
@@ -306,6 +268,7 @@ body {
     font-size: 24px;
     user-select: none;
     color: #f4f5ff;
+    letter-spacing: -0.23px;
     text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
 }
 
@@ -381,7 +344,7 @@ body {
     right: 18px;
     position: absolute;
     height: 3px;
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.4);
     border-radius: 1px;
     overflow: hidden;
 }
@@ -436,31 +399,6 @@ body {
 
 .action.like {
     background: linear-gradient(135deg, #0C4C1F, #13322E);
-}
-
-.subtitles {
-    position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 118px;
-    padding: 12px 14px;
-    border-radius: 14px;
-    background: rgba(0, 0, 0, 0.52);
-    color: var(--text);
-    font-size: 14px;
-    line-height: 1.5;
-    letter-spacing: 0.2px;
-    box-shadow: var(--shadow);
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    pointer-events: none;
-    z-index: 5;
-}
-
-.subtitles.visible {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .overlay {

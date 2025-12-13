@@ -31,7 +31,7 @@ const archetypeDescriptions: Record<string, string> = {
     Шут: 'Твой архетип — Шут. Ты умеешь разряжать напряжение и смотреть на ситуацию с юмором. Помогаешь людям не застревать в серьёзности.'
 };
 
-const cardImages = Array.from({ length: 24 }, (_, idx) => `/assets/cards/card-${String(idx + 1).padStart(2, '0')}.svg`);
+const cardImages = Array.from({ length: 24 }, (_, idx) => `/assets/cards/card-${String(idx + 1).padStart(2, '0')}.jpg`);
 
 const baseCards: ArchetypeCard[] = [
     {
@@ -43,9 +43,9 @@ const baseCards: ArchetypeCard[] = [
     },
     {
         id: 2,
-        title: 'Славный малый 100%',
-        description: 'В любой компании тебе близко ощущение “свой человек”.',
-        composition: {'Славный малый': 1},
+        title: 'Творец 100%',
+        description: 'Тебе интересно придумывать нестандартные решения и соединять разное.',
+        composition: {Творец: 1},
         art: cardImages[1]
     },
     {
@@ -71,136 +71,73 @@ const baseCards: ArchetypeCard[] = [
     },
     {
         id: 6,
-        title: 'Бунтарь 100%',
-        description: 'Тебе откликается ломать устоявшиеся правила и делать всё по-своему.',
-        composition: {Бунтарь: 1},
+        title: 'Правитель 100%',
+        description: 'Тебе важно, чтобы всё было организованно и работало как чёткая система.',
+        composition: {Правитель: 1},
         art: cardImages[5]
     },
     {
         id: 7,
-        title: 'Эстет 100%',
-        description: 'Тебе нравится аккуратность, ясная форма и порядок деталей.',
-        composition: {Эстет: 1},
+        title: 'Дитя/Шут 60/40',
+        description: 'Тебе свойственны искренность и живой отклик, потом игра и ирония.',
+        composition: {Дитя: 0.6, Шут: 0.4},
         art: cardImages[6]
     },
     {
         id: 8,
-        title: 'Творец 100%',
-        description: 'Тебе интересно придумывать нестандартные решения и соединять разное.',
-        composition: {Творец: 1},
+        title: 'Творец/Эстет 60/40',
+        description: 'Сначала в тебе рождается смелая идея, потом аккуратная её подача.',
+        composition: {Творец: 0.6, Эстет: 0.4},
         art: cardImages[7]
     },
     {
         id: 9,
-        title: 'Правитель 100%',
-        description: 'Тебе важно, чтобы всё было организованно и работало как чёткая система.',
-        composition: {Правитель: 1},
+        title: 'Воин/Бунтарь 60/40',
+        description: 'Тебе важнее дисциплина и цель, дерзость во втором плане.',
+        composition: {Воин: 0.6, Бунтарь: 0.4},
         art: cardImages[8]
     },
     {
         id: 10,
-        title: 'Маг 100%',
-        description: 'Тебе нравится удивлять, когда привычные вещи вдруг работают по-новому.',
-        composition: {Маг: 1},
+        title: 'Опекун/Славный 60/40',
+        description: 'В первую очередь поддержка и забота, затем простота общения.',
+        composition: {Опекун: 0.6, 'Славный малый': 0.4},
         art: cardImages[9]
     },
     {
         id: 11,
-        title: 'Мудрец 100%',
-        description: 'Тебе нужно понимать причины и уметь все просто объяснять.',
-        composition: {Мудрец: 1},
+        title: 'Искатель/Мудрец 60/40',
+        description: 'Сначала опыт и эксперименты, затем глубокое осмысление.',
+        composition: {Искатель: 0.6, Мудрец: 0.4},
         art: cardImages[10]
     },
     {
         id: 12,
-        title: 'Шут 100%',
-        description: 'Тебе хочется разряжать напряжение и смотреть на вещи с юмором.',
-        composition: {Шут: 1},
+        title: 'Правитель/Маг 60/40',
+        description: 'В тебе преобладает порядок и структура, затем творческая энергия.',
+        composition: {Правитель: 0.6, Маг: 0.4},
         art: cardImages[11]
     },
     {
         id: 13,
-        title: 'Дитя/Шут 60/40',
-        description: 'Тебе свойственны искренность и живой отклик, потом игра и ирония.',
-        composition: {Дитя: 0.6, Шут: 0.4},
+        title: 'Правитель/Бунтарь 70/30',
+        description: 'В тебе преобладает порядок: тебе важно, чтобы всё было организовано, но иногда ты допускаешь немного свободы для эксперимента.',
+        composition: {Правитель: 0.7, Бунтарь: 0.3},
         art: cardImages[12]
     },
     {
         id: 14,
-        title: 'Творец/Эстет 60/40',
-        description: 'Сначала в тебе рождается смелая идея, потом аккуратная её подача.',
-        composition: {Творец: 0.6, Эстет: 0.4},
+        title: 'Правитель/Бунтарь 30/70',
+        description: 'На первом плане разрыв шаблонов и смелые решения, но при этом минимальные рамки ты всё же сохраняешь.',
+        composition: {Правитель: 0.3, Бунтарь: 0.7},
         art: cardImages[13]
     },
     {
         id: 15,
-        title: 'Воин/Бунтарь 60/40',
-        description: 'Тебе важнее дисциплина и цель, дерзость во втором плане.',
-        composition: {Воин: 0.6, Бунтарь: 0.4},
-        art: cardImages[14]
-    },
-    {
-        id: 16,
-        title: 'Опекун/Славный 60/40',
-        description: 'В первую очередь поддержка и забота, затем простота общения.',
-        composition: {Опекун: 0.6, 'Славный малый': 0.4},
-        art: cardImages[15]
-    },
-    {
-        id: 17,
-        title: 'Искатель/Мудрец 60/40',
-        description: 'Сначала опыт и эксперименты, затем глубокое осмысление.',
-        composition: {Искатель: 0.6, Мудрец: 0.4},
-        art: cardImages[16]
-    },
-    {
-        id: 18,
-        title: 'Правитель/Творец 60/40',
-        description: 'В тебе преобладает порядок и структура, затем творческая энергия.',
-        composition: {Правитель: 0.6, Творец: 0.4},
-        art: cardImages[17]
-    },
-    {
-        id: 19,
-        title: 'Дитя/Шут 40/60',
-        description: 'Тебе ближе игра и ирония: сначала смотришь на вещь с юмором, но фоном остается прямой детский взгляд.',
-        composition: {Дитя: 0.4, Шут: 0.6},
-        art: cardImages[18]
-    },
-    {
-        id: 20,
-        title: 'Творец/Эстет 40/60',
-        description: 'На первом месте аккуратная форма и чистый вид. Смелые идеи тебе не чужды, но они поддерживают, а не ведут.',
-        composition: {Творец: 0.4, Эстет: 0.6},
-        art: cardImages[19]
-    },
-    {
-        id: 21,
-        title: 'Воин/Бунтарь 40/60',
-        description: 'Сначала дерзкий ход и вызов обычному и привычному, при этом цель остаётся четкой и ясной.',
-        composition: {Воин: 0.4, Бунтарь: 0.6},
-        art: cardImages[20]
-    },
-    {
-        id: 22,
-        title: 'Правитель/Бунтарь 70/30',
-        description: 'В тебе преобладает порядок: тебе важно, чтобы всё было организовано, но иногда ты допускаешь немного свободы для эксперимента.',
-        composition: {Правитель: 0.7, Бунтарь: 0.3},
-        art: cardImages[21]
-    },
-    {
-        id: 23,
-        title: 'Правитель/Бунтарь 30/70',
-        description: 'На первом плане разрыв шаблонов и смелые решения, но при этом минимальные рамки ты всё же сохраняешь.',
-        composition: {Правитель: 0.3, Бунтарь: 0.7},
-        art: cardImages[22]
-    },
-    {
-        id: 24,
         title: 'Эстет/Воин 70/30',
         description: 'Тебе ближе чёткая, аккуратная форма, а для выразительности можешь добавить немного движения.',
         composition: {Эстет: 0.7, Воин: 0.3},
-        art: cardImages[23]
+        art: cardImages[14]
     }
 ];
 
@@ -258,88 +195,10 @@ const mainResult = document.getElementById('mainResult') as HTMLParagraphElement
 const mainDescription = document.getElementById('mainDescription') as HTMLParagraphElement;
 const profileList = document.getElementById('profileList') as HTMLDivElement;
 const appEl = document.querySelector('.app') as HTMLDivElement;
-const subtitlesEl = document.getElementById('subtitles') as HTMLDivElement;
-const soundToggleBtn = document.getElementById('soundToggle') as HTMLButtonElement;
-
-const soundStorageKey = 'archetypeSoundEnabled';
-let soundEnabled = localStorage.getItem(soundStorageKey) !== 'false';
-let currentUtterance: SpeechSynthesisUtterance | null = null;
-const soundOnIcon = soundToggleBtn?.querySelector('[data-sound="on"]') as HTMLElement | null;
-const soundOffIcon = soundToggleBtn?.querySelector('[data-sound="off"]') as HTMLElement | null;
 
 const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
 const dislikeBtn = document.getElementById('dislikeBtn') as HTMLButtonElement;
 const restartBtn = document.getElementById('restart') as HTMLButtonElement;
-
-function stopNarration() {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-    }
-    currentUtterance = null;
-}
-
-function syncSoundControls(subtitleText: string) {
-    if (soundToggleBtn) {
-        soundToggleBtn.dataset.enabled = soundEnabled ? 'true' : 'false';
-        soundToggleBtn.setAttribute('aria-pressed', soundEnabled.toString());
-        soundToggleBtn.setAttribute('aria-label', soundEnabled ? 'Выключить звук' : 'Включить звук');
-        soundOnIcon?.classList.toggle('visible', soundEnabled);
-        soundOffIcon?.classList.toggle('visible', !soundEnabled);
-    }
-
-    if (subtitlesEl) {
-        const shouldShow = Boolean(subtitleText) && !soundEnabled;
-        subtitlesEl.classList.toggle('visible', shouldShow);
-    }
-}
-
-function updateSubtitles(text: string) {
-    if (!subtitlesEl) return;
-    subtitlesEl.textContent = text;
-    syncSoundControls(text);
-}
-
-function speakText(text: string) {
-    if (!soundEnabled || !text) return;
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-
-    stopNarration();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ru-RU';
-    currentUtterance = utterance;
-    window.speechSynthesis.speak(utterance);
-}
-
-function setSoundEnabled(enabled: boolean) {
-    soundEnabled = enabled;
-    localStorage.setItem(soundStorageKey, enabled ? 'true' : 'false');
-    if (!enabled) {
-        stopNarration();
-    }
-    const subtitleText = subtitlesEl?.textContent ?? '';
-    syncSoundControls(subtitleText);
-    if (enabled) {
-        speakText(subtitleText);
-    }
-}
-
-function getNarrationText(card?: ArchetypeCard) {
-    if (!card) return '';
-    const parts = [card.description, card.tutorialSubtext].filter(Boolean) as string[];
-    return parts.join(' ');
-}
-
-function narrateCard(card?: ArchetypeCard) {
-    const subtitleText = getNarrationText(card);
-    updateSubtitles(subtitleText);
-    if (soundEnabled) {
-        speakText(subtitleText);
-    } else {
-        stopNarration();
-    }
-}
-
-syncSoundControls('');
 
 function resetState() {
     state.index = 0;
@@ -368,7 +227,7 @@ function renderStack() {
         const answeredQuestions = Math.max(0, state.index - tutorialLength);
         const cardNumber = isTutorialCard ? null : answeredQuestions + idx + 1;
         const percent = (answeredQuestions / totalQuestions) * 100;
-        el.style.setProperty('--card-art', card.art);
+        el.style.setProperty('background-image', `url(${card.art})`);
         const labelMarkup = card.tutorialLabel ? `<div class="card-label">${card.tutorialLabel}</div>` : '';
         const bodyClass = card.tutorial ? 'card-text tutorial-body' : 'card-text';
         const bodyMarkup = card.tutorial
@@ -434,8 +293,6 @@ function renderStack() {
         attachDrag(el, card);
         stackEl.appendChild(el);
     });
-
-    narrateCard(cards[state.index]);
 }
 
 function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
@@ -561,8 +418,6 @@ function computeProfile(): ArchetypeResult[] {
 }
 
 function showResults() {
-    stopNarration();
-    updateSubtitles('');
     const profile = computeProfile();
     const best = profile[0];
     mainResult.textContent = `Вы — ${best.name}`;
@@ -617,10 +472,6 @@ function bindControls() {
         if (!topCard) return;
         swipeAway(topCard, card, -1);
     });
-
-    if (soundToggleBtn) {
-        soundToggleBtn.addEventListener('click', () => setSoundEnabled(!soundEnabled));
-    }
 
     restartBtn.addEventListener('click', () => resetState());
 }
