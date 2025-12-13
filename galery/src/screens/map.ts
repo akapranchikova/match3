@@ -83,12 +83,12 @@ const createMarkersSvg = (
             const isComplete = viewedPoints.has(item.id)
             const label = originalIndex + 1
             const {x, y} = item.map
-            const markerLineStart =  (x - 25 ) * -1;
+            const markerLineStart =  (x - 80 ) * -1;
 
 
             return `
         <g class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}" data-index="${originalIndex}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="${item.title}">
-<!--          <line class="map__marker-line" x1="${markerLineStart}" y1="0" x2="${markerLineEnd}" y2="0" />-->
+          <line class="map__marker-line" x1="${markerLineStart}" y1="0" x2="${markerLineEnd}" y2="0" />
           <g ${isActive ? 'filter="url(#light)"' : ''}>
             <circle cx="0" cy="0" r="6" fill="#E2E2E2" />
           </g>
