@@ -6,7 +6,13 @@ import floorPlanSecond from '../assets/floor-2.svg?raw'
 import floorPlanThird from '../assets/floor-3.svg?raw'
 import {RoutePoint} from '../types'
 
-type RenderMapOptions = {
+type MapDataOptions = {
+    pointsOverride?: RoutePoint[]
+    currentPointIndex?: number
+    initialFloor?: number
+}
+
+type RenderMapOptions = MapDataOptions & {
     onClose?: () => void
     onFloorChange?: () => void
     onMarkerSelect?: (index: number) => void
@@ -19,10 +25,17 @@ const MAP_VIEWBOXES: Record<number, {width: number; height: number}> = {
     3: {width: 257, height: 643},
 }
 
-const resolveVisiblePoints = (): RoutePoint[] =>
-    points.filter((item, index) => viewedPoints.has(item.id) || index === state.currentPointIndex)
+const resolveVisiblePoints = (mapPoints: RoutePoint[], currentPointIndex: number, applyViewedFilter: boolean): RoutePoint[] =>
+    applyViewedFilter
+        ? mapPoints.filter((item, index) => viewedPoints.has(item.id) || index === currentPointIndex)
+        : mapPoints
 
-const createPreviewMarkup = (point: RoutePoint, originalIndex: number, isComplete: boolean, isActive: boolean) => {
+const createPreviewMarkup = (
+    point: RoutePoint,
+    originalIndex: number,
+    isComplete: boolean,
+    isActive: boolean,
+) => {
     if (isComplete && !isActive) {
         console.log(point.map.htmlY);
         return `
@@ -48,13 +61,18 @@ const createPreviewMarkup = (point: RoutePoint, originalIndex: number, isComplet
   `
 }
 
-const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; height: number}) => {
+const createMarkersSvg = (
+    floorPoints: RoutePoint[],
+    viewBox: {width: number; height: number},
+    mapPoints: RoutePoint[],
+    activeIndex: number,
+) => {
     const markerLineEnd = -6
 
     const markersMarkup = floorPoints
         .map((item) => {
-            const originalIndex = points.findIndex((original) => original.id === item.id)
-            const isActive = originalIndex === state.currentPointIndex
+            const originalIndex = mapPoints.findIndex((original) => original.id === item.id)
+            const isActive = originalIndex === activeIndex
             const isComplete = viewedPoints.has(item.id)
             const label = originalIndex + 1
             const {x, y} = item.map
@@ -98,11 +116,23 @@ const removeExistingMap = () => {
 }
 
 export const renderMap = (options?: RenderMapOptions): HTMLElement => {
-    const point = points[state.currentPointIndex]
-    const visiblePoints = resolveVisiblePoints()
-    const floors = Array.from(new Set(visiblePoints.slice(-2).map((item) => item.map.floor))).sort((a, b) => a - b)
+    const mapPoints = options?.pointsOverride ?? points
+    const isDefaultPoints = !options?.pointsOverride
+    const currentPointIndex = Math.max(
+        0,
+        Math.min(options?.currentPointIndex ?? state.currentPointIndex, Math.max(mapPoints.length - 1, 0)),
+    )
+    const point = mapPoints[currentPointIndex]
+    const visiblePoints = resolveVisiblePoints(mapPoints, currentPointIndex, isDefaultPoints)
+    const floors = Array.from(new Set((isDefaultPoints ? visiblePoints.slice(-2) : visiblePoints).map((item) => item.map.floor))).sort((a, b) => a - b)
     const shouldShowFloors = floors.length > 1
-    const activeFloor = floors.includes(state.currentFloor) ? state.currentFloor : point.map.floor
+    const preferredFloor = options?.initialFloor ?? point?.map.floor ?? floors[0]
+    const fallbackFloor = preferredFloor ?? state.currentFloor ?? 1
+    const activeFloor = floors.includes(state.currentFloor) && isDefaultPoints
+        ? state.currentFloor
+        : floors.includes(fallbackFloor)
+            ? fallbackFloor
+            : floors[0] ?? 1
     state.currentFloor = activeFloor
 
     if (!state.mapPositions[state.currentFloor]) {
@@ -138,8 +168,8 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
     const previewsMarkup = visiblePoints
         .filter((item) => item.map.floor === state.currentFloor)
         .map((item) => {
-            const originalIndex = points.findIndex((original) => original.id === item.id)
-            const isActive = originalIndex === state.currentPointIndex
+            const originalIndex = mapPoints.findIndex((original) => original.id === item.id)
+            const isActive = originalIndex === currentPointIndex
             const isComplete = viewedPoints.has(item.id)
 
             return createPreviewMarkup(item, originalIndex, isComplete, isActive)
@@ -184,35 +214,41 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
 
     if (markersContainer && viewBox) {
         const visiblePointsOnFloor = visiblePoints.filter((item) => item.map.floor === state.currentFloor)
-        markersContainer.innerHTML = createMarkersSvg(visiblePointsOnFloor, viewBox)
+        markersContainer.innerHTML = createMarkersSvg(visiblePointsOnFloor, viewBox, mapPoints, currentPointIndex)
     }
 
     const handleMarkerSelect = (originalIndex: number) => {
-        state.currentPointIndex = originalIndex
+        if (isDefaultPoints) {
+            state.currentPointIndex = originalIndex
 
-        if (options?.onMarkerSelect) {
+            if (options?.onMarkerSelect) {
+                options.onMarkerSelect(originalIndex)
+            } else {
+                state.screen = 'nextPoint'
+                rerender()
+            }
+        } else if (options?.onMarkerSelect) {
             options.onMarkerSelect(originalIndex)
-        } else {
-            state.screen = 'nextPoint'
-            rerender()
         }
     }
 
-    markersContainer?.querySelectorAll<SVGGElement>('.map__marker').forEach((marker) => {
-        marker.addEventListener('click', (event) => {
-            event.stopPropagation()
-            const originalIndex = Number(marker.dataset.index)
-            handleMarkerSelect(originalIndex)
-        })
-
-        marker.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault()
+    if (isDefaultPoints || options?.onMarkerSelect) {
+        markersContainer?.querySelectorAll<SVGGElement>('.map__marker').forEach((marker) => {
+            marker.addEventListener('click', (event) => {
+                event.stopPropagation()
                 const originalIndex = Number(marker.dataset.index)
                 handleMarkerSelect(originalIndex)
-            }
+            })
+
+            marker.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    const originalIndex = Number(marker.dataset.index)
+                    handleMarkerSelect(originalIndex)
+                }
+            })
         })
-    })
+    }
 
     page.querySelectorAll<HTMLButtonElement>('.map__floor').forEach((floorButton) => {
         floorButton.addEventListener('click', () => {
@@ -329,7 +365,7 @@ export const renderMap = (options?: RenderMapOptions): HTMLElement => {
 
 type MapOverlayOptions = {
     onMarkerSelect?: () => void
-}
+} & MapDataOptions
 
 export const openMapOverlay = (options?: MapOverlayOptions) => {
     const host = document.createElement('div')
@@ -350,6 +386,9 @@ export const openMapOverlay = (options?: MapOverlayOptions) => {
                 options?.onMarkerSelect?.()
                 rerender()
             },
+            pointsOverride: options?.pointsOverride,
+            currentPointIndex: options?.currentPointIndex,
+            initialFloor: options?.initialFloor,
         })
 
         host.appendChild(mapElement)

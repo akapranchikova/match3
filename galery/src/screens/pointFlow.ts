@@ -1,4 +1,4 @@
-import { guideIntroAudio, guideVoiceAssets, points } from '../data'
+import { guideIntroAudio, guideVoiceAssets, photoZonePoint, points } from '../data'
 import { rerender } from '../navigation'
 import {
   saveCameraPermissionGranted,
@@ -881,6 +881,15 @@ export const renderRouteComplete = (): RenderResult => {
     updateSoundToggle()
     footerButton.replaceChildren(soundToggle)
   }
+
+  card.querySelector<HTMLButtonElement>('[data-action="map"]')?.addEventListener('click', () => {
+    state.currentFloor = photoZonePoint.map.floor
+    openMapOverlay({
+      pointsOverride: [photoZonePoint],
+      currentPointIndex: 0,
+      initialFloor: photoZonePoint.map.floor,
+    })
+  })
 
   return card
 }

@@ -25,6 +25,7 @@ import pipeModelSubtitlesRaw from './assets/points/5. История архео�
 import tileModelSubtitlesRaw from './assets/points/5. История археологических раскопок/13. Печной изразец.txt?raw'
 import potModelSubtitlesRaw from './assets/points/5. История археологических раскопок/14. Керамический горшок.txt?raw'
 import routeImage1 from './assets/route/route-1.png'
+import AIImage from './assets/ii.png'
 import routeImage2 from './assets/route/route-2.png'
 import routeImage3 from './assets/route/route-3.png'
 import routeImage4 from './assets/route/route-4.png'
@@ -303,6 +304,22 @@ const mapPoints: Record<RoutePoint['id'], MapPoint> = {
     excavation: {floor: 2, x: 125.72, y: 434.34, htmlY: 263, htmlDone: 389},
     railway: {floor: 3, x: 167.66, y: 398.22, htmlY: 230,  htmlDone: 350},
     final: {floor: 3, x: 244.22, y: 192.96, htmlY: 40,  htmlDone: 130},
+}
+
+export const photoZonePoint: RoutePoint = {
+  id: 'photo-zone',
+  title: 'ИИ-фотостенд',
+  description: 'На 1 этаже рядом с гардеробом',
+  period: '21 век',
+  photo: AIImage,
+  photoAlt: 'Пример снимка из фотозоны',
+  map: {
+    floor: 1,
+    x: 134,
+    y: 548,
+    htmlY: 360,
+    htmlDone: 470,
+  },
 }
 
 export const points: RoutePoint[] = [
