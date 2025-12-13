@@ -2725,3 +2725,10 @@ main,
         min-height: 100dvh;
     }
 }
+.card--guide .content-subtitles {
+    height: 125px;
+    margin-bottom: 50px;
+}
+.card--guide .content-subtitles img{
+    display: none;
+}
