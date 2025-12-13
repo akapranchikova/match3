@@ -2310,9 +2310,10 @@ main,
 
 .map__header {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
     padding: 0 4px;
 }
 
@@ -2326,6 +2327,27 @@ main,
     font-size: 14px;
     color: rgba(229, 231, 235, 0.86);
     max-width: 420px;
+}
+
+.map__hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.4;
+    color: rgba(226, 226, 226, 1);
+    font-size: 14px;
+    font-family: 'SB Sans Display Semibold', sans-serif;
+    white-space: nowrap;
+}
+
+.map__hint-icon svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+
+.map__hint-text {
+    line-height: 1.2;
 }
 
 .map__floors {
