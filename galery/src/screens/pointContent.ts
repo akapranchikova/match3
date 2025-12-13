@@ -650,7 +650,22 @@ export const renderPointContent = () => {
   config.sections.forEach((section, index) => {
     const panel = renderSection(section)
     panel.classList.add('content-stack__item')
+    const panelAudios = Array.from(panel.querySelectorAll('audio'))
     mediaElements.push(...Array.from(panel.querySelectorAll('video, audio')))
+
+    panelAudios.forEach((audioElement) => {
+      const handleAudioEnd = () => {
+        const isActive = stack.children[state.currentContentIndex]?.contains(audioElement)
+
+        if (!isActive || state.currentContentIndex >= config.sections.length - 1) return
+
+        state.currentContentIndex += 1
+        rerender()
+      }
+
+      audioElement.addEventListener('ended', handleAudioEnd)
+      cleanupCallbacks.push(() => audioElement.removeEventListener('ended', handleAudioEnd))
+    })
     stack.appendChild(panel)
   })
 
