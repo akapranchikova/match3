@@ -308,15 +308,15 @@ const mapPoints: Record<RoutePoint['id'], MapPoint> = {
 
 export const photoZonePoint: RoutePoint = {
   id: 'photo-zone',
-  title: 'ИИ-фотостенд',
+    photoAlt: 'ИИ-фотостенд',
+  title: 'Сделайте фото в одном из исторических мест',
   description: 'На 1 этаже рядом с гардеробом',
   period: '21 век',
   photo: AIImage,
-  photoAlt: 'Пример снимка из фотозоны',
   map: {
     floor: 1,
-    x: 134,
-    y: 548,
+    x: 184,
+    y: 398,
     htmlY: 360,
     htmlDone: 470,
   },

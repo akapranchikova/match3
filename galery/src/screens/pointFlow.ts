@@ -615,8 +615,8 @@ export const renderNextPoint = (): RenderResult => {
 export const renderRouteComplete = (): RenderResult => {
   const point = points[state.currentPointIndex]
   const headingText = 'Отличная работа!'
-  const subtitleText = 'Вы открыли все карточки маршрута'
-  const caption = point.guide?.caption || point.description
+  const subtitleText = photoZonePoint.title
+  const caption = 'Сделайте фото в одном из исторических мест'
 
   const card = document.createElement('section')
   card.className = 'card card--point card--next card--complete'
@@ -639,7 +639,7 @@ export const renderRouteComplete = (): RenderResult => {
           </span>
         </button>
         <div class="point-visual__placeholder" role="img" aria-label="${
-          point.photoAlt || `Превью точки «${point.title}»`
+          photoZonePoint.photoAlt || photoZonePoint.title
         }"></div>
         <p class="point-visual__caption">${caption}</p>
       </div>

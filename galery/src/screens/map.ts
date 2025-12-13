@@ -27,8 +27,15 @@ const MAP_VIEWBOXES: Record<number, {width: number; height: number}> = {
 
 let mapResizeCleanup: (() => void) | null = null
 
-const resolveVisiblePoints = (): RoutePoint[] =>
-    points.filter((item, index) => viewedPoints.has(item.id) || index === state.currentPointIndex)
+const resolveVisiblePoints = (
+    mapPoints: RoutePoint[],
+    currentPointIndex: number,
+    isDefaultPoints: boolean,
+): RoutePoint[] => {
+    if (!isDefaultPoints) return mapPoints
+
+    return mapPoints.filter((item, index) => viewedPoints.has(item.id) || index === currentPointIndex)
+}
 
 const resolvePreviewTop = (point: RoutePoint, target: 'htmlY' | 'htmlDone') => {
     const viewBox = MAP_VIEWBOXES[point.map.floor]
@@ -61,7 +68,7 @@ const createPreviewMarkup = (point: RoutePoint, originalIndex: number, isComplet
         <img src="${point.photo}" alt="${point.photoAlt || point.title}" loading="lazy" />
       </div>
       <div class="map__preview-info">
-        <span class="map__preview-label">Точка ${originalIndex + 1}</span>
+        <span class="map__preview-label">${point.id === 'photo-zone' ? point.photoAlt : 'Точка ' + originalIndex + 1}</span>
         <p class="map__preview-title">${point.title}</p>
       </div>
     </aside>
