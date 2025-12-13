@@ -64,8 +64,8 @@ const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; he
             return `
         <g class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}" data-index="${originalIndex}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="${item.title}">
           <line class="map__marker-line" x1="${markerLineStart}" y1="0" x2="${markerLineEnd}" y2="0" />
-          <g filter="url(#map-marker-shadow)">
-            <circle class="map__marker-dot" cx="0" cy="0" r="6" />
+          <g ${isActive ? 'filter="url(#light)"' : ''}>
+            <circle cx="0" cy="0" r="6" fill="#E2E2E2" />
           </g>
         </g>
       `
@@ -74,11 +74,19 @@ const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; he
 
     return `
     <svg class="map__markers-layer" viewBox="0 0 ${viewBox.width} ${viewBox.height}" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
-      <defs>
-        <filter id="map-marker-shadow" x="-12" y="-12" width="36" height="36" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-          <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#111" flood-opacity="0.35" />
-        </filter>
-      </defs>
+       <defs>
+            <filter id="light" x="-22" y="-22" width="44" height="44" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                <feMorphology radius="4" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_1768_10528"/>
+                <feOffset/>
+                <feGaussianBlur stdDeviation="6"/>
+                <feComposite in2="hardAlpha" operator="out"/>
+                <feColorMatrix type="matrix" values="0 0 0 0 0.623529 0 0 0 0 0.988235 0 0 0 0 0.788235 0 0 0 1 0"/>
+                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1768_10528"/>
+                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1768_10528" result="shape"/>
+            </filter>
+        </defs>
       ${markersMarkup}
     </svg>
   `
