@@ -618,6 +618,20 @@ export const renderGuideIntro = (): RenderResult => {
 
     setSubtitles(introSubtitles)
 
+    const startRoute = () => {
+        if (isRouteCompleted()) {
+            resetProgress()
+        }
+        state.currentPointIndex = getFirstUnviewedPointIndex()
+        state.screen = 'nextPoint'
+        rerender()
+    }
+
+    const handleEnded = () => {
+        showFinalCue()
+        startRoute()
+    }
+
     const updateSubtitles = () => {
         if (!introSubtitles.length) {
             resetSubtitleState()
@@ -641,7 +655,7 @@ export const renderGuideIntro = (): RenderResult => {
             const progress = Math.min(1, Math.max(0, cueElapsed / (activeCue.end - activeCue.start)))
             subtitleFill.style.setProperty('--progress', `${progress * 100}%`)
         } else if (audio.ended) {
-            showFinalCue()
+            handleEnded()
         } else {
             resetSubtitleState()
         }
@@ -673,7 +687,7 @@ export const renderGuideIntro = (): RenderResult => {
     audio.addEventListener('play', handlePlay)
     audio.addEventListener('loadedmetadata', handleLoadedMetadata)
     audio.addEventListener('canplay', tryPlay)
-    audio.addEventListener('ended', showFinalCue)
+    audio.addEventListener('ended', handleEnded)
 
     getIntroSubtitles()
         .then((subtitles) => {
@@ -728,14 +742,7 @@ export const renderGuideIntro = (): RenderResult => {
     footer.appendChild(controls)
 
     const start = createButton('Начать маршрут')
-    start.addEventListener('click', () => {
-        if (isRouteCompleted()) {
-            resetProgress()
-        }
-        state.currentPointIndex = getFirstUnviewedPointIndex()
-        state.screen = 'nextPoint'
-        rerender()
-    })
+    start.addEventListener('click', startRoute)
 
     footer.appendChild(start)
 
@@ -753,7 +760,7 @@ export const renderGuideIntro = (): RenderResult => {
             audio.removeEventListener('play', handlePlay)
             audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
             audio.removeEventListener('canplay', tryPlay)
-            audio.removeEventListener('ended', showFinalCue)
+            audio.removeEventListener('ended', handleEnded)
         },
     }
 }
