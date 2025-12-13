@@ -448,6 +448,8 @@ export const renderGuideIntro = (): RenderResult => {
     let isSubtitleVisible = false
     let isSubtitleAnimatingOut = false
 
+    let cancelSubtitleOut: (() => void) | null = null
+
     const playSubtitleAnimation = (className: (typeof subtitleAnimationClasses)[number]) => {
         subtitleAnimationClasses.forEach((animationClass) => subtitleText.classList.remove(animationClass))
 
@@ -456,6 +458,11 @@ export const renderGuideIntro = (): RenderResult => {
     }
 
     const animateSubtitleIn = () => {
+        if (cancelSubtitleOut) {
+            cancelSubtitleOut()
+            cancelSubtitleOut = null
+        }
+
         isSubtitleAnimatingOut = false
         isSubtitleVisible = true
         playSubtitleAnimation('subtitle-animate-in')
@@ -474,11 +481,17 @@ export const renderGuideIntro = (): RenderResult => {
 
         const handleAnimationEnd = () => {
             subtitleText.removeEventListener('animationend', handleAnimationEnd)
+            cancelSubtitleOut = null
             isSubtitleAnimatingOut = false
             onFinish()
         }
 
         subtitleText.addEventListener('animationend', handleAnimationEnd)
+        cancelSubtitleOut = () => {
+            subtitleText.removeEventListener('animationend', handleAnimationEnd)
+            cancelSubtitleOut = null
+            isSubtitleAnimatingOut = false
+        }
     }
 
     intro.appendChild(subtitleFill)

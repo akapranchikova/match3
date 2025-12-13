@@ -87,6 +87,7 @@ const createButtonHint = (step: HintStep) => {
   }
 }
 
+
 const runNextPointHints = (
   mapButton: HTMLElement | null,
   routeButton: HTMLElement | null,
@@ -335,6 +336,8 @@ export const renderNextPoint = (): RenderResult => {
   `
 
   let footerAudio: HTMLAudioElement | null = null
+    let hideAnimationCancel: (() => void) | null = null
+
 
   const footerVoice = card.querySelector<HTMLDivElement>('.footer__voice')
   if (footerVoice) {
@@ -362,23 +365,29 @@ export const renderNextPoint = (): RenderResult => {
     }
 
     const animateSubtitleOut = (onFinish?: () => void) => {
-      if (isSubtitleAnimatingOut || !isSubtitleVisible) {
-        if (onFinish) onFinish()
-        return
-      }
+        if (isSubtitleAnimatingOut || !isSubtitleVisible) {
+            if (onFinish) onFinish()
+            return
+        }
 
-      isSubtitleAnimatingOut = true
-      playSubtitleAnimation('subtitle-animate-out')
+        isSubtitleAnimatingOut = true
+        playSubtitleAnimation('subtitle-animate-out')
 
-      if (!onFinish) return
+        let cancelled = false
+        hideAnimationCancel = () => {
+            cancelled = true
+            hideAnimationCancel = null
+        }
 
-      const handleAnimationEnd = () => {
-        subtitleText.removeEventListener('animationend', handleAnimationEnd)
-        isSubtitleAnimatingOut = false
-        onFinish()
-      }
+        const handleAnimationEnd = () => {
+            subtitleText.removeEventListener('animationend', handleAnimationEnd)
+            if (cancelled) return
+            isSubtitleAnimatingOut = false
+            hideAnimationCancel = null
+            onFinish?.()
+        }
 
-      subtitleText.addEventListener('animationend', handleAnimationEnd)
+        subtitleText.addEventListener('animationend', handleAnimationEnd)
     }
 
     const renderDefaultSubtitle = () => {
@@ -463,6 +472,8 @@ export const renderNextPoint = (): RenderResult => {
       activeCueIndex = lastCueIndex
       renderSubtitleText(lastCue.text)
       subtitleWrapper?.classList.add('footer__subtitles--visible')
+        hideAnimationCancel?.()
+        hideAnimationCancel = null
       animateSubtitleIn()
     }
 
@@ -481,6 +492,8 @@ export const renderNextPoint = (): RenderResult => {
         if (activeCueIndex !== activeIndexNext) {
           activeCueIndex = activeIndexNext
           renderSubtitleText(activeCue.text)
+            hideAnimationCancel?.()
+            hideAnimationCancel = null
           animateSubtitleIn()
         }
 
@@ -488,6 +501,7 @@ export const renderNextPoint = (): RenderResult => {
       } else if (footerAudio?.ended) {
         showFinalCue()
       } else {
+          if (isSubtitleVisible) return
         resetSubtitleState()
       }
     }

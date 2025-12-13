@@ -692,7 +692,8 @@ export const renderPointContent = () => {
   const container = document.createElement('section')
   container.className = isFinalPoint ? 'card card--guide' : 'card card--content'
 
-  const contentPositionLabel = `Сюжет ${state.currentContentIndex + 1} из ${config.sections.length}`
+
+    const contentPositionLabel = `Сюжет ${state.currentContentIndex + 1} из ${config.sections.length}`
 
   const header = document.createElement('header')
   header.className = 'content-header'
@@ -977,6 +978,7 @@ export const renderPointContent = () => {
     const subtitleText = document.createElement('div')
     subtitleText.className = 'content-subtitles__text'
 
+
     subtitleLayout.appendChild(subtitleText)
     container.appendChild(subtitleLayout)
 
@@ -999,13 +1001,14 @@ export const renderPointContent = () => {
     const buildFallbackCues = (lines?: string[]) =>
       (lines || []).map((line, index) => createCueFromText(line, index * 3, index * 3 + 2.75))
 
-    let subtitleAudio: HTMLAudioElement | null = initialSubtitleSource.audio
+      let subtitleAudio: HTMLAudioElement | null = null
     let subtitleFallbackCues: SubtitleCue[] = buildFallbackCues(initialSubtitleSource.subtitles)
     let currentSubtitlesUrl = initialSubtitleSource.subtitlesUrl
     let subtitleCues: SubtitleCue[] = []
     let activeCueIndex: number | null = null
     let isSubtitleVisible = false
     let isSubtitleAnimatingOut = false
+      let cancelPendingHide: (() => void) | null = null
 
     const playSubtitleAnimation = (className: (typeof subtitleAnimationClasses)[number]) => {
       subtitleAnimationClasses.forEach((animationClass) => subtitleText.classList.remove(animationClass))
@@ -1021,23 +1024,29 @@ export const renderPointContent = () => {
     }
 
     const animateSubtitleOut = (onFinish?: () => void) => {
-      if (isSubtitleAnimatingOut || !isSubtitleVisible) {
-        if (onFinish) onFinish()
-        return
-      }
+        if (isSubtitleAnimatingOut || !isSubtitleVisible) {
+            onFinish?.()
+            return
+        }
 
-      isSubtitleAnimatingOut = true
-      playSubtitleAnimation('subtitle-animate-out')
+        isSubtitleAnimatingOut = true
+        playSubtitleAnimation('subtitle-animate-out')
 
-      if (!onFinish) return
+        let cancelled = false
+        cancelPendingHide = () => {
+            cancelled = true
+            cancelPendingHide = null
+        }
 
-      const handleAnimationEnd = () => {
-        subtitleText.removeEventListener('animationend', handleAnimationEnd)
-        isSubtitleAnimatingOut = false
-        onFinish()
-      }
+        const handleAnimationEnd = () => {
+            subtitleText.removeEventListener('animationend', handleAnimationEnd)
+            if (cancelled) return
+            isSubtitleAnimatingOut = false
+            cancelPendingHide = null
+            onFinish?.()
+        }
 
-      subtitleText.addEventListener('animationend', handleAnimationEnd)
+        subtitleText.addEventListener('animationend', handleAnimationEnd)
     }
 
     const renderCueLines = (cue: SubtitleCue | null) => {
@@ -1090,6 +1099,8 @@ export const renderPointContent = () => {
       }
 
       activeCueIndex = lastCueIndex
+        cancelPendingHide?.()
+        cancelPendingHide = null
       renderCueLines(lastCue)
       animateSubtitleIn()
     }
@@ -1113,12 +1124,15 @@ export const renderPointContent = () => {
 
         if (cueChanged) {
           activeCueIndex = activeIndexNext
+            cancelPendingHide?.()
+            cancelPendingHide = null
           renderCueLines(activeCue)
           animateSubtitleIn()
         }
       } else if (subtitleAudio.ended) {
         showFinalCue()
       } else {
+          if (isSubtitleVisible) return
         hideSubtitle()
       }
     }
@@ -1132,6 +1146,8 @@ export const renderPointContent = () => {
         return
       }
 
+        cancelPendingHide?.()
+        cancelPendingHide = null
       renderCueLines(subtitleCues[0])
       animateSubtitleIn()
       updateSubtitles()

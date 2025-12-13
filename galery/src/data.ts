@@ -106,7 +106,7 @@ export const guideVoiceAssets: Record<
   },
   'metal-plant': {
     audio: new URL(
-      './assets/points/2.1 Пермское море, пермский период и геология/5.1 переход к точке 3.mp3',
+      './assets/points/2.1 Пермское море, пермский период и геология/5.1-переход-к-точке-3.mp3',
       import.meta.url,
     ).href,
     subtitles: new URL(
@@ -151,7 +151,7 @@ const historyVideoSrc = new URL(
   import.meta.url,
 ).href
 const historyAudioSrc = new URL(
-  './assets/points/1. Создание и история галереи/2. Создание и история галереи.mp3',
+  './assets/points/1. Создание и история галереи/2.-Создание-и-история-галереи.mp3',
   import.meta.url,
 ).href
 const geologyCardImages = [
@@ -177,7 +177,7 @@ const permSeaVideoSrc = new URL(
   import.meta.url,
 ).href
 const permSeaAudioSrc = new URL(
-  './assets/points/2.1 Пермское море, пермский период и геология/3. Пермское море.mp3',
+  './assets/points/2.1 Пермское море, пермский период и геология/3.-Пермское-море.mp3',
   import.meta.url,
 ).href
 const permPeriodVideoSrc = new URL(
@@ -185,7 +185,7 @@ const permPeriodVideoSrc = new URL(
   import.meta.url,
 ).href
 const permPeriodAudioSrc = new URL(
-  './assets/points/2.1 Пермское море, пермский период и геология/4. Пермский период.mp3',
+  './assets/points/2.1 Пермское море, пермский период и геология/4.-Пермский-период.mp3',
   import.meta.url,
 ).href
 const metalPlantLocationVideoSrc = new URL(
