@@ -37,6 +37,27 @@ export const renderCameraPermission = (): RenderResult => {
     }
   }
 
+  const requestCamera = async (): Promise<MediaStream> => {
+    const isConstraintFallbackError = (error: unknown) => {
+      if (!(error instanceof DOMException)) return false
+      return error.name === 'OverconstrainedError' || error.name === 'NotFoundError'
+    }
+
+    try {
+      return await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+        audio: false,
+      })
+    } catch (error) {
+      console.warn('Primary camera request failed, retrying with defaults', error)
+      if (!isConstraintFallbackError(error)) {
+        throw error
+      }
+
+      return navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    }
+  }
+
   hasCameraPermission(state.cameraPermissionGranted).then((granted) => {
     if (!granted) return
 
@@ -56,10 +77,7 @@ export const renderCameraPermission = (): RenderResult => {
     showStatus('Запрашиваем доступ к камере…')
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
-        audio: false,
-      })
+      const stream = await requestCamera()
 
       stream.getTracks().forEach((track) => track.stop())
 
