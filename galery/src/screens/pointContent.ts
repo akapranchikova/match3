@@ -1,7 +1,7 @@
 import { pointContentConfigs, points } from '../data'
 import { rerender } from '../navigation'
 import { state } from '../state'
-import { saveSoundEnabled } from '../storage'
+import { saveContentGestureHintCompleted, saveSoundEnabled } from '../storage'
 import { loadSrtSubtitles, SubtitleCue, createCueFromText } from '../subtitles'
 import { AudioContent, CardsContent, ModelsContent, PointContentSection, VideoContent } from '../types'
 import { navigateToNextPoint } from './pointFlow'
@@ -9,6 +9,106 @@ import onboardingVoice from '../assets/onboarding-voice.png'
 
 const SWIPE_THRESHOLD = 48
 const MODEL_GESTURE_CLASS = 'model-gesture-active'
+
+type GestureHintStep = {
+  text: string
+    icon: string
+  direction: 'up' | 'down'
+}
+
+const gestureHintSteps: GestureHintStep[] = [
+  {
+    text: 'Листайте снизу вверх, чтобы перейти к следующему сюжету',
+    direction: 'up',
+      icon: `<svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5.125 13C4.275 11.9333 3.625 10.7583 3.175 9.475C2.725 8.19167 2.5 6.86667 2.5 5.5C2.5 5.05 2.525 4.6 2.575 4.15C2.625 3.7 2.7 3.25 2.8 2.8L1.05 4.55L0 3.5L3.5 0L7 3.5L5.95 4.55L4.325 2.95C4.20833 3.36667 4.125 3.7875 4.075 4.2125C4.025 4.6375 4 5.06667 4 5.5C4 6.66667 4.1875 7.79583 4.5625 8.8875C4.9375 9.97917 5.48333 10.9917 6.2 11.925L5.125 13ZM15.45 19.825C15.0667 19.9583 14.6792 20.0208 14.2875 20.0125C13.8958 20.0042 13.5167 19.9083 13.15 19.725L6.6 16.675L7.05 15.675C7.21667 15.3417 7.45 15.0708 7.75 14.8625C8.05 14.6542 8.38333 14.5333 8.75 14.5L10.45 14.375L7.65 6.7C7.55 6.43333 7.55833 6.17917 7.675 5.9375C7.79167 5.69583 7.98333 5.525 8.25 5.425C8.51667 5.325 8.77083 5.33333 9.0125 5.45C9.25417 5.56667 9.425 5.75833 9.525 6.025L13.225 16.2L10.725 16.375L14 17.9C14.1167 17.95 14.2417 17.9792 14.375 17.9875C14.5083 17.9958 14.6333 17.9833 14.75 17.95L18.675 16.525C19.1917 16.3417 19.5667 15.9958 19.8 15.4875C20.0333 14.9792 20.0583 14.4667 19.875 13.95L18.5 10.2C18.4 9.93333 18.4083 9.67917 18.525 9.4375C18.6417 9.19583 18.8333 9.025 19.1 8.925C19.3667 8.825 19.6208 8.83333 19.8625 8.95C20.1042 9.06667 20.275 9.25833 20.375 9.525L21.75 13.275C22.1333 14.325 22.0958 15.3458 21.6375 16.3375C21.1792 17.3292 20.425 18.0167 19.375 18.4L15.45 19.825ZM13.2 13.2L11.85 9.425C11.75 9.15833 11.7583 8.90417 11.875 8.6625C11.9917 8.42083 12.1833 8.25 12.45 8.15C12.7167 8.05 12.9708 8.05833 13.2125 8.175C13.4542 8.29167 13.625 8.48333 13.725 8.75L15.1 12.5L13.2 13.2ZM16.025 12.175L15 9.35C14.9 9.08333 14.9083 8.82917 15.025 8.5875C15.1417 8.34583 15.3333 8.175 15.6 8.075C15.8667 7.975 16.1208 7.98333 16.3625 8.1C16.6042 8.21667 16.775 8.40833 16.875 8.675L17.9 11.475L16.025 12.175Z" fill="#E2E2E2"/>
+          </svg>`
+  },
+  {
+    text: 'Листайте сверху вниз, чтобы вернуться к предыдущему сюжету',
+    direction: 'down',
+      icon: `<svg width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.5 13L0 9.5L1.05 8.45L2.8 10.2C2.7 9.75 2.625 9.3 2.575 8.85C2.525 8.4 2.5 7.95 2.5 7.5C2.5 6.13333 2.725 4.80833 3.175 3.525C3.625 2.24167 4.275 1.06667 5.125 0L6.2 1.075C5.48333 2.00833 4.9375 3.02083 4.5625 4.1125C4.1875 5.20417 4 6.33333 4 7.5C4 7.93333 4.025 8.3625 4.075 8.7875C4.125 9.2125 4.20833 9.63333 4.325 10.05L5.95 8.45L7 9.5L3.5 13ZM15.45 18.825C15.0667 18.9583 14.6792 19.0208 14.2875 19.0125C13.8958 19.0042 13.5167 18.9083 13.15 18.725L6.6 15.675L7.05 14.675C7.21667 14.3417 7.45 14.0708 7.75 13.8625C8.05 13.6542 8.38333 13.5333 8.75 13.5L10.45 13.375L7.65 5.7C7.55 5.43333 7.55833 5.17917 7.675 4.9375C7.79167 4.69583 7.98333 4.525 8.25 4.425C8.51667 4.325 8.77083 4.33333 9.0125 4.45C9.25417 4.56667 9.425 4.75833 9.525 5.025L13.225 15.2L10.725 15.375L14 16.9C14.1167 16.95 14.2417 16.9792 14.375 16.9875C14.5083 16.9958 14.6333 16.9833 14.75 16.95L18.675 15.525C19.1917 15.3417 19.5667 14.9958 19.8 14.4875C20.0333 13.9792 20.0583 13.4667 19.875 12.95L18.5 9.2C18.4 8.93333 18.4083 8.67917 18.525 8.4375C18.6417 8.19583 18.8333 8.025 19.1 7.925C19.3667 7.825 19.6208 7.83333 19.8625 7.95C20.1042 8.06667 20.275 8.25833 20.375 8.525L21.75 12.275C22.1333 13.325 22.0958 14.3458 21.6375 15.3375C21.1792 16.3292 20.425 17.0167 19.375 17.4L15.45 18.825ZM13.2 12.2L11.85 8.425C11.75 8.15833 11.7583 7.90417 11.875 7.6625C11.9917 7.42083 12.1833 7.25 12.45 7.15C12.7167 7.05 12.9708 7.05833 13.2125 7.175C13.4542 7.29167 13.625 7.48333 13.725 7.75L15.1 11.5L13.2 12.2ZM16.025 11.175L15 8.35C14.9 8.08333 14.9083 7.82917 15.025 7.5875C15.1417 7.34583 15.3333 7.175 15.6 7.075C15.8667 6.975 16.1208 6.98333 16.3625 7.1C16.6042 7.21667 16.775 7.40833 16.875 7.675L17.9 10.475L16.025 11.175Z" fill="#E2E2E2"/>
+</svg>
+`
+  },
+]
+
+const maybeShowGestureHint = (host: HTMLElement): (() => void) | null => {
+  if (state.contentGestureHintCompleted) return null
+
+  const overlay = document.createElement('div')
+  overlay.className = 'content-gesture-overlay'
+
+  const panel = document.createElement('div')
+  panel.className = 'content-gesture-overlay__panel'
+
+
+  const icon = document.createElement('div')
+  icon.className = 'content-gesture-overlay__icon'
+  icon.innerHTML = `
+    <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.125 13C4.275 11.9333 3.625 10.7583 3.175 9.475C2.725 8.19167 2.5 6.86667 2.5 5.5C2.5 5.05 2.525 4.6 2.575 4.15C2.625 3.7 2.7 3.25 2.8 2.8L1.05 4.55L0 3.5L3.5 0L7 3.5L5.95 4.55L4.325 2.95C4.20833 3.36667 4.125 3.7875 4.075 4.2125C4.025 4.6375 4 5.06667 4 5.5C4 6.66667 4.1875 7.79583 4.5625 8.8875C4.9375 9.97917 5.48333 10.9917 6.2 11.925L5.125 13ZM15.45 19.825C15.0667 19.9583 14.6792 20.0208 14.2875 20.0125C13.8958 20.0042 13.5167 19.9083 13.15 19.725L6.6 16.675L7.05 15.675C7.21667 15.3417 7.45 15.0708 7.75 14.8625C8.05 14.6542 8.38333 14.5333 8.75 14.5L10.45 14.375L7.65 6.7C7.55 6.43333 7.55833 6.17917 7.675 5.9375C7.79167 5.69583 7.98333 5.525 8.25 5.425C8.51667 5.325 8.77083 5.33333 9.0125 5.45C9.25417 5.56667 9.425 5.75833 9.525 6.025L13.225 16.2L10.725 16.375L14 17.9C14.1167 17.95 14.2417 17.9792 14.375 17.9875C14.5083 17.9958 14.6333 17.9833 14.75 17.95L18.675 16.525C19.1917 16.3417 19.5667 15.9958 19.8 15.4875C20.0333 14.9792 20.0583 14.4667 19.875 13.95L18.5 10.2C18.4 9.93333 18.4083 9.67917 18.525 9.4375C18.6417 9.19583 18.8333 9.025 19.1 8.925C19.3667 8.825 19.6208 8.83333 19.8625 8.95C20.1042 9.06667 20.275 9.25833 20.375 9.525L21.75 13.275C22.1333 14.325 22.0958 15.3458 21.6375 16.3375C21.1792 17.3292 20.425 18.0167 19.375 18.4L15.45 19.825ZM13.2 13.2L11.85 9.425C11.75 9.15833 11.7583 8.90417 11.875 8.6625C11.9917 8.42083 12.1833 8.25 12.45 8.15C12.7167 8.05 12.9708 8.05833 13.2125 8.175C13.4542 8.29167 13.625 8.48333 13.725 8.75L15.1 12.5L13.2 13.2ZM16.025 12.175L15 9.35C14.9 9.08333 14.9083 8.82917 15.025 8.5875C15.1417 8.34583 15.3333 8.175 15.6 8.075C15.8667 7.975 16.1208 7.98333 16.3625 8.1C16.6042 8.21667 16.775 8.40833 16.875 8.675L17.9 11.475L16.025 12.175Z" fill="#E2E2E2"/>
+</svg>
+
+  `
+
+  const text = document.createElement('p')
+  text.className = 'content-gesture-overlay__text'
+
+  panel.appendChild(icon)
+  panel.appendChild(text)
+  overlay.appendChild(panel)
+  host.appendChild(overlay)
+
+  let stepTimerId: number | null = null
+  let dismissTimerId: number | null = null
+  let isDismissed = false
+
+  const applyStep = (stepIndex: number) => {
+    const step = gestureHintSteps[Math.min(stepIndex, gestureHintSteps.length - 1)]
+    text.textContent = step.text
+    icon.innerHTML = step.icon
+  }
+
+  const cleanupTimers = () => {
+    if (stepTimerId !== null) {
+      window.clearTimeout(stepTimerId)
+      stepTimerId = null
+    }
+
+    if (dismissTimerId !== null) {
+      window.clearTimeout(dismissTimerId)
+      dismissTimerId = null
+    }
+  }
+
+  const dismissOverlay = () => {
+    if (isDismissed) return
+    isDismissed = true
+    cleanupTimers()
+    state.contentGestureHintCompleted = true
+    saveContentGestureHintCompleted()
+    overlay.classList.add('content-gesture-overlay--hidden')
+
+    const removeOnAnimationEnd = () => overlay.remove()
+    overlay.addEventListener('animationend', removeOnAnimationEnd, { once: true })
+    // Fallback in case animation events are not supported
+    window.setTimeout(removeOnAnimationEnd, 240)
+  }
+
+  overlay.addEventListener('click', dismissOverlay)
+
+  applyStep(0)
+  stepTimerId = window.setTimeout(() => applyStep(1), 3000)
+  dismissTimerId = window.setTimeout(dismissOverlay, 6000)
+
+  return () => {
+    cleanupTimers()
+    overlay.removeEventListener('click', dismissOverlay)
+    overlay.remove()
+  }
+}
 
 let activeModelGestures = 0
 
@@ -1101,6 +1201,11 @@ export const renderPointContent = () => {
     })
   }
   container.appendChild(hint)
+
+  const gestureHintCleanup = maybeShowGestureHint(container)
+  if (gestureHintCleanup) {
+    cleanupCallbacks.push(gestureHintCleanup)
+  }
 
   const cleanup = () => {
     cleanupCallbacks.forEach((fn) => fn())

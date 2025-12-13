@@ -1797,6 +1797,56 @@ main,
 .content-hint__finish {
     justify-self: start;
 }
+
+.content-gesture-overlay {
+    position: fixed;
+    inset: 0;
+    padding: 32px 18px;
+    background: rgba(22, 23, 22, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 24;
+    animation: content-gesture-fade-in 160ms ease;
+}
+
+.content-gesture-overlay--hidden {
+    animation: content-gesture-fade-out 200ms ease forwards;
+}
+
+.content-gesture-overlay__panel {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    padding: 22px 20px;
+    width: min(330px, 100%);
+    text-align: center;
+}
+
+.content-gesture-overlay__text {
+    font-size: 14px;
+    color: rgba(226, 226, 226, 1);
+    font-family: "SB Sans Display Semibold", sans-serif;
+    margin: 0;
+}
+
+@keyframes content-gesture-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes content-gesture-fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
 .route-card__status {
     font-size: 12px;
     position: relative;
@@ -2448,7 +2498,7 @@ main,
     font-size: 20px;
 }
 
-.map__marker.is-active .map__marker-dot,
+.map__marker.is-active .map__marker-dot
  {
     stroke: #21cca1;
     fill: #21cca1;

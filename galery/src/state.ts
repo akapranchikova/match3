@@ -1,6 +1,7 @@
 import { initialMapPositions, points } from './data'
 import {
   loadCameraPermissionGranted,
+  loadContentGestureHintCompleted,
   loadOnboardingCompleted,
   loadNextPointHintsCompleted,
   loadSoundEnabled,
@@ -16,6 +17,7 @@ const onboardingCompleted = loadOnboardingCompleted()
 const deepLinkPointIndex = resolvePointIndexFromLocation(window.location)
 const cameraPermissionGranted = loadCameraPermissionGranted()
 const nextPointHintsCompleted = loadNextPointHintsCompleted()
+const contentGestureHintCompleted = loadContentGestureHintCompleted()
 export let viewedPoints = loadViewed()
 
 export const isRouteCompleted = (): boolean => viewedPoints.size >= points.length
@@ -75,6 +77,7 @@ export const state: AppState = {
   scannerOrigin: null,
   cameraPermissionGranted,
   nextPointHintsCompleted,
+  contentGestureHintCompleted,
 }
 
 let teardown: RenderCleanup | null = null
