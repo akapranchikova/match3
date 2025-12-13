@@ -3,7 +3,6 @@ import { MapPoint, MapPosition, OnboardingSlide, PointContentConfig, RoutePoint 
 import historyIllustration from './assets/onboarding-history.png'
 import voiceIllustration from './assets/onboarding-voice.png'
 import qrIllustration from './assets/onboarding-qr.svg'
-import guideBackground from './assets/guide-background.png'
 import guideIntroAudio from './assets/guide-intro.wav'
 import onboardingGolosLogo from './assets/onboarding-golos-logo.svg'
 import logoList from './assets/logo-list.svg'
@@ -298,12 +297,12 @@ const potModelSubtitles = parseSubtitleLines(potModelSubtitlesRaw)
 const potModelSubtitlesUrl = createSubtitlesUrlFromText(potModelSubtitlesRaw)
 
 const mapPoints: Record<RoutePoint['id'], MapPoint> = {
-    history: {floor: 1, x: 168.72, y: 530.4, htmlY: 333, htmlDone: 463},
-    'perm-period': {floor: 1, x: 185.44, y: 264.86, htmlY: 100, htmlDone: 222},
-    'metal-plant': {floor: 2, x: 158.96, y: 555.62, htmlY: 317, htmlDone: 503},
-    excavation: {floor: 2, x: 125.72, y: 434.34, htmlY: 263, htmlDone: 389},
-    railway: {floor: 3, x: 170.66, y: 398.22, htmlY: 230,  htmlDone: 350},
-    final: {floor: 3, x: 244.22, y: 192.96, htmlY: 40,  htmlDone: 130},
+    history: {floor: 1, x: 118.72, y: 530.4, htmlY: 333, htmlDone: 463},
+    'perm-period': {floor: 1, x: 135.44, y: 264.86, htmlY: 100, htmlDone: 222},
+    'metal-plant': {floor: 2, x: 105.96, y: 555.62, htmlY: 317, htmlDone: 503},
+    excavation: {floor: 2, x: 75.72, y: 434.34, htmlY: 263, htmlDone: 389},
+    railway: {floor: 3, x: 120.66, y: 398.22, htmlY: 230,  htmlDone: 350},
+    final: {floor: 3, x: 194.22, y: 192.96, htmlY: 40,  htmlDone: 130},
 }
 
 export const photoZonePoint: RoutePoint = {
@@ -651,7 +650,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'audio',
         src: finalAudioSrc,
         artwork: voiceIllustration,
-        background: guideBackground,
+        background: onboardingGolosLogo,
         backgroundOverlay: onboardingGolosLogo,
         logo: logoList,
         subtitles: finalSubtitles,

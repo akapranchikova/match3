@@ -44,9 +44,10 @@
 
 body {
     height: 100dvh;
+    min-height: 100dvh;
+    padding: 0;
     display: flex;
     justify-content: center;
-    padding: 24px 12px;
     background: radial-gradient(60% 40% at 20% 20%, rgba(33, 204, 161, 0.08), transparent 70%),
     radial-gradient(50% 32% at 82% 12%, rgba(124, 188, 164, 0.14), transparent 80%),
     #0b0c0b;
@@ -65,24 +66,23 @@ body {
 body::before {
     content: '';
     position: fixed;
-    width: 640px;
-    height: 180px;
-    left: -120px;
-    top: 28%;
-    background: linear-gradient(229.11deg, #0d1915 14%, #7cbca4 28.48%, #0d1915 93.95%);
-    filter: blur(36px);
-    opacity: 0.5;
-    transform: rotate(-77deg);
+    width: 528px;
+    height: 166px;
+    top: 33%;
+    background: linear-gradient(229.11deg,#0D1915 5.95%, #387347 17.48%, #0D1915 81.95%);
+    filter: blur(54px);
+    transform: rotate(-81deg);
     pointer-events: none;
     z-index: 0;
 }
 
 #app {
-    width: min(375px, 100%);
     display: flex;
     justify-content: center;
     position: relative;
     z-index: 1;
+    width: 100%;
+    min-height: 100dvh;
 }
 
 #app > * {
@@ -122,7 +122,6 @@ p {
 }
 
 main,
-.card,
 .route,
 .scanner {
     background: #161716;
@@ -139,20 +138,6 @@ main,
     display: flex;
     flex-direction: column;
     gap: 12px;
-}
-
-.card::before {
-    content: '';
-    position: absolute;
-    width: 474px;
-    height: 139px;
-    left: -25px;
-    top: 30%;
-    background: linear-gradient(229.11deg, #0d1915 14%, #7cbca4 28.48%, #0d1915 93.95%);
-    filter: blur(28px);
-    transform: rotate(-77.14deg);
-    opacity: 0.85;
-    z-index: 0;
 }
 
 
@@ -581,6 +566,7 @@ main,
     font-weight: bold;
     margin: 0;
     z-index: 10;
+    max-width: 260px;
     margin-bottom: -6px;
 }
 
@@ -813,7 +799,6 @@ main,
 .card__content--options {
     position: relative;
     z-index: 1;
-    justify-content: space-around;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -825,10 +810,9 @@ main,
 
 .card--options h1 {
     font-size: 28px;
-    line-height: 1.1;
     color: #ffffff;
     margin: 0;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .card--options p {
@@ -886,7 +870,6 @@ main,
 
 .guide__header {
     width: 100%;
-    justify-content: center;
 }
 
 .guide__content {
@@ -951,14 +934,38 @@ main,
     margin: 8px 0 4px;
 }
 
+.card__background-giga {
+    position: absolute !important;
+    inset: 0;
+    margin-top: 15%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    left: 0;
+    right: 0;
+}
+
+@media (max-width: 420px) {
+    .card__background-giga {
+        margin-top: 35%;
+    }
+}
 .guide__hero-image {
-    width: 184px;
-    height: 184px;
+
+    width: 386px;
+    height: 386px;
     max-width: 100%;
     object-fit: cover;
     display: block;
     filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.6));
 }
+
+@media (max-width: 420px) {
+    .guide__hero-image {
+        width: 184px;
+        height: 184px;
+    }
+}
+
 
 .guide__intro {
     color: #e2e2e2;
@@ -2307,6 +2314,20 @@ main,
     will-change: transform;
     overflow: hidden;
 }
+.map__scene {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.map__svg {
+    width: auto;        /* чтобы не растягивать на всю ширину */
+    height: 100%;       /* занять доступную высоту */
+    max-width: 100%;    /* не вылезать */
+    display: block;
+}
 
 .map__handle {
     width: 86px;
@@ -2386,15 +2407,24 @@ main,
     display: inline-flex;
     align-items: center;
     padding: 4px;
+    white-space: nowrap;
     font-weight: 700;
     color: #e5e7eb;
 }
 
+.map__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0; /* КРИТИЧНО */
+}
+
 .map__viewport {
     position: relative;
-    --map-vertical-offset: 0px;
-    height: 100%;
-    width: 100%;
+    display: flex;              /* + */
+    justify-content: flex-end;  /* + прижать вправо */
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -2447,10 +2477,13 @@ main,
 }
 
 .map__inner {
-    transition: none;
-    overflow: hidden;
+    position: relative;
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 0;
 }
 
 .map__grid {
@@ -2462,10 +2495,6 @@ main,
     background-size: 80px 80px;
     pointer-events: none;
     border-radius: 22px;
-}
-
-.map__body {
-    height: 100%;
 }
 
 .map__plan {
@@ -2504,12 +2533,12 @@ main,
     bottom: 0;
     right: 0;
     max-height: 652px;
-    width: 100%;
+    /*width: 100%;*/
     pointer-events: none;
 }
 
 .map__markers-layer {
-    width: 100%;
+    /*width: 100%;*/
     height: 100%;
 }
 
@@ -2546,31 +2575,14 @@ main,
 }
 
 .loader-screen {
-    background: #161716;
-    border-radius: 22px;
     padding: 28px 24px 32px;
     width: 100%;
     min-height: 100%;
-    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
     display: flex;
     flex-direction: column;
     gap: 36px;
     position: relative;
     isolation: isolate;
-}
-
-.loader-screen::before {
-    content: '';
-    position: absolute;
-    width: 420px;
-    height: 140px;
-    left: -120px;
-    top: 22%;
-    background: linear-gradient(229.11deg, #0d1915 14%, #7cbca4 28.48%, #0d1915 93.95%);
-    filter: blur(28px);
-    transform: rotate(-77deg);
-    opacity: 0.7;
-    z-index: 0;
 }
 
 .loader-screen__header {
@@ -2688,10 +2700,14 @@ main,
     top: 1px;
 }
 
+.card,
+.route,
+.map,
+.loader-screen {
+    padding: 20px;
+}
+
 @media (max-width: 420px) {
-    body {
-        padding: 12px;
-    }
 
     .card,
     .route,
@@ -2702,19 +2718,6 @@ main,
 }
 
 @media (max-width: 520px) {
-    body {
-        padding: 0;
-        background: radial-gradient(60% 40% at 20% 20%, rgba(33, 204, 161, 0.08), transparent 70%),
-        radial-gradient(50% 32% at 82% 12%, rgba(124, 188, 164, 0.14), transparent 80%),
-        #0b0c0b;
-        min-height: 100dvh;
-    }
-
-    #app {
-        width: 100%;
-        max-width: none;
-        min-height: 100dvh;
-    }
 
     main,
     .card,

@@ -7,12 +7,13 @@ import { RenderResult } from '../types'
 import headphonesIllustration from '../assets/onboarding-headphones.png'
 import bookIllustration from '../assets/book.png'
 import logoList from '../assets/logo-list.svg'
-import guideBackground from '../assets/guide-background.png'
 import onboardingVoice from '../assets/onboarding-voice.png'
 import onboardingHistory from '../assets/onboarding-history.png'
 import guideGreetingAudio from '../assets/points/0. Интро - приветствие/1.Интро-приветствие.mp3'
 import guideGreetingSubtitlesUrl from '../assets/points/0. Интро - приветствие/1. Интро - приветствие.txt?url'
 import { createCueFromText, loadSrtSubtitles, SubtitleCue } from '../subtitles'
+import onboardingGolosLogo from '../assets/onboarding-golos-logo.svg'
+
 
 const ONBOARDING_SLIDE_DURATION_MS = 6000
 
@@ -394,7 +395,6 @@ export const renderGuideIntro = (): RenderResult => {
 
     const background = document.createElement('div')
     background.className = 'guide__background'
-    background.style.backgroundImage = `linear-gradient(180deg, rgba(12, 20, 16, 0.86) 0%, rgba(11, 12, 11, 0.94) 100%), url(${guideBackground})`
     container.appendChild(background)
 
     const header = document.createElement('header')
@@ -419,6 +419,12 @@ export const renderGuideIntro = (): RenderResult => {
     heroImage.className = 'guide__hero-image'
     hero.appendChild(heroImage)
     content.appendChild(hero)
+
+        const backgroundBG = document.createElement('div')
+    backgroundBG.className = 'card__background-giga'
+    backgroundBG.style.backgroundImage = `url(${onboardingGolosLogo})`
+
+        container.prepend(backgroundBG)
 
     const intro = document.createElement('p')
     intro.className = 'guide__intro guide__subtitle guide__subtitle--current'

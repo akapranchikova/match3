@@ -308,7 +308,8 @@ export const renderNextPoint = (): RenderResult => {
         </svg>
       </button>
     </div>
-    <article class="point-visual">
+    <div class="point-body">
+        <article class="point-visual">
       <div class="point-visual__frame">
         <button class="button icon-button primary map-button" data-action="map" aria-label="Открыть карту этажа">
           <span class="icon-button__icon" aria-hidden="true">
@@ -326,6 +327,8 @@ export const renderNextPoint = (): RenderResult => {
       <button class="button secondary" data-action="scan">Отсканировать QR код</button>
     </div>
     <p class="point-layout__hint"> Отсканируйте QR-код, чтобы открыть следующую часть маршрута</p>
+</div>
+
     <div class="point-layout__route footer">
       <div class="footer__voice">
         <img src="${onboardingVoice}" alt="voice-img" class="footer__voice__image">
