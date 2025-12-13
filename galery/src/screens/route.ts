@@ -2,13 +2,12 @@ import { points } from '../data'
 import { rerender } from '../navigation'
 import { getFirstUnviewedPointIndex, isRouteCompleted, resetProgress, state, viewedPoints } from '../state'
 import { createButton } from '../ui'
-import routeImage1 from '../assets/route/route-1.png'
-import routeImage2 from '../assets/route/route-2.png'
-import routeImage3 from '../assets/route/route-3.png'
-import routeImage4 from '../assets/route/route-4.png'
-import routeImage5 from '../assets/route/route-5.png'
-import routeImage6 from '../assets/route/route-6.png'
-
+import routeImage1 from '../assets/boarding-1/photo-1.jpg'
+import routeImage2 from '../assets/boarding-1/photo-3.jpg'
+import routeImage3 from '../assets/route/route-3.jpg'
+import routeImage4 from '../assets/boarding-1/photo-2.jpg'
+import routeImage5 from '../assets/route/route-5.jpg'
+import routeImage6 from '../assets/route/route-6.jpg'
 export const renderRouteList = (): HTMLElement => {
   const timelineImages = [routeImage1, routeImage2, routeImage3, routeImage4, routeImage5, routeImage6]
 
