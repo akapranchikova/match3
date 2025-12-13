@@ -13,6 +13,8 @@ import guideGreetingAudio from '../assets/points/0. Интро - приветс�
 import guideGreetingSubtitlesUrl from '../assets/points/0. Интро - приветствие/1. Интро - приветствие.txt?url'
 import { createCueFromText, loadSrtSubtitles, SubtitleCue } from '../subtitles'
 import onboardingGolosLogo from '../assets/onboarding-golos-logo.svg'
+import voiceNewIllustration from '../assets/gigachat-guide.svg'
+
 
 
 const ONBOARDING_SLIDE_DURATION_MS = 6000
@@ -364,7 +366,7 @@ export const renderRouteModePrompt = (): RenderResult => {
         options: [
             {
                 title: 'С гидом Голос времени',
-                image: onboardingVoice,
+                image: voiceNewIllustration,
                 imageAlt: 'Голос времени',
                 imageClassName: 'option-card__image-wrap--voice',
                 variant: 'primary',

@@ -488,6 +488,7 @@ main,
     display: flex;
     gap: 18px;
     flex-direction: column;
+    align-items: center;
     flex: 1;
     justify-content: center;
 }
@@ -511,9 +512,10 @@ main,
 }
 
 .point-visual__frame {
-    width: 256px;
+    width: 384px;
     position: relative;
     display: flex;
+    align-items: center;
     flex-direction: column;
     gap: 12px;
     background: #f4f4f5;
@@ -522,17 +524,18 @@ main,
     border: 1px solid #e5e7eb;
 }
 
+
 .point-visual__frame::before,
 .point-visual__frame::after {
     content: '';
     position: absolute;
     transform: rotate(7deg) translate(-11px, -7px);
-    width: 256px;
+    width: 384px;
     filter: blur(4.5px);
     z-index: -1;
     height: 100%;
     background: gray;
-    border-radius: 12px;
+    border-radius: 18px;
     opacity: 0.4;
     padding: 7px;
     border: 1px solid #e5e7eb;
@@ -542,12 +545,34 @@ main,
 }
 
 .point-visual__placeholder {
-    width: 240px;
-    height: 270px;
+    width: 360px;
+    height: 410px;
     border-radius: 8px;
     background: linear-gradient(135deg, #d6d6d8, #bfc1c4);
     border: 1px solid #e5e7eb;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 420px) {
+    .point-visual__frame {
+        width: 256px;
+    }
+    .point-visual__placeholder {
+        width: 240px;
+        height: 270px;
+    }
+
+    .point-visual__frame::before,
+    .point-visual__frame::after {
+        transform: rotate(7deg) translate(-11px, -7px);
+        width: 256px;
+        border-radius: 12px;
+        padding: 7px;
+        border: 1px solid #e5e7eb;
+    }
+    .point-visual__frame::after {
+        transform: rotate(-7deg) translate(-11px, -7px);
+    }
 }
 
 .point-visual__caption {
@@ -665,10 +690,9 @@ main,
 .card--onboarding .card__image.qr {
     width: 156px;
 }
-.card--onboarding .card__image.golos {
-    width: 184px;
+.card--onboarding .card__image.golos, .content-panel--guide .guide__hero-image {
+    width: 386px;
 }
-
 .card--content {
     padding: 0;
     border-radius: 0;
@@ -681,14 +705,14 @@ main,
 .photo-collage {
     position: relative;
     width: 100%;
-    height: 360px;
+    height: 100%;
     margin: 0 auto;
 }
 
 .photo-collage__card {
     position: absolute;
-    width: 154px;
-    height: 240px;
+    width: 265px;
+    height: 414px;
     border-radius: 16px;
     border: 6px solid rgba(255, 255, 255, 0.85);
     background: linear-gradient(180deg, #1f2724 0%, #161b19 100%);
@@ -696,6 +720,7 @@ main,
     overflow: hidden;
     transition: transform 0.2s ease;
 }
+
 
 .photo-collage__image {
     width: 100%;
@@ -705,10 +730,10 @@ main,
 }
 
 .photo-collage__card--back-left {
-    left: 37px;
+    left: 48px;
     bottom: 24px;
     z-index: 10;
-    transform: rotate(-7deg) translateX(-12px);
+    transform: rotate(-11deg) translateX(-12px);
 }
 .photo-collage__card--back-left img {
     object-position: -50px;
@@ -719,10 +744,10 @@ main,
 }
 
 .photo-collage__card--back-right {
-    bottom: 13px;
-    right: 27px;
+    bottom: 23px;
+    right: 45px;
     z-index: 8;
-    transform: rotate(7deg) translateX(8px);
+    transform: rotate(11deg) translateX(8px);
 }
 
 .photo-collage__card--front {
@@ -731,9 +756,41 @@ main,
     transform: translateX(-50%) rotate(0deg);
 }
 
+
 @media (max-width: 420px) {
     .photo-collage {
         height: 360px;
+    }
+    .photo-collage__card {
+        width: 154px;
+        height: 240px;
+    }
+
+    .photo-collage__card--back-left {
+        left: 37px;
+        bottom: 24px;
+        z-index: 10;
+        transform: rotate(-7deg) translateX(-12px);
+    }
+    .photo-collage__card--back-left img {
+        object-position: -50px;
+    }
+
+    .photo-collage__card--front img {
+        object-position: -133px -40px;
+    }
+
+    .photo-collage__card--back-right {
+        bottom: 13px;
+        right: 27px;
+        z-index: 8;
+        transform: rotate(7deg) translateX(8px);
+    }
+
+    .photo-collage__card--front {
+        left: 50%;
+        z-index: 6;
+        transform: translateX(-50%) rotate(0deg);
     }
 }
 
@@ -959,12 +1016,6 @@ main,
     filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.6));
 }
 
-@media (max-width: 420px) {
-    .guide__hero-image {
-        width: 184px;
-        height: 184px;
-    }
-}
 
 
 .guide__intro {
@@ -1330,15 +1381,43 @@ main,
 
 .route-card {
     display: grid;
-    height: 220px;
-    grid-template-columns: 1fr 175px;
+    height: 340px;
+    grid-template-columns: 1fr 483px;
+
     gap: 12px;
     margin-right: -20px;
     position: relative;
     cursor: pointer;
-    padding-bottom: 20px;
+    padding-bottom: 30px;
     padding-left: 18px;
     transition: transform 0.12s ease, border-color 0.14s ease, box-shadow 0.16s ease;
+}
+
+.route-card__image {
+    width: 100%;
+    max-width: 483px;
+    object-fit: cover;
+    height: 100%;
+}
+
+
+@media (max-width: 420px) {
+    .route-card {
+        height: 220px;
+        grid-template-columns: 1fr 175px;
+    }
+    .route-card__image {
+        width: 100%;
+        max-width: 175px;
+        object-fit: cover;
+    }
+
+
+    .route-card {
+        padding-bottom: 20px;
+
+    }
+
 }
 
 .route-card::before {
@@ -1476,11 +1555,6 @@ main,
     justify-content: center;
 }
 
-.content-panel--guide .guide__hero-image {
-    width: 184px;
-    height: 184px;
-}
-
 .content-panel--guide .guide__content {
     display: flex;
     flex-direction: column;
@@ -1569,8 +1643,9 @@ main,
 .content-models__track {
     position: relative;
     width: 100%;
-    height: 320px;
+    height: 50vh;
 }
+
 
 .content-model {
     position: absolute;
@@ -1596,10 +1671,20 @@ main,
 
 .content-model__viewer {
     width: 100%;
-    height: 220px;
+    height: 50vh;
     overscroll-behavior: contain;
     touch-action: none;
 }
+
+@media (max-width: 420px) {
+    .content-models__track {
+        height: 320px;
+    }
+    .content-model__viewer {
+        height: 220px;
+    }
+}
+
 
 .content-model__info {
     text-align: center;
@@ -1641,13 +1726,11 @@ main,
     align-items: center;
     overflow: visible;
     box-sizing: border-box;
-    width: 256px;
+    width: 385px;
 }
 
 .content-cards--stacked {
-    /*position: relative;*/
-    height: 464px;
-    /*perspective: 1200px;*/
+    height: 477px;
 }
 
 .content-cards__track {
@@ -1686,21 +1769,40 @@ main,
 }
 
 .content-card__image-wrapper {
-    width: 256px;
     overflow: hidden;
     display: flex;
     padding: 8px;
     justify-content: center;
+    width: 384px;
+    border-radius: 18px;
     background: #fff;
-    border-radius: 12px;
     box-sizing: border-box;
 }
 
 .content-card__image {
-    width: 240px;
+    width: 380px;
     object-fit: cover;
     display: block;
     border-radius: 10px;
+}
+
+@media (max-width: 420px) {
+    .content-cards {
+        width: 256px;
+    }
+    .content-cards--stacked {
+        height: 464px;
+    }
+    .content-card__image-wrapper {
+        width: 256px;
+        border-radius: 12px;
+    }
+
+    .content-card__image {
+        width: 240px;
+        border-radius: 10px;
+    }
+
 }
 
 .content-cards__controls {
@@ -1738,7 +1840,12 @@ main,
     gap: 8px;
     align-items: center;
     justify-content: center;
-    margin-top: 12px;
+    margin-top: 50px;
+}
+@media (max-width: 420px) {
+    .content-cards__dots {
+        margin-top: 12px;
+    }
 }
 
 .content-cards__dot {
@@ -1880,14 +1987,11 @@ main,
 }
 
 .route-card__media {
+    width: 100%;
+    height: 100%;
     justify-self: end;
 }
 
-.route-card__image {
-    width: 100%;
-    max-width: 175px;
-    object-fit: cover;
-}
 
 .route__footer {
     display: grid;
@@ -2327,6 +2431,7 @@ main,
     height: 100%;       /* занять доступную высоту */
     max-width: 100%;    /* не вылезать */
     display: block;
+    overflow: visible;
 }
 
 .map__handle {
@@ -2383,6 +2488,7 @@ main,
     display: inline-flex;
     gap: 6px;
     border-radius: 4px;
+    white-space: nowrap;
     font-size: 16px;
     border: 1px solid rgba(226, 226, 226, 1);
 }
@@ -2477,7 +2583,6 @@ main,
 }
 
 .map__inner {
-    position: relative;
     width: 100%;
     height: 100%;
     display: flex;
@@ -2741,9 +2846,16 @@ main,
     font-size: 18px;
 }
 .card--guide .content-subtitles {
+    justify-content: center;
     height: 125px;
     margin-bottom: 50px;
 }
 .card--guide .content-subtitles img{
     display: none;
+}
+@media (max-width: 420px) {
+    .card--onboarding .card__image.golos, .content-panel--guide .guide__hero-image, .guide__hero-image {
+        width: 184px;
+        height: 184px;
+    }
 }

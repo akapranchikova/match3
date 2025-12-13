@@ -1,4 +1,4 @@
-import { guideIntroAudio, guideVoiceAssets, photoZonePoint, points } from '../data'
+import { guideVoiceAssets, photoZonePoint, points } from '../data'
 import { rerender } from '../navigation'
 import {
   saveCameraPermissionGranted,
@@ -426,7 +426,7 @@ export const renderNextPoint = (): RenderResult => {
 
     const nextPointVoice = guideVoiceAssets[point.id]
 
-    const audioSrc = nextPointVoice?.audio ?? guideIntroAudio
+    const audioSrc = nextPointVoice?.audio as string;
     const subtitlesUrl = nextPointVoice?.subtitles ?? null
 
     footerAudio = document.createElement('audio')
@@ -740,7 +740,7 @@ export const renderRouteComplete = (): RenderResult => {
 
     const completionVoice = guideVoiceAssets.final
 
-    const audioSrc = completionVoice?.audio ?? guideIntroAudio
+    const audioSrc = completionVoice?.audio as string
     const subtitlesUrl = completionVoice?.subtitles ?? null
 
     footerAudio = document.createElement('audio')

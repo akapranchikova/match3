@@ -3,7 +3,7 @@ import { MapPoint, MapPosition, OnboardingSlide, PointContentConfig, RoutePoint 
 import historyIllustration from './assets/onboarding-history.png'
 import voiceIllustration from './assets/onboarding-voice.png'
 import qrIllustration from './assets/onboarding-qr.svg'
-import guideIntroAudio from './assets/guide-intro.wav'
+import voiceNewIllustration from './assets/gigachat-guide.svg'
 import onboardingGolosLogo from './assets/onboarding-golos-logo.svg'
 import logoList from './assets/logo-list.svg'
 import boardingPhoto1 from './assets/boarding-1/photo-1.jpg'
@@ -32,7 +32,6 @@ import routeImage5 from './assets/route/route-5.jpg'
 import routeImage6 from './assets/route/route-6.jpg'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
-export { guideIntroAudio }
 
 const splitSubtitleLines = (content: string) =>
   content
@@ -297,7 +296,7 @@ const potModelSubtitles = parseSubtitleLines(potModelSubtitlesRaw)
 const potModelSubtitlesUrl = createSubtitlesUrlFromText(potModelSubtitlesRaw)
 
 const mapPoints: Record<RoutePoint['id'], MapPoint> = {
-    history: {floor: 1, x: 118.72, y: 530.4, htmlY: 333, htmlDone: 463},
+    history: {floor: 1, x: 118.72, y: 530.4, htmlY: 350, htmlDone: 463},
     'perm-period': {floor: 1, x: 135.44, y: 264.86, htmlY: 100, htmlDone: 222},
     'metal-plant': {floor: 2, x: 105.96, y: 555.62, htmlY: 317, htmlDone: 503},
     excavation: {floor: 2, x: 75.72, y: 434.34, htmlY: 263, htmlDone: 389},
@@ -672,7 +671,7 @@ export const onboardingSlides: OnboardingSlide[] = [
     title: 'Голос времени',
     body:
       'Ваш гид, который проведёт через историю Перми от пермского периода до сегодняшнего дня. Его рассказ создан с помощью нейросети ГИГАЧАТ от Сбера',
-    image: voiceIllustration,
+    image: voiceNewIllustration,
     backgroundImage: onboardingGolosLogo,
     backgroundConfig: {
       position: 'center 83px',

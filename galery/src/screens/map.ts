@@ -94,7 +94,8 @@ const createMarkersMarkup = (floorPoints: RoutePoint[], mapPoints: RoutePoint[],
             const isActive = originalIndex === activeIndex
             const isComplete = viewedPoints.has(item.id)
             const { x, y } = item.map
-            const markerLineStart =  (x - 80 ) * -1;
+            const maxLength = document.body.getBoundingClientRect().width > 420 ? 250 : 150;
+            const markerLineStart =  (x - document.body.getBoundingClientRect().width + maxLength);
 
             return `
         <g class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}"
@@ -103,9 +104,9 @@ const createMarkersMarkup = (floorPoints: RoutePoint[], mapPoints: RoutePoint[],
            role="button"
            tabindex="0"
            aria-label="${item.title}">
-          <g ${isActive ? 'filter="url(#map-marker-light)"' : ''}>
+          <g >
           <line class="map__marker-line" x1="${markerLineStart}" y1="0" x2="-6" y2="0" />
-            <circle cx="0" cy="0" r="6" fill="#E2E2E2" />
+            <circle cx="0" ${isActive ? 'filter="url(#map-marker-light)"' : ''} cy="0" r="6" fill="#E2E2E2" />
           </g>
         </g>
       `
