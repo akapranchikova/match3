@@ -58,7 +58,7 @@ const createMarkersSvg = (floorPoints: RoutePoint[], viewBox: {width: number; he
             const isComplete = viewedPoints.has(item.id)
             const label = originalIndex + 1
             const {x, y} = item.map
-            const markerLineStart =  (x - 55 ) * -1;
+            const markerLineStart =  (x - 65 ) * -1;
 
 
             return `
