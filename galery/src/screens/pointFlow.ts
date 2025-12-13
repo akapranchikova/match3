@@ -397,6 +397,8 @@ export const renderNextPoint = (): RenderResult => {
       isSubtitleAnimatingOut = false
     }
 
+    // Hide the currently visible subtitle line. If nothing is shown, clear immediately;
+    // otherwise trigger the hide animation and clean up once it finishes.
     const hideSubtitle = () => {
       if (!(subtitleText.textContent || '').trim().length) {
         clearSubtitleContent()
@@ -435,22 +437,9 @@ export const renderNextPoint = (): RenderResult => {
         return current >= cueStart && current < cueEnd
       })
 
-    const renderWords = (words: { text: string }[]) => {
+    const renderSubtitleText = (text: string) => {
       subtitleText.replaceChildren()
-
-      if (!words.length) {
-        subtitleText.textContent = defaultSubtitleMessage
-        return
-      }
-
-      words.forEach((word, index) => {
-        const span = document.createElement('span')
-        span.className = 'footer__subtitle-word'
-        span.textContent = `${index > 0 ? ' ' : ''}${word.text}`
-        span.classList.add('footer__subtitle-word--visible')
-
-        subtitleText.appendChild(span)
-      })
+      subtitleText.textContent = text.trim() ? text : defaultSubtitleMessage
     }
 
     const resetSubtitleState = () => {
@@ -464,9 +453,7 @@ export const renderNextPoint = (): RenderResult => {
       const lastCueIndex = footerCues.length - 1
       const lastCue = footerCues[lastCueIndex]
       const isAlreadyShowingLastCue =
-        activeCueIndex === lastCueIndex &&
-        subtitleText.childElementCount === lastCue.words.length &&
-        isSubtitleVisible
+        activeCueIndex === lastCueIndex && subtitleText.textContent === lastCue.text && isSubtitleVisible
 
       if (isAlreadyShowingLastCue) {
         subtitleWrapper?.classList.add('footer__subtitles--visible')
@@ -474,7 +461,7 @@ export const renderNextPoint = (): RenderResult => {
       }
 
       activeCueIndex = lastCueIndex
-      renderWords(lastCue.words)
+      renderSubtitleText(lastCue.text)
       subtitleWrapper?.classList.add('footer__subtitles--visible')
       animateSubtitleIn()
     }
@@ -490,11 +477,10 @@ export const renderNextPoint = (): RenderResult => {
 
       if (activeIndexNext !== -1) {
         const activeCue = footerCues[activeIndexNext]
-        const cueElapsed = current - activeCue.start
 
         if (activeCueIndex !== activeIndexNext) {
           activeCueIndex = activeIndexNext
-          renderWords(activeCue.words)
+          renderSubtitleText(activeCue.text)
           animateSubtitleIn()
         }
 
@@ -720,6 +706,8 @@ export const renderRouteComplete = (): RenderResult => {
       isSubtitleAnimatingOut = false
     }
 
+    // Hide the completion subtitle line. If nothing is shown, reset immediately;
+    // otherwise run the hide animation before clearing the text.
     const hideSubtitle = () => {
       if (!(subtitleText.textContent || '').trim().length) {
         renderDefaultSubtitle()
@@ -758,22 +746,9 @@ export const renderRouteComplete = (): RenderResult => {
         return current >= cueStart && current < cueEnd
       })
 
-    const renderWords = (words: { text: string }[]) => {
+    const renderSubtitleText = (text: string) => {
       subtitleText.replaceChildren()
-
-      if (!words.length) {
-        subtitleText.textContent = defaultSubtitleMessage
-        return
-      }
-
-      words.forEach((word, index) => {
-        const span = document.createElement('span')
-        span.className = 'footer__subtitle-word'
-        span.textContent = `${index > 0 ? ' ' : ''}${word.text}`
-        span.classList.add('footer__subtitle-word--visible')
-
-        subtitleText.appendChild(span)
-      })
+      subtitleText.textContent = text.trim() ? text : defaultSubtitleMessage
     }
 
     const resetSubtitleState = () => {
@@ -796,23 +771,12 @@ export const renderRouteComplete = (): RenderResult => {
 
       if (activeIndexNext !== -1) {
         const activeCue = footerCues[activeIndexNext]
-        const cueElapsed = current - activeCue.start
 
         if (activeCueIndex !== activeIndexNext) {
           activeCueIndex = activeIndexNext
-          renderWords(activeCue.words)
+          renderSubtitleText(activeCue.text)
           animateSubtitleIn()
         }
-
-        const totalCueDuration = activeCue.end - activeCue.start
-        const cueProgress = totalCueDuration > 0 ? cueElapsed / totalCueDuration : 0
-
-        subtitleText.querySelectorAll<HTMLSpanElement>('.footer__subtitle-word').forEach((wordEl, index) => {
-          const revealThreshold = (index + 1) / (activeCue.words.length || 1)
-          if (cueProgress >= revealThreshold) {
-            wordEl.classList.add('footer__subtitle-word--visible')
-          }
-        })
 
         subtitleWrapper.classList.add('footer__subtitles--visible')
       } else if (footerAudio?.ended) {

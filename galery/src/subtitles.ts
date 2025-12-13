@@ -1,13 +1,7 @@
-export interface SubtitleWord {
-    start: number
-    text: string
-}
-
 export interface SubtitleCue {
     start: number
     end: number
     text: string
-    words: SubtitleWord[]
 }
 
 const parseTimecode = (value: string): number => {
@@ -18,23 +12,6 @@ const parseTimecode = (value: string): number => {
     const milliseconds = Number(match[4] || 0)
 
     return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000
-}
-
-const createWordsFromText = (text: string, start: number, end: number): SubtitleWord[] => {
-    const parts = text
-        .split(/\s+/)
-        .map((word) => word.trim())
-        .filter(Boolean)
-
-    if (!parts.length) return []
-
-    const duration = Math.max(0.1, end - start)
-    const step = duration / parts.length
-
-    return parts.map((word, index) => ({
-        text: word,
-        start: index * step,
-    }))
 }
 
 const parseSrtBlock = (block: string): SubtitleCue | null => {
@@ -60,7 +37,6 @@ const parseSrtBlock = (block: string): SubtitleCue | null => {
         start,
         end,
         text,
-        words: createWordsFromText(text, start, end),
     }
 }
 
@@ -89,5 +65,4 @@ export const createCueFromText = (text: string, start: number, end: number): Sub
     start,
     end,
     text,
-    words: createWordsFromText(text, start, end),
 })

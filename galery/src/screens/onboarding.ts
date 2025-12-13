@@ -497,9 +497,11 @@ export const renderGuideIntro = (): RenderResult => {
         isSubtitleAnimatingOut = false
     }
 
+    // Hide the current subtitle line. If there is nothing visible, clear state immediately;
+    // otherwise play the hide animation and reset when it ends.
     const hideSubtitle = () => {
+        console.log('hideeee')
         if (!(subtitleText.textContent || '').trim().length) {
-            console.log('clear')
             clearSubtitleContent()
             return
         }
@@ -509,28 +511,19 @@ export const renderGuideIntro = (): RenderResult => {
 
     const resetSubtitleState = () => {
         subtitleFill.style.setProperty('--progress', '0%')
+        console.log('reset')
         hideSubtitle()
         activeCueIndex = null
     }
 
-    const renderWords = (words: { text: string }[]) => {
+    const renderSubtitleText = (text: string) => {
         subtitleText.replaceChildren()
+        subtitleText.textContent = text
 
-        if (!words.length) {
-            console.log('reset')
+        console.log('text', text)
+        if (!text.trim()) {
             resetSubtitleState()
-            return
         }
-
-        words.forEach((word, index) => {
-            const span = document.createElement('span')
-            span.className = 'guide__subtitle-word'
-            span.textContent = `${index > 0 ? ' ' : ''}${word.text}`
-            span.classList.add('guide__subtitle-word--visible')
-
-            console.log(word.text)
-            subtitleText.appendChild(span)
-        })
     }
 
     const subtitleTimeTolerance = 0.15
@@ -544,14 +537,13 @@ export const renderGuideIntro = (): RenderResult => {
         })
 
     const showFinalCue = () => {
+        console.log('show filen clue', !introSubtitles.length)
         if (!introSubtitles.length) return
 
         const lastCueIndex = introSubtitles.length - 1
         const lastCue = introSubtitles[lastCueIndex]
         const isAlreadyShowingLastCue =
-            activeCueIndex === lastCueIndex &&
-            subtitleText.childElementCount === lastCue.words.length &&
-            isSubtitleVisible
+            activeCueIndex === lastCueIndex && subtitleText.textContent === lastCue.text && isSubtitleVisible
 
         if (isAlreadyShowingLastCue) {
             subtitleFill.style.setProperty('--progress', '100%')
@@ -560,7 +552,7 @@ export const renderGuideIntro = (): RenderResult => {
         }
 
         activeCueIndex = lastCueIndex
-        renderWords(lastCue.words)
+        renderSubtitleText(lastCue.text)
         subtitleFill.style.setProperty('--progress', '100%')
         subtitleCurrent.classList.add('guide__subtitle--visible')
         animateSubtitleIn()
@@ -579,10 +571,7 @@ export const renderGuideIntro = (): RenderResult => {
                 return false
             }
 
-            return cue.words.every((word, wordIndex) => {
-                const otherWord = other.words[wordIndex]
-                return otherWord?.text === word.text && otherWord?.start === word.start
-            })
+            return cue.text === other.text
         })
     }
 
@@ -594,7 +583,7 @@ export const renderGuideIntro = (): RenderResult => {
         introSubtitles = subtitles
 
         if (!introSubtitles.length) {
-            console.log('reset 2')
+            console.log('reset set')
             resetSubtitleState()
             return
         }
@@ -602,8 +591,7 @@ export const renderGuideIntro = (): RenderResult => {
         if (wasShowingActiveCue && activeCueIndex !== null) {
             const activeCue = introSubtitles[activeCueIndex]
             if (activeCue) {
-                console.log(activeCue.words)
-                renderWords(activeCue.words)
+                renderSubtitleText(activeCue.text)
                 const activeCueDuration = Math.max(0.001, activeCue.end - activeCue.start)
                 const progress = Math.min(1, Math.max(0, (audio.currentTime - activeCue.start) / activeCueDuration))
                 subtitleFill.style.setProperty('--progress', `${progress * 100}%`)
@@ -614,11 +602,11 @@ export const renderGuideIntro = (): RenderResult => {
             }
         }
 
+        console.log('reset 3')
         resetSubtitleState()
 
         if (introSubtitles.length) {
-            console.log('render')
-            renderWords(introSubtitles[0].words)
+            renderSubtitleText(introSubtitles[0].text)
         }
     }
 
@@ -640,6 +628,7 @@ export const renderGuideIntro = (): RenderResult => {
 
     const updateSubtitles = () => {
         if (!introSubtitles.length) {
+            console.log('update')
             resetSubtitleState()
             return
         }
@@ -653,7 +642,7 @@ export const renderGuideIntro = (): RenderResult => {
 
             if (activeCueIndex !== activeCueIndexNext) {
                 activeCueIndex = activeCueIndexNext
-                renderWords(activeCue.words)
+                renderSubtitleText(activeCue.text)
                 subtitleCurrent.classList.add('guide__subtitle--visible')
                 animateSubtitleIn()
             }
@@ -663,6 +652,7 @@ export const renderGuideIntro = (): RenderResult => {
         } else if (audio.ended) {
             handleEnded()
         } else {
+            console.log('reset 4')
             resetSubtitleState()
         }
     }
