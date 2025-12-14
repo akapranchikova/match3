@@ -16,6 +16,88 @@ type GestureHintStep = {
   direction: 'up' | 'down'
 }
 
+let audioAutoplayUnlocked = false
+
+const unlockAudioPlaybackOnce = (root: HTMLElement) => {
+    if (audioAutoplayUnlocked) return
+
+    // Берём любое текущее аудио на экране (подойдёт хоть гайд, хоть model audio)
+    const audio = root.querySelector('audio') as HTMLAudioElement | null
+    if (!audio) {
+        audioAutoplayUnlocked = true
+        return
+    }
+
+    const prevMuted = audio.muted
+    audio.muted = true
+
+    const p = audio.play()
+    if (p && typeof (p as Promise<void>).then === 'function') {
+        ;(p as Promise<void>)
+            .then(() => {
+                audio.pause()
+                audio.currentTime = 0
+                audio.muted = prevMuted
+                audioAutoplayUnlocked = true
+            })
+            .catch(() => {
+                // не разлочилось — попробуем снова при следующем жесте
+                audio.muted = prevMuted
+            })
+    } else {
+        audio.muted = prevMuted
+        audioAutoplayUnlocked = true
+    }
+}
+
+const playWhenReady = (media: HTMLMediaElement) => {
+    const tryPlay = () => media.play().catch(() => {})
+
+    if (media.readyState >= 2) {
+        tryPlay()
+        return
+    }
+
+    const onCanPlay = () => {
+        media.removeEventListener('canplay', onCanPlay)
+        tryPlay()
+    }
+
+    media.addEventListener('canplay', onCanPlay)
+    try {
+        media.load()
+    } catch {}
+}
+
+const playAudioWithIOSAutoplayHack = (audio: HTMLAudioElement, wantSound: boolean) => {
+    // 1) стартуем тихо (так Safari чаще разрешает autoplay)
+    const prevMuted = audio.muted
+    const prevVolume = audio.volume
+
+    audio.muted = true
+    audio.volume = 0
+
+    // 2) пробуем запустить когда готово
+    playWhenReady(audio)
+
+    // 3) когда реально "playing" — возвращаем звук (если нужно)
+    const restore = () => {
+        audio.removeEventListener('playing', restore)
+        audio.muted = !wantSound
+        audio.volume = wantSound ? prevVolume || 1 : 0
+    }
+
+    audio.addEventListener('playing', restore)
+
+    // Fallback: если playing не прилетит (некоторые девайсы), всё равно попробуем вернуть
+    window.setTimeout(() => {
+        audio.removeEventListener('playing', restore)
+        audio.muted = !wantSound
+        audio.volume = wantSound ? prevVolume || 1 : 0
+    }, 250)
+}
+
+
 const gestureHintSteps: GestureHintStep[] = [
   {
     text: 'Листайте снизу вверх, чтобы перейти к следующему сюжету',
@@ -125,39 +207,90 @@ const releaseModelGestureScroll = () => {
 }
 
 const renderVideoSection = (section: VideoContent) => {
-  const container = document.createElement('div')
-  container.className = 'content-panel content-panel--video'
+    const container = document.createElement('div')
+    container.className = 'content-panel content-panel--video'
 
-  const video = document.createElement('video')
-  video.className = 'content-video'
-  video.controls = false
-  video.playsInline = true
-  video.src = section.src
-  video.poster = section.poster || ''
-  video.muted = true
-  video.defaultMuted = true
+    // Лоадер поверх видео (чтобы не было “черного экрана”)
+    const loading = document.createElement('div')
+    loading.className = 'content-video__loading'
+    loading.innerHTML = `<span class="content-video__spinner" aria-hidden="true"></span>`
+    container.appendChild(loading)
 
-  container.appendChild(video)
+    const video = document.createElement('video')
+    video.className = 'content-video'
+    video.controls = false
+    video.playsInline = true
+    video.src = section.src
+    video.poster = section.poster || ''
+    video.muted = true
+    video.defaultMuted = true
 
-  if (section.audio) {
-    const audio = document.createElement('audio')
-    audio.className = 'content-video__audio'
-    audio.controls = false
-    audio.preload = 'auto'
-    audio.src = section.audio
+    // Важно: не грузим “всё видео” для НЕактивных панелей
+    video.preload = 'metadata'
+    video.setAttribute('preload', 'metadata')
 
-    if (section.subtitlesUrl) {
-      const track = document.createElement('track')
-      track.kind = 'subtitles'
-      track.src = section.subtitlesUrl
-      track.default = true
-      audio.appendChild(track)
+    // Скрываем видео до первого кадра (иначе будет черный фрейм)
+    video.classList.add('is-loading')
+
+    const reveal = () => {
+        video.classList.remove('is-loading')
+        loading.classList.add('is-hidden')
+    }
+    const showLoading = () => {
+        video.classList.add('is-loading')
+        loading.classList.remove('is-hidden')
     }
 
-    container.appendChild(audio)
-  }
+    // loadeddata/canplay = первый кадр готов
+    video.addEventListener('loadeddata', reveal, { once: true })
+    video.addEventListener('canplay', reveal, { once: true })
 
-  return container
+    // waiting/stalled = сеть/декодер не успевает — показываем лоадер
+    video.addEventListener('waiting', showLoading)
+    video.addEventListener('stalled', showLoading)
+
+    container.appendChild(video)
+
+    if (section.audio) {
+        const audio = document.createElement('audio')
+        audio.className = 'content-video__audio'
+        audio.controls = false
+        audio.preload = 'metadata'
+        audio.src = section.audio
+
+        if (section.subtitlesUrl) {
+            const track = document.createElement('track')
+            track.kind = 'subtitles'
+            track.src = section.subtitlesUrl
+            track.default = true
+            audio.appendChild(track)
+        }
+
+        container.appendChild(audio)
+    }
+
+    return container
+}
+
+const warmupMediaInPanel = (panel?: HTMLElement | null) => {
+    if (!panel) return
+
+    const videos = Array.from(panel.querySelectorAll('video')) as HTMLVideoElement[]
+    const audios = Array.from(panel.querySelectorAll('audio')) as HTMLAudioElement[]
+
+    videos.forEach((v) => {
+        try {
+            v.preload = 'metadata'
+            if (v.readyState === 0) v.load()
+        } catch {}
+    })
+
+    audios.forEach((a) => {
+        try {
+            a.preload = 'metadata'
+            if (a.readyState === 0) a.load()
+        } catch {}
+    })
 }
 
 const renderCardsSection = (section: CardsContent) => {
@@ -495,7 +628,9 @@ const renderModelsSection = (section: ModelsContent) => {
     const isPanelActive = container.closest('.content-stack__item')?.classList.contains('is-active')
 
     if (activeModelAudio && isPanelActive) {
-      activeModelAudio.play().catch(() => {})
+        // тут нет доступа к isMuted из родителя, поэтому считаем:
+        // если пользователь потом включит звук — setMuted() всё синхронизирует
+        playAudioWithIOSAutoplayHack(activeModelAudio, true)
     }
 
     dispatchActiveModelChange()
@@ -778,19 +913,29 @@ export const renderPointContent = () => {
     const isModelPanel = activePanel?.classList.contains('content-panel--models')
 
     mediaElements.forEach((media) => {
-      const isWithinActivePanel = !!activePanel?.contains(media)
-      const activeModelCard = media.closest('.content-model')
-      const isActive =
-        isWithinActivePanel && (!isModelPanel || activeModelCard?.classList.contains('is-active'))
-      if (media instanceof HTMLVideoElement) {
-        media.muted = true
-        media.defaultMuted = true
-      } else {
-        media.muted = isMuted
-      }
-      if (!isActive) {
-        media.pause()
-      }
+        const isWithinActivePanel = !!activePanel?.contains(media)
+        const activeModelCard = media.closest('.content-model')
+        const isActive =
+            isWithinActivePanel && (!isModelPanel || activeModelCard?.classList.contains('is-active'))
+
+        if (media instanceof HTMLVideoElement) {
+            media.muted = true
+            media.defaultMuted = true
+            media.preload = isActive ? 'auto' : 'metadata'
+        } else {
+            media.muted = isMuted
+            media.preload = isActive ? 'auto' : 'metadata'
+        }
+
+        if (!isActive) {
+            media.pause()
+            // ✅ чтобы при “скачках” всегда стартовало заново
+            if (media instanceof HTMLAudioElement) {
+                try {
+                    media.currentTime = 0
+                } catch {}
+            }
+        }
     })
 
     const activeVideo = activePanel?.querySelector('video') as HTMLVideoElement | null
@@ -805,9 +950,10 @@ export const renderPointContent = () => {
       }, 1)
     }
 
-    if (activeAudio) {
-      activeAudio.play().catch(() => {})
-    }
+      if (activeAudio) {
+          // wantSound = true, если пользователь включил звук
+          playAudioWithIOSAutoplayHack(activeAudio, !isMuted)
+      }
   }
 
   const updateActive = () => {
@@ -820,10 +966,69 @@ export const renderPointContent = () => {
       dot.classList.toggle('is-active', index === state.currentContentIndex)
     })
 
-    syncMediaState()
-  }
+      warmupMediaInPanel(stack.children[state.currentContentIndex + 1] as HTMLElement | undefined)
 
-  config.sections.forEach((section, index) => {
+      syncMediaState()
+  }
+    const clampIndex = (i: number) => Math.max(0, Math.min(i, config.sections.length - 1))
+
+    let setSubtitleSourceFn: ((source: ModelChangeDetail) => void) | null = null
+    let disableSubtitlesFn: (() => void) | null = null
+
+    const syncSubtitlesForActivePanel = () => {
+        if (!setSubtitleSourceFn) return
+
+        const activePanel = stack.children[state.currentContentIndex] as HTMLElement | undefined
+        const activeSection = config.sections[state.currentContentIndex]
+        if (!activePanel || !activeSection) return
+
+        // ✅ если на этом сюжете субтитров нет — полностью выключаем отображение
+        const hasSubs =
+            (activeSection.type === 'models' && activeSection.models.some((m) => !!m.subtitlesUrl || (m.subtitles?.length ?? 0) > 0)) ||
+            (!!activeSection.subtitlesUrl || (activeSection.subtitles?.length ?? 0) > 0)
+
+        if (!hasSubs) {
+            disableSubtitlesFn?.()
+            return
+        }
+
+        if (activeSection.type === 'models') {
+            const firstModel = activeSection.models[0]
+            setSubtitleSourceFn({
+                audio: (activePanel.querySelector('.content-model audio') as HTMLAudioElement | null) ?? null,
+                subtitles: firstModel?.subtitles,
+                subtitlesUrl: firstModel?.subtitlesUrl,
+            })
+            activePanel.dispatchEvent(new Event('request-modelstate'))
+            return
+        }
+
+        setSubtitleSourceFn({
+            audio: (activePanel.querySelector('audio') as HTMLAudioElement | null) ?? null,
+            subtitles: activeSection.subtitles,
+            subtitlesUrl: activeSection.subtitlesUrl,
+        })
+    }
+
+
+    const updateHeaderForIndex = (index: number) => {
+        const section = config.sections[index]
+        const eyebrow = header.querySelector('.content-header__eyebrow')
+        const title = header.querySelector('.content-header__title')
+
+        if (eyebrow) eyebrow.textContent = `Сюжет ${index + 1} из ${config.sections.length}`
+        if (title) title.textContent = section?.heading || config.heading
+    }
+
+    const goToContentIndex = (nextIndex: number) => {
+        state.currentContentIndex = clampIndex(nextIndex)
+        updateHeaderForIndex(state.currentContentIndex)
+        updateActive()
+        syncSubtitlesForActivePanel()
+    }
+
+
+    config.sections.forEach((section, index) => {
     const panel = renderSection(section)
     panel.classList.add('content-stack__item')
     const panelAudios = Array.from(panel.querySelectorAll('audio'))
@@ -835,8 +1040,7 @@ export const renderPointContent = () => {
 
         if (!isActive || state.currentContentIndex >= config.sections.length - 1) return
 
-        state.currentContentIndex += 1
-        rerender()
+          goToContentIndex(state.currentContentIndex + 1)
       }
 
       audioElement.addEventListener('ended', handleAudioEnd)
@@ -920,24 +1124,26 @@ export const renderPointContent = () => {
     }
   }
 
-  const onTouchEnd = (event: TouchEvent) => {
-    if (gestureFromModel) {
-      gestureFromModel = false
-      return
-    }
+    const onTouchEnd = (event: TouchEvent) => {
+        if (gestureFromModel) {
+            gestureFromModel = false
+            return
+        }
 
-    if (!isTouching) return
-    const deltaY = event.changedTouches[0].clientY - startY
-    isTouching = false
+        if (!isTouching) return
 
-    if (deltaY < -SWIPE_THRESHOLD && state.currentContentIndex < config.sections.length - 1) {
-      state.currentContentIndex += 1
-      rerender()
-    } else if (deltaY > SWIPE_THRESHOLD && state.currentContentIndex > 0) {
-      state.currentContentIndex -= 1
-      rerender()
+        // ✅ разлочим аудио в момент пользовательского жеста
+        unlockAudioPlaybackOnce(container)
+
+        const deltaY = event.changedTouches[0].clientY - startY
+        isTouching = false
+
+        if (deltaY < -SWIPE_THRESHOLD && state.currentContentIndex < config.sections.length - 1) {
+            goToContentIndex(state.currentContentIndex + 1)
+        } else if (deltaY > SWIPE_THRESHOLD && state.currentContentIndex > 0) {
+            goToContentIndex(state.currentContentIndex - 1)
+        }
     }
-  }
 
   container.addEventListener('touchstart', onTouchStart)
   container.addEventListener('touchmove', onTouchMove, { passive: false })
@@ -954,7 +1160,9 @@ export const renderPointContent = () => {
   slider.appendChild(stack)
 
   setMuted(!state.soundEnabled)
+    updateHeaderForIndex(state.currentContentIndex)
   updateActive()
+    syncSubtitlesForActivePanel()
 
   if (!isFinalPoint) {
     container.appendChild(header)
@@ -981,6 +1189,13 @@ export const renderPointContent = () => {
 
     subtitleLayout.appendChild(subtitleText)
     container.appendChild(subtitleLayout)
+
+      const setSubtitlesVisible = (visible: boolean) => {
+          subtitleLayout.style.display = visible ? '' : 'none'
+      }
+
+// по умолчанию показываем только если реально есть сабы у текущего сюжета
+      setSubtitlesVisible(true)
 
     const activePanel = stack.children[state.currentContentIndex] as HTMLElement | undefined
     const initialModel = currentSection.type === 'models' ? currentSection.models[0] : null
@@ -1195,7 +1410,28 @@ export const renderPointContent = () => {
 
     setSubtitleSource(initialSubtitleSource)
 
-    if (currentSection.type === 'models') {
+      const disableSubtitles = () => {
+          // спрятать UI
+          setSubtitlesVisible(false)
+
+          // отцепить слушатели
+          detachSubtitleListeners()
+
+          // отвязать аудио, чтобы оно не пыталось апдейтить текст
+          syncSubtitleAudio(null)
+
+          // очистить текст
+          subtitleText.replaceChildren()
+      }
+
+      setSubtitleSourceFn = (source: ModelChangeDetail) => {
+          setSubtitlesVisible(true)
+          setSubtitleSource(source)
+      }
+
+      disableSubtitlesFn = disableSubtitles
+
+      if (currentSection.type === 'models') {
       const modelPanel = stack.children[state.currentContentIndex] as HTMLElement | undefined
 
       const handleModelChange = (event: Event) => {

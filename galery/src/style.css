@@ -688,7 +688,8 @@ main,
     filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.45));
 }
 .card--onboarding .card__image.qr {
-    width: 156px;
+    height: 45dvh;
+    width: auto;
 }
 .card--onboarding .card__image.golos, .content-panel--guide .guide__hero-image {
     width: 386px;
@@ -890,7 +891,7 @@ main,
     border-radius: 12px;
     padding: 12px;
     display: grid;
-    grid-template-rows: 160px 1fr;
+    grid-template-rows: 30dvh 1fr;
     flex-direction: column;
     gap: 12px;
     cursor: pointer;
@@ -898,17 +899,39 @@ main,
 }
 
 .option-card__image-wrap {
-    height: 160px;
+    height: 30dvh;
     align-self: center;
 }
 
 .option-card__image-wrap--voice {
-    height: 130px;
+    height: 26dvh;
 }
 
 .option-card__image-wrap--voice .option-card__image {
-    width: 130px;
-    height: 130px;
+    width: 26dvh;
+    height: 26dvh;
+}
+
+@media (max-width: 420px) {
+    .card--options .option-card {
+        border-radius: 12px;
+        padding: 12px;
+        grid-template-rows: 160px 1fr;
+        gap: 12px;
+    }
+
+    .option-card__image-wrap {
+        height: 160px;
+    }
+
+    .option-card__image-wrap--voice {
+        height: 130px;
+    }
+
+    .option-card__image-wrap--voice .option-card__image {
+        width: 130px;
+        height: 130px;
+    }
 }
 
 .card--options .option-card--secondary .option-card__image-wrap {
@@ -2442,6 +2465,15 @@ main,
     margin: 6px auto 2px;
 }
 
+.map__handle::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    height: 250px;
+    left: 0;
+    right: 0;
+}
+
 .map__header {
     display: flex;
     flex-direction: row;
@@ -2858,4 +2890,28 @@ main,
         width: 184px;
         height: 184px;
     }
+}
+
+
+
+.content-panel--video {
+    position: relative;
+}
+
+/* Видео скрываем до первого кадра */
+.content-video.is-loading {
+    opacity: 0;
+}
+
+/* Лоадер поверх */
+.content-video__loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+.content-video__loading.is-hidden {
+    display: none;
 }

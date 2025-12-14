@@ -7,7 +7,6 @@ import { RenderResult } from '../types'
 import headphonesIllustration from '../assets/onboarding-headphones.png'
 import bookIllustration from '../assets/book.png'
 import logoList from '../assets/logo-list.svg'
-import onboardingVoice from '../assets/onboarding-voice.png'
 import onboardingHistory from '../assets/onboarding-history.png'
 import guideGreetingAudio from '../assets/points/0. Интро - приветствие/1.Интро-приветствие.mp3'
 import guideGreetingSubtitlesUrl from '../assets/points/0. Интро - приветствие/1. Интро - приветствие.txt?url'
@@ -416,7 +415,7 @@ export const renderGuideIntro = (): RenderResult => {
     const hero = document.createElement('div')
     hero.className = 'guide__hero'
     const heroImage = document.createElement('img')
-    heroImage.src = onboardingVoice
+    heroImage.src = voiceNewIllustration
     heroImage.alt = 'Голос времени'
     heroImage.className = 'guide__hero-image'
     hero.appendChild(heroImage)
