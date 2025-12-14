@@ -679,7 +679,6 @@ export const renderRouteComplete = (): RenderResult => {
     </div>
     <article class="point-visual">
       <div class="point-visual__frame">
-<!--      todo сделать чтобы на карте на первом этаже показывалась точка фотозоны-->
         <button class="button icon-button primary map-button" data-action="map" aria-label="Открыть карту этажа">
           <span class="icon-button__icon" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -689,7 +688,9 @@ export const renderRouteComplete = (): RenderResult => {
         </button>
         <div class="point-visual__placeholder" role="img" aria-label="${
           photoZonePoint.photoAlt || photoZonePoint.title
-        }"></div>
+        }">
+        <img src="${point.photoWhere}" alt="">
+</div>
         <p class="point-visual__caption">${caption}</p>
       </div>
     </article>
@@ -765,6 +766,7 @@ export const renderRouteComplete = (): RenderResult => {
     let isSubtitleAnimatingOut = false
 
     const playSubtitleAnimation = (className: (typeof subtitleAnimationClasses)[number]) => {
+          startVoiceVideo();
       subtitleText.classList.remove(...subtitleAnimationClasses)
       subtitleText.getBoundingClientRect()
       subtitleText.classList.add(className)
@@ -828,7 +830,7 @@ export const renderRouteComplete = (): RenderResult => {
 
     subtitleWrapper?.appendChild(subtitleText)
 
-    const completionVoice = guideVoiceAssets.final
+    const completionVoice = guideVoiceAssets.photo
 
     const audioSrc = completionVoice?.audio as string
     const subtitlesUrl = completionVoice?.subtitles ?? null

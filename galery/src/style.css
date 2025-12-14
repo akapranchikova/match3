@@ -47,6 +47,7 @@ body {
     min-height: 100dvh;
     padding: 0;
     display: flex;
+    font-family: 'SB Sans Display', sans-serif;
     justify-content: center;
     background: radial-gradient(60% 40% at 20% 20%, rgba(33, 204, 161, 0.08), transparent 70%),
     radial-gradient(50% 32% at 82% 12%, rgba(124, 188, 164, 0.14), transparent 80%),
@@ -774,7 +775,7 @@ main,
 
 @media (max-width: 420px) {
     .photo-collage {
-        height: 360px;
+        height: 50dvh;
     }
 
     .photo-collage__card {

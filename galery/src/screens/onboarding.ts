@@ -13,7 +13,6 @@ import guideGreetingSubtitlesUrl from '../assets/points/0. Интро - прив
 import { createCueFromText, loadSrtSubtitles, SubtitleCue } from '../subtitles'
 import onboardingGolosLogo from '../assets/onboarding-golos-logo.svg'
 import voiceNewIllustration from '../assets/gigachat-guide.svg'
-// import voiceVideoSrc from '../assets/voice-video.mp4'
 import onboardingVoiceVideoWebm from "../assets/speaking-voice.webm";
 import onboardingVoiceVideoMov from "../assets/speaking-voice.mov";
 

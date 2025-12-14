@@ -796,13 +796,48 @@ const renderAudioSection = (section: AudioContent) => {
   const hero = document.createElement('div')
   hero.className = 'guide__hero'
 
-  const img = document.createElement('img')
-  img.className = 'guide__hero-image'
-  img.src = section.artwork
-  img.alt = 'Голос времени'
-  hero.appendChild(img)
+    const hero2 = document.createElement('div')
+    hero2.className = 'guide__wrap-video'
 
-  const audio = document.createElement('audio')
+    const voiceVideo = document.createElement('video')
+    voiceVideo.className = 'guide__hero-image'
+    voiceVideo.muted = true
+    voiceVideo.defaultMuted = true
+    voiceVideo.loop = true
+    voiceVideo.playsInline = true
+    voiceVideo.autoplay = false
+    voiceVideo.preload = 'metadata'
+    voiceVideo.setAttribute('playsinline', '')
+    voiceVideo.setAttribute('muted', '')
+    voiceVideo.setAttribute('aria-hidden', 'true')
+
+    const srcWebm = document.createElement('source')
+    srcWebm.src = onboardingVoiceVideoWebm
+    srcWebm.type = 'video/webm; codecs="vp9"'
+
+    const srcMov = document.createElement('source')
+    srcMov.src = onboardingVoiceVideoMov
+    srcMov.type = 'video/quicktime'
+
+    voiceVideo.appendChild(srcMov)
+    voiceVideo.appendChild(srcWebm)
+
+    hero2.appendChild(voiceVideo)
+    hero.appendChild(hero2)
+    content.appendChild(hero)
+
+    const startVoiceVideo = () => {
+        voiceVideo?.play().catch(() => {})
+    }
+
+    const stopVoiceVideo = () => {
+        if (!voiceVideo) return
+        voiceVideo.pause()
+        try { voiceVideo.currentTime = 0 } catch {}
+    }
+
+
+    const audio = document.createElement('audio')
   audio.className = 'guide__audio'
   audio.controls = false
   audio.preload = 'auto'

@@ -23,7 +23,6 @@ import finalSubtitlesRaw from './assets/points/6. Финал/17. Финал.txt?
 import pipeModelSubtitlesRaw from './assets/points/5. История археологических раскопок/12. Чаша от курительной трубки.txt?raw'
 import tileModelSubtitlesRaw from './assets/points/5. История археологических раскопок/13. Печной изразец.txt?raw'
 import potModelSubtitlesRaw from './assets/points/5. История археологических раскопок/14. Керамический горшок.txt?raw'
-import AIImage from './assets/ii.png'
 import routeImage1 from './assets/boarding-1/photo-1.jpg'
 import routeImage2 from './assets/boarding-1/photo-3.jpg'
 import routeImage3 from './assets/route/route-3.jpg'
@@ -36,6 +35,7 @@ import image3 from './assets/points-position/point3.jpg'
 import image4 from './assets/points-position/point4.jpg'
 import image5 from './assets/points-position/point5.jpg'
 import image6 from './assets/points-position/point6.jpg'
+import image7 from './assets/points-position/point7.png'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 
@@ -140,7 +140,7 @@ export const guideVoiceAssets: Record<
   },
   final: {
     audio: new URL(
-      './assets/points/5. История археологических раскопок/16.1 переход к точке 6.mp3',
+      './assets/points/5. История археологических раскопок/16.1 переход к точке 6 .mp3',
       import.meta.url,
     ).href,
     subtitles: new URL(
@@ -148,6 +148,16 @@ export const guideVoiceAssets: Record<
         import.meta.url,
     ).href,
   },
+    photo: {
+        audio: new URL(
+            './assets/points/6. Финал/17.1 переход к фотозоне.mp3',
+            import.meta.url,
+        ).href,
+        subtitles: new URL(
+            './assets/points/6. Финал/17.1 переход к фотозоне.txt',
+            import.meta.url,
+        ).href,
+    }
 }
 
 const historyVideoSrc = new URL(
@@ -316,7 +326,8 @@ export const photoZonePoint: RoutePoint = {
   title: 'Сделайте фото в одном из исторических мест',
   description: 'На 1 этаже рядом с гардеробом',
   period: '21 век',
-  photo: AIImage,
+  photo: image7,
+    photoWhere: image7,
   map: {
     floor: 1,
     x: 184,
