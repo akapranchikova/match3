@@ -94,8 +94,8 @@ const createMarkersMarkup = (floorPoints: RoutePoint[], mapPoints: RoutePoint[],
             const isActive = originalIndex === activeIndex
             const isComplete = viewedPoints.has(item.id)
             const { x, y } = item.map
-            const maxLength = document.body.getBoundingClientRect().width > 420 ? 250 : 150;
-            const markerLineStart =  (x - document.body.getBoundingClientRect().width + maxLength);
+            const maxLength = document.body.getBoundingClientRect().width > 420 ? 300 : 120;
+            const markerLineStart =  (document.body.getBoundingClientRect().width - maxLength - (MAP_VIEWBOXES[item.map.floor].width - x)) * -1;
 
             return `
         <g class="map__marker${isActive ? ' is-active' : ''}${isComplete ? ' is-complete' : ''}"

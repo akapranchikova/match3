@@ -13,6 +13,9 @@ import guideGreetingSubtitlesUrl from '../assets/points/0. Интро - прив
 import { createCueFromText, loadSrtSubtitles, SubtitleCue } from '../subtitles'
 import onboardingGolosLogo from '../assets/onboarding-golos-logo.svg'
 import voiceNewIllustration from '../assets/gigachat-guide.svg'
+// import voiceVideoSrc from '../assets/voice-video.mp4'
+import onboardingVoiceVideoWebm from "../assets/speaking-voice.webm";
+import onboardingVoiceVideoMov from "../assets/speaking-voice.mov";
 
 
 
@@ -414,12 +417,48 @@ export const renderGuideIntro = (): RenderResult => {
 
     const hero = document.createElement('div')
     hero.className = 'guide__hero'
-    const heroImage = document.createElement('img')
-    heroImage.src = voiceNewIllustration
-    heroImage.alt = 'Голос времени'
-    heroImage.className = 'guide__hero-image'
-    hero.appendChild(heroImage)
+
+    const hero2 = document.createElement('div')
+    hero2.className = 'guide__wrap-video'
+
+    const voiceVideo = document.createElement('video')
+    voiceVideo.className = 'guide__hero-image'
+    voiceVideo.muted = true
+    voiceVideo.defaultMuted = true
+    voiceVideo.loop = true
+    voiceVideo.playsInline = true
+    voiceVideo.autoplay = false
+    voiceVideo.preload = 'metadata'
+    voiceVideo.setAttribute('playsinline', '')
+    voiceVideo.setAttribute('muted', '')
+    voiceVideo.setAttribute('aria-hidden', 'true')
+
+    const srcWebm = document.createElement('source')
+    srcWebm.src = onboardingVoiceVideoWebm
+    srcWebm.type = 'video/webm; codecs="vp9"'
+
+    const srcMov = document.createElement('source')
+    srcMov.src = onboardingVoiceVideoMov
+    srcMov.type = 'video/quicktime'
+
+    voiceVideo.appendChild(srcMov)
+    voiceVideo.appendChild(srcWebm)
+
+
+
+    hero2.appendChild(voiceVideo)
+    hero.appendChild(hero2)
     content.appendChild(hero)
+
+    const startVoiceVideo = () => {
+        voiceVideo?.play().catch(() => {})
+    }
+
+    const stopVoiceVideo = () => {
+        if (!voiceVideo) return
+        voiceVideo.pause()
+        try { voiceVideo.currentTime = 0 } catch {}
+    }
 
         const backgroundBG = document.createElement('div')
     backgroundBG.className = 'card__background-giga'
@@ -458,6 +497,7 @@ export const renderGuideIntro = (): RenderResult => {
     let cancelSubtitleOut: (() => void) | null = null
 
     const playSubtitleAnimation = (className: (typeof subtitleAnimationClasses)[number]) => {
+        startVoiceVideo();
         subtitleAnimationClasses.forEach((animationClass) => subtitleText.classList.remove(animationClass))
 
         void subtitleText.offsetWidth
@@ -510,6 +550,7 @@ export const renderGuideIntro = (): RenderResult => {
     let hasStarted = false
 
     const clearSubtitleContent = () => {
+        stopVoiceVideo()
         subtitleText.replaceChildren()
         subtitleText.textContent = ''
         subtitleCurrent.classList.remove('guide__subtitle--visible')

@@ -1046,14 +1046,20 @@ main,
     }
 }
 
-.guide__hero-image {
-
+.guide__wrap-video {
     width: 386px;
+    background: transparent;
+
     height: 386px;
+}
+
+.guide__hero-image {
+    width: 426px;
+    height: 426px;
     max-width: 100%;
+    mix-blend-mode: screen;
     object-fit: cover;
-    display: block;
-    filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.6));
+    transform: translateZ(0);
 }
 
 
@@ -1648,8 +1654,8 @@ main,
 }
 
 .card--point .footer__voice video {
-    width: 48px;
-    height: 48px;
+    width: 58px;
+    height: 58px;
     mix-blend-mode: screen;
     transform: translateZ(0);
 }
@@ -1785,11 +1791,11 @@ main,
     align-items: center;
     overflow: visible;
     box-sizing: border-box;
-    width: 385px;
+    width: 400px;
 }
 
 .content-cards--stacked {
-    height: 477px;
+    height: 527px;
 }
 
 .content-cards__track {
@@ -1804,7 +1810,7 @@ main,
     border-radius: 18px;
     overflow: hidden;
     color: rgba(27, 28, 29, 1);
-    box-shadow: var(--stack-shadow, 0px 12px 32px rgba(0, 0, 0, 0.28));
+    /*box-shadow: var(--stack-shadow, 0px 12px 32px rgba(0, 0, 0, 0.28));*/
     transform-origin: center top;
     transform: translateX(var(--drag-translate, 0px)) translateY(var(--stack-translate, 0px)) scale(var(--stack-scale, 1)) rotate(calc(var(--stack-rotate, 0deg) + var(--drag-rotate, 0deg)));
     filter: blur(var(--stack-blur, 0px));
@@ -1825,20 +1831,55 @@ main,
 .content-card__image-wrapper {
     overflow: hidden;
     display: flex;
-    padding: 8px;
+    padding: 8px 8px 0 8px;
+    position: relative;
     justify-content: center;
-    width: 384px;
-    border-radius: 18px;
+    width: 400px;
     background: #fff;
     box-sizing: border-box;
 }
 
+.content-card__image-wrapper::before{
+    position: absolute;
+    content: "";
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    z-index: 10;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.00552296) 8.07%, rgba(255, 255, 255, 0.0217837) 15.54%, rgba(255, 255, 255, 0.04832) 22.5%, rgba(255, 255, 255, 0.0846696) 29.04%, rgba(255, 255, 255, 0.13037) 35.26%, rgba(255, 255, 255, 0.18496) 41.25%, rgba(255, 255, 255, 0.247976) 47.1%, rgba(255, 255, 255, 0.318957) 52.9%, rgba(255, 255, 255, 0.39744) 58.75%, rgba(255, 255, 255, 0.482963) 64.74%, rgba(255, 255, 255, 0.575064) 70.96%, rgba(255, 255, 255, 0.67328) 77.5%, rgba(255, 255, 255, 0.77715) 84.46%, rgba(255, 255, 255, 0.88621) 91.93%, #FFFFFF 100%);
+
+}
+
 .content-card__image {
     width: 380px;
+    height: 400px;
     object-fit: cover;
     display: block;
     border-radius: 10px;
 }
+
+.content-card__body {
+    padding: 14px 16px 18px;
+    display: flex;
+    background: #ffffff;
+    border-radius: 0 0 18px 18px;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.content-card__title {
+    font-size: 16px;
+    font-family: "SB Sans Display Semibold", sans-serif;
+    margin-bottom: 4px;
+}
+
+.content-card__text {
+    font-size: 14px;
+    color: rgba(27, 28, 29, 1);
+    margin: 0;
+}
+
 
 @media (max-width: 420px) {
     .content-cards {
@@ -1851,12 +1892,16 @@ main,
 
     .content-card__image-wrapper {
         width: 256px;
-        border-radius: 12px;
     }
 
     .content-card__image {
         width: 240px;
+        height: 280px;
         border-radius: 10px;
+    }
+
+    .content-card__body {
+        border-radius: 0 0 12px 12px;
     }
 
 }
@@ -2931,9 +2976,14 @@ main,
 }
 
 @media (max-width: 420px) {
-    .card--onboarding .card__image.golos, .content-panel--guide .guide__hero-image, .guide__hero-image {
+    .card--onboarding .card__image.golos, .content-panel--guide .guide__hero-image,
+    .guide__wrap-video {
         width: 184px;
         height: 184px;
+    }
+    .guide__hero-image {
+        width: 214px;
+        height: 214px;
     }
 }
 
@@ -2961,6 +3011,8 @@ main,
 }
 
 .footer__voice__media {
+    width: 48px;
+    height: 48px;
     position: relative;
 }
 
@@ -2977,19 +3029,4 @@ main,
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     will-change: transform;
-}
-
-.footer__voice__media::after {
-    content: "";
-    position: absolute;
-    width: 48px;
-    height: 48px;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    background: radial-gradient(
-            circle at center,
-            rgba(11, 120, 11, 0) 0%, /* центр — полностью прозрачно */ rgba(11, 12, 11, 0.2) 35%, /* ещё пусто */ rgba(11, 12, 11, 0.75) 40%, /* начинает затемняться */ rgba(11, 12, 11, 1) 100% /* край */
-    );
-    pointer-events: none;
 }
