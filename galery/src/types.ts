@@ -31,6 +31,7 @@ export interface RoutePoint {
   description: string
   period?: string
   photo?: string
+    photoWhere?: string
   photoAlt?: string
   longDescription?: string
   highlights?: string[]

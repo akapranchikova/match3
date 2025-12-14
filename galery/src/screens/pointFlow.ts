@@ -8,7 +8,8 @@ import {
 } from '../storage'
 import { isRouteCompleted, resetProgress, state, viewedPoints } from '../state'
 import { createButton } from '../ui'
-import onboardingVoice from '../assets/onboarding-voice.png'
+import onboardingVoiceVideoWebm from '../assets/speaking-voice.webm'
+import onboardingVoiceVideoMov from '../assets/speaking-voice.mov'
 import routePreview from '../assets/onboarding-photo.svg'
 import { loadSrtSubtitles, SubtitleCue } from '../subtitles'
 import { hasCameraPermission } from '../permissions'
@@ -319,7 +320,9 @@ export const renderNextPoint = (): RenderResult => {
           </span>
         </button>
 
-        <div class="point-visual__placeholder" role="img" aria-label="${point.photoAlt || `Превью точки «${point.title}»`}"></div>
+        <div class="point-visual__placeholder" role="img" aria-label="${point.photoAlt || `Превью точки «${point.title}»`}">
+        <img src="${point.photoWhere}" alt="">
+</div>
         <p class="point-visual__caption">${caption}</p>
       </div>
     </article>
@@ -331,7 +334,7 @@ export const renderNextPoint = (): RenderResult => {
 
     <div class="point-layout__route footer">
       <div class="footer__voice">
-        <img src="${onboardingVoice}" alt="voice-img" class="footer__voice__image">
+      <div class="footer__voice__media" aria-hidden="true"></div>
         <div class="footer__subtitles" aria-live="polite"></div>
       </div>
       <div class="footer__button"></div>
@@ -349,6 +352,47 @@ export const renderNextPoint = (): RenderResult => {
     subtitleText.className = 'footer__subtitle-text'
     const defaultSubtitleMessage = ''
 
+      const mediaHost = footerVoice.querySelector<HTMLDivElement>('.footer__voice__media')
+
+      let voiceVideo: HTMLVideoElement | null = null
+
+      if (mediaHost) {
+          voiceVideo = document.createElement('video')
+          voiceVideo.className = 'footer__voice__video'
+          voiceVideo.muted = true
+          voiceVideo.defaultMuted = true
+          voiceVideo.loop = true
+          voiceVideo.playsInline = true
+          voiceVideo.autoplay = false
+          voiceVideo.preload = 'metadata'
+          voiceVideo.setAttribute('playsinline', '')
+          voiceVideo.setAttribute('muted', '')
+          voiceVideo.setAttribute('aria-hidden', 'true')
+
+          const srcWebm = document.createElement('source')
+          srcWebm.src = onboardingVoiceVideoWebm
+          srcWebm.type = 'video/webm; codecs="vp9"'
+
+          const srcMov = document.createElement('source')
+          srcMov.src = onboardingVoiceVideoMov
+          srcMov.type = 'video/quicktime'
+
+          voiceVideo.appendChild(srcMov)
+          voiceVideo.appendChild(srcWebm)
+
+          mediaHost.replaceChildren(voiceVideo)
+      }
+
+      const startVoiceVideo = () => {
+          voiceVideo?.play().catch(() => {})
+      }
+
+      const stopVoiceVideo = () => {
+          if (!voiceVideo) return
+          voiceVideo.pause()
+          try { voiceVideo.currentTime = 0 } catch {}
+      }
+
     const subtitleAnimationClasses = ['subtitle-animate-in', 'subtitle-animate-out'] as const
 
     let isSubtitleVisible = false
@@ -365,6 +409,7 @@ export const renderNextPoint = (): RenderResult => {
       isSubtitleAnimatingOut = false
       isSubtitleVisible = true
       playSubtitleAnimation('subtitle-animate-in')
+        startVoiceVideo()
     }
 
     const animateSubtitleOut = (onFinish?: () => void) => {
@@ -407,6 +452,7 @@ export const renderNextPoint = (): RenderResult => {
       subtitleWrapper?.classList.remove('footer__subtitles--visible')
       isSubtitleVisible = false
       isSubtitleAnimatingOut = false
+        stopVoiceVideo()
     }
 
     // Hide the currently visible subtitle line. If nothing is shown, clear immediately;
@@ -504,7 +550,7 @@ export const renderNextPoint = (): RenderResult => {
       } else if (footerAudio?.ended) {
         showFinalCue()
       } else {
-          if (isSubtitleVisible) return
+          // if (isSubtitleVisible) return
         resetSubtitleState()
       }
     }
@@ -649,7 +695,7 @@ export const renderRouteComplete = (): RenderResult => {
     </article>
     <div class="point-layout__route footer">
       <div class="footer__voice">
-        <img src="${onboardingVoice}" alt="voice-img" class="footer__voice__image">
+        <div class="footer__voice__media" aria-hidden="true"></div>
         <div class="footer__subtitles" aria-live="polite"></div>
       </div>
       <div class="footer__button"></div>
@@ -672,6 +718,47 @@ export const renderRouteComplete = (): RenderResult => {
     subtitleText.className = 'footer__subtitle-text'
     const defaultSubtitleMessage = ''
 
+      const mediaHost = footerVoice.querySelector<HTMLDivElement>('.footer__voice__media')
+
+      let voiceVideo: HTMLVideoElement | null = null
+
+      if (mediaHost) {
+          voiceVideo = document.createElement('video')
+          voiceVideo.className = 'footer__voice__video'
+          voiceVideo.muted = true
+          voiceVideo.defaultMuted = true
+          voiceVideo.loop = true
+          voiceVideo.playsInline = true
+          voiceVideo.autoplay = false
+          voiceVideo.preload = 'metadata'
+          voiceVideo.setAttribute('playsinline', '')
+          voiceVideo.setAttribute('muted', '')
+          voiceVideo.setAttribute('aria-hidden', 'true')
+
+          const srcWebm = document.createElement('source')
+          srcWebm.src = onboardingVoiceVideoWebm
+          srcWebm.type = 'video/webm; codecs="vp9"'
+
+          const srcMov = document.createElement('source')
+          srcMov.src = onboardingVoiceVideoMov
+          srcMov.type = 'video/quicktime'
+
+          voiceVideo.appendChild(srcWebm)
+          voiceVideo.appendChild(srcMov)
+
+          mediaHost.replaceChildren(voiceVideo)
+      }
+
+      const startVoiceVideo = () => {
+          voiceVideo?.play().catch(() => {})
+      }
+
+      const stopVoiceVideo = () => {
+          if (!voiceVideo) return
+          voiceVideo.pause()
+          try { voiceVideo.currentTime = 0 } catch {}
+      }
+
     const subtitleAnimationClasses = ['subtitle-animate-in', 'subtitle-animate-out'] as const
 
     let isSubtitleVisible = false
@@ -687,11 +774,13 @@ export const renderRouteComplete = (): RenderResult => {
       isSubtitleAnimatingOut = false
       isSubtitleVisible = true
       playSubtitleAnimation('subtitle-animate-in')
+        startVoiceVideo()
     }
 
     const renderFinishButton = () => {
       subtitleText.replaceChildren()
         footerVoice?.classList.add('footer__subtitles--visible')
+        stopVoiceVideo()
         footerVoice?.replaceChildren(finishButton)
     }
 
@@ -721,6 +810,7 @@ export const renderRouteComplete = (): RenderResult => {
       subtitleWrapper?.classList.remove('footer__subtitles--visible')
       isSubtitleVisible = false
       isSubtitleAnimatingOut = false
+        stopVoiceVideo()
     }
 
     // Hide the completion subtitle line. If nothing is shown, reset immediately;

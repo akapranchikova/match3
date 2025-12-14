@@ -5,7 +5,8 @@ import { saveContentGestureHintCompleted, saveSoundEnabled } from '../storage'
 import { loadSrtSubtitles, SubtitleCue, createCueFromText } from '../subtitles'
 import { AudioContent, CardsContent, ModelsContent, PointContentSection, VideoContent } from '../types'
 import { navigateToNextPoint } from './pointFlow'
-import onboardingVoice from '../assets/onboarding-voice.png'
+import onboardingVoiceVideoWebm from '../assets/speaking-voice.webm'
+import onboardingVoiceVideoMov from '../assets/speaking-voice.mov'
 
 const SWIPE_THRESHOLD = 48
 const MODEL_GESTURE_CLASS = 'model-gesture-active'
@@ -1171,17 +1172,39 @@ export const renderPointContent = () => {
 
   const hasModelSubtitles =
     currentSection.type === 'models' && currentSection.models.some((model) => model.subtitles?.length)
-  const hasSectionSubtitles = !!currentSection.subtitles?.length || hasModelSubtitles
+    const hasAnySubtitles = config.sections.some((s) =>
+        (s.type === 'models' && s.models.some((m) => !!m.subtitlesUrl || (m.subtitles?.length ?? 0) > 0)) ||
+        (!!(s as any).subtitlesUrl || ((s as any).subtitles?.length ?? 0) > 0)
+    )
 
-  if (hasSectionSubtitles) {
+
+    if (hasAnySubtitles) {
     const subtitleLayout = document.createElement('div')
     subtitleLayout.className = 'content-subtitles content-subtitles--voice'
 
-    const subtitleImage = document.createElement('img')
-    subtitleImage.src = onboardingVoice
-    subtitleImage.alt = 'Голос времени'
-    subtitleImage.className = 'content-subtitles__image'
-    subtitleLayout.appendChild(subtitleImage)
+      const voiceVideo = document.createElement('video')
+      voiceVideo.className = 'content-subtitles__image content-subtitles__video'
+      voiceVideo.muted = true
+      voiceVideo.loop = true
+      voiceVideo.playsInline = true
+      voiceVideo.autoplay = false
+      voiceVideo.preload = 'metadata'
+      voiceVideo.setAttribute('playsinline', '')
+      voiceVideo.setAttribute('muted', '')
+      voiceVideo.setAttribute('aria-hidden', 'true')
+
+      const srcWebm = document.createElement('source')
+      srcWebm.src = onboardingVoiceVideoWebm
+      srcWebm.type = 'video/webm; codecs="vp9"'
+
+      const srcMov = document.createElement('source')
+      srcMov.src = onboardingVoiceVideoMov
+      srcMov.type = 'video/quicktime'
+
+      voiceVideo.appendChild(srcWebm)
+      voiceVideo.appendChild(srcMov)
+
+      subtitleLayout.appendChild(voiceVideo)
 
     const subtitleText = document.createElement('div')
     subtitleText.className = 'content-subtitles__text'
@@ -1192,6 +1215,16 @@ export const renderPointContent = () => {
 
       const setSubtitlesVisible = (visible: boolean) => {
           subtitleLayout.style.display = visible ? '' : 'none'
+      }
+
+      const startSubtitleVideo = () => {
+          // iOS: autoplay видео (muted + playsInline) обычно проходит
+          voiceVideo.play().catch(() => {})
+      }
+
+      const stopSubtitleVideo = () => {
+          voiceVideo.pause()
+          voiceVideo.currentTime = 0
       }
 
 // по умолчанию показываем только если реально есть сабы у текущего сюжета
@@ -1236,6 +1269,7 @@ export const renderPointContent = () => {
       isSubtitleAnimatingOut = false
       isSubtitleVisible = true
       playSubtitleAnimation('subtitle-animate-in')
+        startSubtitleVideo()
     }
 
     const animateSubtitleOut = (onFinish?: () => void) => {
@@ -1280,6 +1314,7 @@ export const renderPointContent = () => {
       subtitleText.replaceChildren()
       isSubtitleVisible = false
       isSubtitleAnimatingOut = false
+        stopSubtitleVideo()
     }
 
     const hideSubtitle = () => {
@@ -1415,13 +1450,10 @@ export const renderPointContent = () => {
           setSubtitlesVisible(false)
 
           // отцепить слушатели
-          detachSubtitleListeners()
-
-          // отвязать аудио, чтобы оно не пыталось апдейтить текст
-          syncSubtitleAudio(null)
-
-          // очистить текст
+          syncSubtitleAudio(null) // оно само detach/attach сделает
           subtitleText.replaceChildren()
+          stopSubtitleVideo()
+          setSubtitlesVisible(false)
       }
 
       setSubtitleSourceFn = (source: ModelChangeDetail) => {
