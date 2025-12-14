@@ -19,37 +19,31 @@ type GestureHintStep = {
 }
 
 let audioAutoplayUnlocked = false
+let isGestureOverlayVisible = false
 
-const unlockAudioPlaybackOnce = (root: HTMLElement) => {
+const unlockAudioPlaybackOnce = (probeSrc?: string) => {
     if (audioAutoplayUnlocked) return
 
-    // Берём любое текущее аудио на экране (подойдёт хоть гайд, хоть model audio)
-    const audio = root.querySelector('audio') as HTMLAudioElement | null
-    if (!audio) {
+    // если нет src — просто считаем, что разлочили (ничего не можем сделать)
+    if (!probeSrc) {
         audioAutoplayUnlocked = true
         return
     }
 
-    const prevMuted = audio.muted
-    audio.muted = true
+    const probe = new Audio()
+    probe.src = probeSrc
+    probe.muted = true
+    probe.volume = 0
+    probe.playsInline = true
 
-    const p = audio.play()
-    if (p && typeof (p as Promise<void>).then === 'function') {
-        ;(p as Promise<void>)
-            .then(() => {
-                audio.pause()
-                audio.currentTime = 0
-                audio.muted = prevMuted
-                audioAutoplayUnlocked = true
-            })
-            .catch(() => {
-                // не разлочилось — попробуем снова при следующем жесте
-                audio.muted = prevMuted
-            })
-    } else {
-        audio.muted = prevMuted
-        audioAutoplayUnlocked = true
-    }
+    probe.play()
+        .then(() => {
+            try { probe.pause() } catch {}
+            audioAutoplayUnlocked = true
+        })
+        .catch(() => {
+            // даже если не вышло — не ломаем основной флоу
+        })
 }
 
 const playWhenReady = (media: HTMLMediaElement) => {
@@ -118,8 +112,10 @@ const gestureHintSteps: GestureHintStep[] = [
   },
 ]
 
-const maybeShowGestureHint = (host: HTMLElement): (() => void) | null => {
-  if (state.contentGestureHintCompleted) return null
+const maybeShowGestureHint = (host: HTMLElement, onDismiss?: () => void): (() => void) | null => {
+    if (state.contentGestureHintCompleted) return null
+
+    isGestureOverlayVisible = true
 
   const overlay = document.createElement('div')
   overlay.className = 'content-gesture-overlay'
@@ -167,21 +163,35 @@ const maybeShowGestureHint = (host: HTMLElement): (() => void) | null => {
     }
   }
 
-  const dismissOverlay = () => {
-    if (isDismissed) return
-    isDismissed = true
-    cleanupTimers()
-    state.contentGestureHintCompleted = true
-    saveContentGestureHintCompleted()
-    overlay.classList.add('content-gesture-overlay--hidden')
+    const dismissOverlay = () => {
+        if (isDismissed) return
+        isDismissed = true
 
-    const removeOnAnimationEnd = () => overlay.remove()
-    overlay.addEventListener('animationend', removeOnAnimationEnd, { once: true })
-    // Fallback in case animation events are not supported
-    window.setTimeout(removeOnAnimationEnd, 240)
-  }
+        cleanupTimers()
+        state.contentGestureHintCompleted = true
+        saveContentGestureHintCompleted()
 
-  overlay.addEventListener('click', dismissOverlay)
+        isGestureOverlayVisible = false
+
+        overlay.classList.add('content-gesture-overlay--hidden')
+
+        const removeOnAnimationEnd = () => overlay.remove()
+        overlay.addEventListener('animationend', removeOnAnimationEnd, { once: true })
+        window.setTimeout(removeOnAnimationEnd, 240)
+
+        onDismiss?.()
+    }
+
+    overlay.addEventListener('touchstart', (e) => {
+        e.stopPropagation()
+        if (e.cancelable) e.preventDefault()
+    }, { passive: false })
+
+    overlay.addEventListener('touchend', (e) => {
+        e.stopPropagation()
+        if (e.cancelable) e.preventDefault()
+        dismissOverlay()
+    }, { passive: false })
 
   applyStep(0)
   stepTimerId = window.setTimeout(() => applyStep(1), 3000)
@@ -630,6 +640,10 @@ const renderModelsSection = (section: ModelsContent) => {
   })
 
   const updateActive = () => {
+      if (isGestureOverlayVisible) {
+          dispatchActiveModelChange()
+          return
+      }
     const cards = Array.from(track.children) as HTMLElement[]
     cards.forEach((card, index) => {
       const isActive = index === activeIndex
@@ -657,7 +671,7 @@ const renderModelsSection = (section: ModelsContent) => {
     if (activeModelAudio && isPanelActive) {
         // тут нет доступа к isMuted из родителя, поэтому считаем:
         // если пользователь потом включит звук — setMuted() всё синхронизирует
-        playAudioWithIOSAutoplayHack(activeModelAudio, true)
+        playAudioWithIOSAutoplayHack(activeModelAudio, !state.soundEnabled ? false : true)
     }
 
     dispatchActiveModelChange()
@@ -973,8 +987,20 @@ export const renderPointContent = () => {
     syncMediaState()
   }
 
+    const getActiveAudioEl = () => {
+        const activePanel = stack.children[state.currentContentIndex] as HTMLElement | undefined
+        const isModelPanel = activePanel?.classList.contains('content-panel--models')
+
+        return (isModelPanel
+            ? activePanel?.querySelector('.content-model.is-active audio')
+            : activePanel?.querySelector('audio')) as HTMLAudioElement | null
+    }
+
   const syncMediaState = () => {
     clearAutoplay()
+      if (isGestureOverlayVisible) {
+          return
+      }
     const activePanel = stack.children[state.currentContentIndex] as HTMLElement | undefined
     const isModelPanel = activePanel?.classList.contains('content-panel--models')
 
@@ -1015,13 +1041,13 @@ export const renderPointContent = () => {
       }, 1)
     }
 
-      if (activeAudio) {
-          // wantSound = true, если пользователь включил звук
+      if (activeAudio && !isGestureOverlayVisible) {
           playAudioWithIOSAutoplayHack(activeAudio, !isMuted)
       }
   }
 
   const updateActive = () => {
+
     Array.from(stack.children).forEach((child, index) => {
       const isActive = index === state.currentContentIndex
       child.classList.toggle('is-active', isActive)
@@ -1221,7 +1247,7 @@ export const renderPointContent = () => {
         if (!isTouching) return
 
         // ✅ разлочим аудио в момент пользовательского жеста
-        unlockAudioPlaybackOnce(container)
+        // unlockAudioPlaybackOnce(container)
 
         const deltaY = event.changedTouches[0].clientY - startY
         isTouching = false
@@ -1245,11 +1271,14 @@ export const renderPointContent = () => {
 
   cleanupCallbacks.push(clearAutoplay)
 
-  slider.appendChild(stack)
+    slider.appendChild(stack)
 
-  setMuted(!state.soundEnabled)
+    const shouldShowGestureHint = !state.contentGestureHintCompleted
+    if (shouldShowGestureHint) isGestureOverlayVisible = true
+
+    setMuted(!state.soundEnabled)
     updateHeaderForIndex(state.currentContentIndex)
-  updateActive()
+    updateActive()
     syncSubtitlesForActivePanel()
 
   if (!isFinalPoint) {
@@ -1574,7 +1603,11 @@ export const renderPointContent = () => {
     renderHint()
   container.appendChild(hint)
 
-  const gestureHintCleanup = maybeShowGestureHint(container)
+    const gestureHintCleanup = maybeShowGestureHint(container, () => {
+        const a = getActiveAudioEl()
+        unlockAudioPlaybackOnce(a?.currentSrc || a?.src)
+        syncMediaState()
+    })
   if (gestureHintCleanup) {
     cleanupCallbacks.push(gestureHintCleanup)
   }

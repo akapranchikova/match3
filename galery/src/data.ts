@@ -36,6 +36,16 @@ import image4 from './assets/points-position/point4.jpg'
 import image5 from './assets/points-position/point5.jpg'
 import image6 from './assets/points-position/point6.jpg'
 import image7 from './assets/points-position/point7.png'
+import preview1 from './assets/video-preview/T1_crop.jpg'
+import preview2 from './assets/video-preview/Т2-Пермское море Квадрат.jpg'
+import preview3 from './assets/video-preview/Т2-Пермский период Квадрат.jpg'
+import preview4 from './assets/video-preview/T3-1_crop.jpg'
+import preview5 from './assets/video-preview/T3-2_crop.jpg'
+import preview6 from './assets/video-preview/T3-3_crop.jpg'
+import preview7 from './assets/video-preview/T5-1_crop.jpg'
+import preview8 from './assets/video-preview/T5-2_crop.jpg'
+import preview9 from './assets/video-preview/Т4-Деревня Квадрат.jpg'
+import preview10 from './assets/video-preview/Т4-Соликамский тракт Квадрат.jpg'
 
 export const STORAGE_KEY = 'gallery-viewed-points'
 
@@ -191,7 +201,7 @@ const permSeaVideoSrc = new URL(
   import.meta.url,
 ).href
 const permSeaAudioSrc = new URL(
-  './assets/points/2.1 Пермское море, пермский период и геология/3.-Пермское-море.mp3',
+  './assets/points/2.1 Пермское море, пермский период и геология/3.Perm-sea.mp3',
   import.meta.url,
 ).href
 const permPeriodVideoSrc = new URL(
@@ -199,7 +209,7 @@ const permPeriodVideoSrc = new URL(
   import.meta.url,
 ).href
 const permPeriodAudioSrc = new URL(
-  './assets/points/2.1 Пермское море, пермский период и геология/4.-Пермский-период.mp3',
+  './assets/points/2.1 Пермское море, пермский период и геология/4.Perm-period.mp3',
   import.meta.url,
 ).href
 const metalPlantLocationVideoSrc = new URL(
@@ -499,6 +509,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         heading: 'Создание и история галереи',
         type: 'video',
         src: historyVideoSrc,
+          poster: preview1,
         audio: historyAudioSrc,
         subtitlesUrl: historySubtitlesUrl,
         subtitles: historySubtitles,
@@ -514,7 +525,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'video',
         src: permSeaVideoSrc,
         audio: permSeaAudioSrc,
-        poster: routeImage2,
+        poster: preview2,
         subtitlesUrl: permSeaSubtitlesUrl,
         subtitles: permSeaSubtitles,
       },
@@ -523,6 +534,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'video',
         src: permPeriodVideoSrc,
         audio: permPeriodAudioSrc,
+          poster: preview3,
         subtitlesUrl: permPeriodSubtitlesUrl,
         subtitles: permPeriodSubtitles,
       },
@@ -567,6 +579,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'video',
         src: metalPlantLocationVideoSrc,
         audio: metalPlantLocationAudioSrc,
+          poster: preview4,
         subtitlesUrl: metalPlantLocationSubtitlesUrl,
         subtitles: metalPlantLocationSubtitles,
       },
@@ -575,6 +588,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'video',
         src: metalPlantConstructionVideoSrc,
         audio: metalPlantConstructionAudioSrc,
+          poster: preview5,
         subtitlesUrl: metalPlantConstructionSubtitlesUrl,
         subtitles: metalPlantConstructionSubtitles,
       },
@@ -583,6 +597,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'video',
         src: metalPlantVillageVideoSrc,
         audio: metalPlantVillageAudioSrc,
+          poster: preview6,
         subtitlesUrl: metalPlantVillageSubtitlesUrl,
         subtitles: metalPlantVillageSubtitles,
       },
@@ -597,6 +612,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'video',
         src: workshopVideoSrc,
         audio: workshopAudioSrc,
+          poster: preview7,
         subtitlesUrl: workshopSubtitlesUrl,
         subtitles: workshopSubtitles,
       },
@@ -604,6 +620,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         heading: 'Бронепоезда',
         type: 'video',
         src: armoredTrainsVideoSrc,
+          poster: preview8,
         audio: armoredTrainsAudioSrc,
         subtitlesUrl: armoredTrainSubtitlesUrl,
         subtitles: armoredTrainSubtitles,
@@ -650,6 +667,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'video',
         src: solikamskyTrackVideoSrc,
         audio: solikamskyTrackAudioSrc,
+          poster: preview10,
         subtitlesUrl: solikamskyTrackSubtitlesUrl,
         subtitles: solikamskyTrackSubtitles,
       },
@@ -658,6 +676,7 @@ export const pointContentConfigs: Record<string, PointContentConfig> = {
         type: 'video',
         src: villagesVideoSrc,
         audio: villagesAudioSrc,
+          poster: preview9,
         subtitlesUrl: villagesSubtitlesUrl,
         subtitles: villagesSubtitles,
       },
