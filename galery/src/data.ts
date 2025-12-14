@@ -130,7 +130,7 @@ export const guideVoiceAssets: Record<
   },
   railway: {
     audio: new URL(
-      './assets/points/4.1 Железная дорога — будущий завод Шпагина/10.1 переход к точке 5.mp3',
+      './assets/points/4.1 Железная дорога — будущий завод Шпагина/10.1 переход к точке 5.wav',
       import.meta.url,
     ).href,
     subtitles: new URL(

@@ -1577,16 +1577,19 @@ main,
 }
 
 .content-stack__item {
-    display: none !important;
     width: 100%;
+
 }
 
+.content-stack__item.is-inactive {
+    opacity: 0 !important;
+    pointer-events: none;
+    position: absolute !important;
+}
 .content-stack__item.is-active {
-    display: block !important;
-}
-
-.content-panel {
-    /*position: relative;*/
+    opacity: 1;
+    pointer-events: auto;
+    position: relative;
 }
 
 .content-panel--guide {
@@ -1639,7 +1642,7 @@ main,
     gap: 12px;
     font-family: "SB Sans Display Semibold", sans-serif;
     font-size: 16px;
-    padding: 0 6px 8px;
+    padding: 0 6px 6px;
     background: transparent;
 }
 
@@ -2993,22 +2996,21 @@ main,
     position: relative;
 }
 
-/* Видео скрываем до первого кадра */
+ /*Видео скрываем до первого кадра */
 .content-video.is-loading {
-    opacity: 0;
 }
 
 /* Лоадер поверх */
 .content-video__loading {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    pointer-events: none;
+    /*position: absolute;*/
+    /*inset: 0;*/
+    /*display: grid;*/
+    /*place-items: center;*/
+    /*pointer-events: none;*/
 }
 
 .content-video__loading.is-hidden {
-    display: none;
+    /*display: none;*/
 }
 
 .footer__voice__media {

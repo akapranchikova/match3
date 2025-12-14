@@ -7,6 +7,7 @@ import { AudioContent, CardsContent, ModelsContent, PointContentSection, VideoCo
 import { navigateToNextPoint } from './pointFlow'
 import onboardingVoiceVideoWebm from '../assets/speaking-voice.webm'
 import onboardingVoiceVideoMov from '../assets/speaking-voice.mov'
+import {prefetchToObjectUrl} from "../mediaPrefetch";
 
 const SWIPE_THRESHOLD = 48
 const MODEL_GESTURE_CLASS = 'model-gesture-active'
@@ -221,7 +222,6 @@ const renderVideoSection = (section: VideoContent) => {
     video.className = 'content-video'
     video.controls = false
     video.playsInline = true
-    video.src = section.src
     video.poster = section.poster || ''
     video.muted = true
     video.defaultMuted = true
@@ -230,8 +230,30 @@ const renderVideoSection = (section: VideoContent) => {
     video.preload = 'metadata'
     video.setAttribute('preload', 'metadata')
 
+    video.setAttribute('muted', '')
+    video.setAttribute('playsinline', '')
+
+    video.src = section.src
+
     // Скрываем видео до первого кадра (иначе будет черный фрейм)
     video.classList.add('is-loading')
+
+    prefetchToObjectUrl(section.src, 'video').then((objUrl) => {
+        // если элемент уже удалён — не трогаем
+        if (!video.isConnected) return
+        // если уже играет/загрузился — тоже можно не менять
+        if (video.currentSrc && video.currentSrc.startsWith('blob:')) return
+
+        // ✅ замена на blob даёт мгновенный старт при следующем play()
+        const wasPaused = video.paused
+        const t = video.currentTime
+        video.src = objUrl
+        try { video.load() } catch {}
+
+        // если он был активным и уже должен играть — можно вернуть позицию и play
+        try { video.currentTime = t } catch {}
+        if (!wasPaused) video.play().catch(() => {})
+    })
 
     const reveal = () => {
         video.classList.remove('is-loading')
@@ -902,6 +924,11 @@ export const renderPointContent = () => {
   const stack = document.createElement('div')
   stack.className = 'content-stack'
 
+    const warmupAround = (index: number) => {
+        warmupMediaInPanel(stack.children[index + 1] as HTMLElement | undefined)
+        warmupMediaInPanel(stack.children[index - 1] as HTMLElement | undefined)
+    }
+
   const cleanupCallbacks: (() => void)[] = []
 
   const mediaElements: HTMLMediaElement[] = []
@@ -968,7 +995,6 @@ export const renderPointContent = () => {
 
         if (!isActive) {
             media.pause()
-            // ✅ чтобы при “скачках” всегда стартовало заново
             if (media instanceof HTMLAudioElement) {
                 try {
                     media.currentTime = 0
@@ -999,13 +1025,13 @@ export const renderPointContent = () => {
     Array.from(stack.children).forEach((child, index) => {
       const isActive = index === state.currentContentIndex
       child.classList.toggle('is-active', isActive)
-      child.toggleAttribute('hidden', !isActive)
+        child.classList.toggle('is-inactive', !isActive)
     })
     Array.from(slider.querySelectorAll('[data-dot]')).forEach((dot, index) => {
       dot.classList.toggle('is-active', index === state.currentContentIndex)
     })
 
-      warmupMediaInPanel(stack.children[state.currentContentIndex + 1] as HTMLElement | undefined)
+      warmupAround(state.currentContentIndex)
 
       syncMediaState()
   }
@@ -1160,6 +1186,8 @@ export const renderPointContent = () => {
   const onTouchStart = (event: TouchEvent) => {
     gestureFromModel = isFromModelViewer(event)
     if (gestureFromModel) return
+
+      warmupAround(state.currentContentIndex)
 
     startX = event.touches[0].clientX
     startY = event.touches[0].clientY
