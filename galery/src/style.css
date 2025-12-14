@@ -417,7 +417,7 @@ main,
     padding: 0;
     box-shadow: none;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     padding-bottom: 26px !important;
 }
 
@@ -586,11 +586,15 @@ main,
     }
 }
 
+.point-visual__title {
+    font-family: "SB Sans Display Semibold", serif;
+    font-size: 16px;
+    color: rgba(27, 28, 29, 1);
+}
 .point-visual__caption {
     margin: 0;
-    color: #1f2937;
-    font-size: 15px;
-    line-height: 1.35;
+    color: rgba(27, 28, 29, 1);
+    font-size: 14px;
 }
 
 .point-layout__hint {
@@ -614,7 +618,6 @@ main,
 .point-layout__actions--inline {
     display: flex;
     align-self: center;
-    margin-top: 16px;
     justify-content: center;
     z-index: 10;
 }
@@ -702,10 +705,6 @@ main,
 .card--onboarding .card__image.qr {
     height: 45dvh;
     width: auto;
-}
-
-.card--onboarding .card__image.golos, .content-panel--guide .guide__hero-image {
-    width: 386px;
 }
 
 .card--content {
@@ -973,9 +972,9 @@ main,
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-rows: 1fr 130px;
+    grid-template-rows: 1fr 100px;
     align-items: center;
-    gap: 40px;
+    gap: 20px;
 }
 
 .guide__logo {
@@ -1593,7 +1592,7 @@ main,
 }
 
 .content-panel--guide {
-    padding: 0px 18px 32px;
+    padding: 0px 10px 32px;
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -1875,7 +1874,6 @@ main,
 .content-card__title {
     font-size: 16px;
     font-family: "SB Sans Display Semibold", sans-serif;
-    margin-bottom: 4px;
 }
 
 .content-card__text {
@@ -1892,6 +1890,7 @@ main,
 
     .content-cards--stacked {
         height: 464px;
+        max-height: 68dvh;
     }
 
     .content-card__image-wrapper {
@@ -1900,12 +1899,13 @@ main,
 
     .content-card__image {
         width: 240px;
-        height: 280px;
+        height: 270px;
         border-radius: 10px;
     }
 
     .content-card__body {
         border-radius: 0 0 12px 12px;
+        padding: 8px
     }
 
 }
@@ -2971,46 +2971,27 @@ main,
 
 .card--guide .content-subtitles {
     justify-content: center;
-    height: 125px;
-    margin-bottom: 50px;
+    height: 175px;
 }
 
-.card--guide .content-subtitles img {
+.card--guide .content-subtitles video {
     display: none;
 }
 
 @media (max-width: 420px) {
-    .card--onboarding .card__image.golos, .content-panel--guide .guide__hero-image,
-    .guide__wrap-video {
+    .card--onboarding .card__image.golos {
         width: 184px;
         height: 184px;
     }
-    .guide__hero-image {
-        width: 214px;
-        height: 214px;
+    .guide__wrap-video, .guide__hero-image {
+        width: 320px;
+        height: 320px;
     }
 }
 
 
 .content-panel--video {
     position: relative;
-}
-
- /*Видео скрываем до первого кадра */
-.content-video.is-loading {
-}
-
-/* Лоадер поверх */
-.content-video__loading {
-    /*position: absolute;*/
-    /*inset: 0;*/
-    /*display: grid;*/
-    /*place-items: center;*/
-    /*pointer-events: none;*/
-}
-
-.content-video__loading.is-hidden {
-    /*display: none;*/
 }
 
 .footer__voice__media {
@@ -3032,4 +3013,9 @@ main,
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     will-change: transform;
+}
+
+.card--point .footer.footer__finishButton {
+    display: flex;
+    justify-content: flex-end;
 }

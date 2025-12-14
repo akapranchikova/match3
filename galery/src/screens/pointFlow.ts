@@ -665,7 +665,7 @@ export const renderRouteComplete = (): RenderResult => {
   const point = points[state.currentPointIndex]
   const headingText = 'Отличная работа!'
   const subtitleText = photoZonePoint.title
-  const caption = 'Сделайте фото в одном из исторических мест'
+  const caption = 'Посетите в ИИ-фотозону на 1 этаже — там можно создать портрет в одном из мест. Не забудьте поделиться впечатлением о музее в соцсетях'
 
   const card = document.createElement('section')
   card.className = 'card card--point card--next card--complete'
@@ -691,6 +691,7 @@ export const renderRouteComplete = (): RenderResult => {
         }">
         <img src="${point.photoWhere}" alt="">
 </div>
+        <div class="point-visual__title">Хотите продолжить историю?</div>
         <p class="point-visual__caption">${caption}</p>
       </div>
     </article>
@@ -705,13 +706,15 @@ export const renderRouteComplete = (): RenderResult => {
 
   let footerAudio: HTMLAudioElement | null = null
 
-  const finishButton = createButton('Завершить')
+  const finishButton = createButton('Завершить', 'secondary')
   finishButton.addEventListener('click', () => {
+      resetProgress()
     state.screen = 'routeList'
     rerender()
   })
 
 
+  const footer = card.querySelector<HTMLDivElement>('.point-layout__route')
   const footerVoice = card.querySelector<HTMLDivElement>('.footer__voice')
   if (footerVoice) {
     const subtitleWrapper = footerVoice.querySelector<HTMLDivElement>('.footer__subtitles')
@@ -783,7 +786,8 @@ export const renderRouteComplete = (): RenderResult => {
       subtitleText.replaceChildren()
         footerVoice?.classList.add('footer__subtitles--visible')
         stopVoiceVideo()
-        footerVoice?.replaceChildren(finishButton)
+        footer?.classList.add('footer__finishButton')
+        footer?.replaceChildren(finishButton)
     }
 
     const animateSubtitleOut = (onFinish?: () => void) => {

@@ -330,8 +330,8 @@ export const photoZonePoint: RoutePoint = {
     photoWhere: image7,
   map: {
     floor: 1,
-    x: 184,
-    y: 398,
+    x: 124 ,
+    y: 418,
     htmlY: 360,
     htmlDone: 470,
   },
