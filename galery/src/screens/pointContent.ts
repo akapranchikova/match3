@@ -1144,8 +1144,14 @@ export const renderPointContent = () => {
                 rerender()
             })
 
+
             hint.appendChild(finishButton)
-            hint.appendChild(soundToggle)
+            if (config.sections[state.currentContentIndex].type !== "cards") {
+                hint.appendChild(soundToggle)
+                hint.classList.remove('no-sound')
+            } else {
+                hint.classList.add('no-sound');
+            }
         } else {
             const hintIcon = document.createElement('span')
             hintIcon.className = 'content-hint__icon'

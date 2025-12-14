@@ -1745,7 +1745,7 @@ main,
 
 @media (max-width: 420px) {
     .content-models__track {
-        height: 320px;
+        height: 290px;
     }
 
     .content-model__viewer {
@@ -3015,7 +3015,7 @@ main,
     will-change: transform;
 }
 
-.card--point .footer.footer__finishButton {
+.card--point .footer.footer__finishButton, .no-sound {
     display: flex;
     justify-content: flex-end;
 }

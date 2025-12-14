@@ -290,7 +290,7 @@ export const renderInfoComplete = (): HTMLElement => {
 export const renderNextPoint = (): RenderResult => {
   const point = points[state.currentPointIndex]
   const completedPoints = viewedPoints.size
-  const progressHeading = getPointProgressHeading(completedPoints)
+  const progressHeading = pointProgressHeadings[state.currentPointIndex]
   const headingText = progressHeading.title
   const subtitleText = progressHeading.subtitle
   const caption = point.guide?.caption || point.description
@@ -502,6 +502,7 @@ export const renderNextPoint = (): RenderResult => {
 
     const resetSubtitleState = () => {
       activeCueIndex = null
+        stopVoiceVideo()
       hideSubtitle()
     }
 
