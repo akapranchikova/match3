@@ -6,6 +6,7 @@ interface ArchetypeCard {
     art: string;
     tutorial?: boolean;
     tutorialLabel?: string;
+    icon?: string;
     tutorialSubtext?: string;
     requiredDirection?: 'right' | 'left';
 }
@@ -17,21 +18,99 @@ interface ArchetypeResult {
 }
 
 const archetypeDescriptions: Record<string, string> = {
-    Дитя: 'Твой архетип — Дитя. Ты часто действуешь по первому импульсу, радуешься простым вещам и доверяешь людям. Тянешься к свежему, живому, искреннему.',
-    'Славный малый': 'Твой архетип — Славный малый. Ты ценишь простоту и понятность, держишься ближе к своим и поддерживаешь тёплую, дружелюбную атмосферу.',
-    Воин: 'Твой архетип — Воин. Тебе ближе собранность и цель: поставил задачу — двигаешься к результату. Уважаешь дисциплину и ясные решения.',
-    Опекун: 'Твой архетип — Опекун. Тебе важно, чтобы рядом было безопасно и надёжно. Ты поддерживаешь и защищаешь. С тобой люди чувствуют опору.',
-    Искатель: 'Твой архетип — Искатель. Тебя тянет на новое: попробовать, исследовать, выйти за привычные рамки. Опыт и впечатления для тебя — топливо.',
-    Бунтарь: 'Твой архетип — Бунтарь. Ты идёшь против скучных правил и "как принято", выбираешь смелые ходы. Твой импульс — менять устоявшееся.',
-    Эстет: 'Твой архетип — Эстет. Ты любишь чистую форму и аккуратность, замечаешь детали и наводишь красоту. Тебе важно, чтобы всё выглядело стройно.',
-    Творец: 'Твой архетип — Творец. Ты придумываешь нестандартные решения и соединяешь разное в новое. Идеи для тебя — рабочий материал.',
-    Правитель: 'Твой архетип — Правитель. Тебе по душе порядок и система: организовать людей, выстроить процесс, видеть целую картину.',
-    Маг: 'Твой архетип — Маг. Ты видишь неожиданные ходы и умеешь сделать привычное «работающим по-новому». Любишь эффект небольшого «вау» в обычных вещах.',
-    Мудрец: 'Твой архетип — Мудрец. Тебе важно понимать причины и смыслы, разбираться в сложном и объяснять просто. Ты принимаешь взвешенные решения.',
-    Шут: 'Твой архетип — Шут. Ты умеешь разряжать напряжение и смотреть на ситуацию с юмором. Помогаешь людям не застревать в серьёзности.'
+    Дитя: 'Ты часто действуешь по первому импульсу, радуешься простым вещам и доверяешь людям. Тянешься к свежему, живому, искреннему.',
+    'Славный малый': 'Ты ценишь простоту и понятность, держишься ближе к своим и поддерживаешь тёплую, дружелюбную атмосферу.',
+    Воин: 'Тебе ближе собранность и цель: поставил задачу — двигаешься к результату. Уважаешь дисциплину и ясные решения.',
+    Опекун: 'Тебе важно, чтобы рядом было безопасно и надёжно. Ты поддерживаешь и защищаешь. С тобой люди чувствуют опору.',
+    Искатель: 'Тебя тянет на новое: попробовать, исследовать, выйти за привычные рамки. Опыт и впечатления для тебя — топливо.',
+    Бунтарь: 'Ты идёшь против скучных правил и "как принято", выбираешь смелые ходы. Твой импульс — менять устоявшееся.',
+    Эстет: 'Ты любишь чистую форму и аккуратность, замечаешь детали и наводишь красоту. Тебе важно, чтобы всё выглядело стройно.',
+    Творец: 'Ты придумываешь нестандартные решения и соединяешь разное в новое. Идеи для тебя — рабочий материал.',
+    Правитель: 'Тебе по душе порядок и система: организовать людей, выстроить процесс, видеть целую картину.',
+    Маг: 'Ты видишь неожиданные ходы и умеешь сделать привычное «работающим по-новому». Любишь эффект небольшого «вау» в обычных вещах.',
+    Мудрец: 'Тебе важно понимать причины и смыслы, разбираться в сложном и объяснять просто. Ты принимаешь взвешенные решения.',
+    Шут: 'Ты умеешь разряжать напряжение и смотреть на ситуацию с юмором. Помогаешь людям не застревать в серьёзности.'
 };
 
-const cardImages = Array.from({ length: 24 }, (_, idx) => `/assets/cards/card-${String(idx + 1).padStart(2, '0')}.jpg`);
+import likeIconUrl from './assets/elements/like.svg?url'
+import dislikeIconUrl from './assets/elements/dislike.svg?url'
+import likeHelpIconUrl from './assets/elements/helpLike.svg?url'
+import dislikeHelpIconUrl from './assets/elements/helpDislike.svg?url'
+
+
+const resultImageKeyByArchetype: Record<string, string> = {
+    Дитя: 'ditya',
+    'Славный малый': 'slavnyy',
+    Воин: 'voin',
+    Опекун: 'opekun',
+    Искатель: 'iskatel',
+    Бунтарь: 'buntar',
+    Эстет: 'estet',
+    Творец: 'tvorec',
+    Правитель: 'pravitel',
+    Маг: 'mag',
+    Мудрец: 'mudrec',
+    Шут: 'shut',
+}
+
+interface ArchetypeColor {
+    bg: string;
+    button: string;
+}
+
+const resultColorKeyByArchetype: Record<string, ArchetypeColor> = {
+    Дитя: {
+        bg: 'linear-gradient(180deg, #EBDBD5 43.41%, #6A5C57 100%)',
+        button: `linear-gradient(0deg, color(display-p3 0.275 0.204 0.024), color(display-p3 0.275 0.204 0.024)),
+        linear-gradient(180deg, #4C1900 0%, #2F0002 100%)`
+    },
+    'Славный малый':  {
+        bg: '',
+        button: ''
+    },
+    Воин:  {
+        bg: '',
+        button: ''
+    },
+    Опекун:  {
+        bg: '',
+        button: ''
+    },
+    Искатель:  {
+        bg: '',
+        button: ''
+    },
+    Бунтарь:  {
+        bg: '',
+        button: ''
+    },
+    Эстет:  {
+        bg: '',
+        button: ''
+    },
+    Творец:  {
+        bg: '',
+        button: ''
+    },
+    Правитель:  {
+        bg: '',
+        button: ''
+    },
+    Маг:  {
+        bg: '',
+        button: ''
+    },
+    Мудрец:  {
+        bg: '',
+        button: ''
+    },
+    Шут:  {
+        bg: '',
+        button: ''
+    },
+}
+
+const cardImages = Array.from({length: 24}, (_, idx) => `src/assets/cards/card-${String(idx + 1).padStart(2, '0')}.jpg?url`);
 
 const baseCards: ArchetypeCard[] = [
     {
@@ -149,23 +228,25 @@ const tutorialCards: ArchetypeCard[] = [
         id: -1,
         title: 'Правила — свайп вправо',
         description:
-            'Смахните вправо – если утверждение откликается вам.',
-        tutorialSubtext: 'Оно частично или полностью отражает Вас и ваши действия в жизни.',
+            'Смахните вправо – если утверждение откликается вам.',
+        tutorialSubtext: 'Оно частично или полностью отражает Вас и ваши действия в жизни.',
         composition: {},
-        art: 'linear-gradient(145deg, #1a1f2d 0%, #0f2f3a 50%, #3c6d7c 100%)',
+        art: cardImages[1],
         tutorial: true,
+        icon: likeHelpIconUrl,
         tutorialLabel: 'КАК ПОЛЬЗОВАТЬСЯ',
         requiredDirection: 'right'
     },
     {
         id: -2,
-        title: 'Правила — свайп влево',
+        title: 'Правила — свайп влево',
         description:
-            'Смахните влево – если утверждение вам не подходит.',
-        tutorialSubtext: 'Оно частично или полностью противоположно описанию Вас и ваших действий в жизни.',
+            'Смахните влево – если утверждение вам не подходит.',
+        tutorialSubtext: 'Оно частично или полностью противоположно описанию Вас и ваших действий в жизни.',
         composition: {},
-        art: 'linear-gradient(145deg, #2b1f27 0%, #621d1b 45%, #b3473f 100%)',
+        art: cardImages[0],
         tutorial: true,
+        icon: dislikeHelpIconUrl,
         tutorialLabel: 'КАК ПОЛЬЗОВАТЬСЯ',
         requiredDirection: 'left'
     }
@@ -191,9 +272,16 @@ function refreshDeckFromStorage() {
 
 const stackEl = document.getElementById('cardStack') as HTMLDivElement;
 const resultsOverlay = document.getElementById('resultsOverlay') as HTMLDivElement;
-const mainResult = document.getElementById('mainResult') as HTMLParagraphElement;
-const mainDescription = document.getElementById('mainDescription') as HTMLParagraphElement;
-const profileList = document.getElementById('profileList') as HTMLDivElement;
+
+
+const resultsPage = document.getElementById('resultsPage') as HTMLDivElement
+const resultTitle = document.getElementById('resultTitle') as HTMLHeadingElement
+const resultSubtitle = document.getElementById('resultSubtitle') as HTMLParagraphElement
+const resultText = document.getElementById('resultText') as HTMLParagraphElement
+const resultImgA = document.getElementById('resultImgA') as HTMLImageElement
+const resultImgB = document.getElementById('resultImgB') as HTMLImageElement
+const closeResultsBtn = document.getElementById('closeResults') as HTMLButtonElement
+
 const appEl = document.querySelector('.app') as HTMLDivElement;
 
 const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
@@ -231,26 +319,27 @@ function renderStack() {
         const labelMarkup = card.tutorialLabel ? `<div class="card-label">${card.tutorialLabel}</div>` : '';
         const bodyClass = card.tutorial ? 'card-text tutorial-body' : 'card-text';
         const bodyMarkup = card.tutorial
-            ? `<div class="${bodyClass}">${card.description}${
-                  card.tutorialSubtext ? `<div class="tutorial-subtext">${card.tutorialSubtext}</div>` : ''
-              }</div>`
+            ? `<div class="${bodyClass}"><div class="card-description">${card.description}</div>
+<div><img class="tutorial-icon" src="${card.icon}" alt=""></div>
+
+</div>`
             : `<div class="${bodyClass}">${card.description}</div>`;
         el.innerHTML = `
       <div class="indicator like">
-<!--     вставить свг лайка он в assets/elements/like.svg-->
+<img class="indicator-icon" src="${likeIconUrl}" alt="">
        </div>
       <div class="indicator dislike">
-<!--     вставить свг лайка он в assets/elements/dislike.svg-->
+<img class="indicator-icon" src="${dislikeIconUrl}" alt="">
        </div>
       ${
-          isTutorialCard
-              ? ''
-              : `<div class="card-counter">${cardNumber}/${totalQuestions}</div>
+            isTutorialCard
+                ? ''
+                : `<div class="card-counter">${cardNumber}/${totalQuestions}</div>
       <div class="progress-bar">
                     <div class="progress-fill" id="progressFill" style="width:${percent}%"></div>
                 </div>
 `
-      }
+        }
  
       <div class="card-content">
         ${labelMarkup}
@@ -260,6 +349,7 @@ function renderStack() {
         attachDrag(el, card);
         stackEl.appendChild(el);
     });
+    updateControlsState();
 }
 
 function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
@@ -305,6 +395,28 @@ function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
     cardEl.addEventListener('pointerup', onPointerUp);
 }
 
+function updateControlsState() {
+    const card = cards[state.index]
+    if (!card) return
+
+    const inTutorial = Boolean(card.tutorial)
+    const must = card.requiredDirection
+
+    // по макету: в онбординге блокируем "неправильную" кнопку
+    if (inTutorial && must) {
+        if (must === 'right') {
+            likeBtn.disabled = false
+            dislikeBtn.disabled = true
+        } else {
+            likeBtn.disabled = true
+            dislikeBtn.disabled = false
+        }
+    } else {
+        likeBtn.disabled = false
+        dislikeBtn.disabled = false
+    }
+}
+
 function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -1) {
     if (state.locked) return;
     const isRightDirection = direction > 0;
@@ -316,6 +428,7 @@ function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -
         if (!matches) {
             cardEl.style.transform = '';
             cardEl.classList.remove('like', 'dislike');
+            updateControlsState();
             return;
         }
     }
@@ -385,36 +498,23 @@ function computeProfile(): ArchetypeResult[] {
 }
 
 function showResults() {
-    const profile = computeProfile();
-    const best = profile[0];
-    mainResult.textContent = `Вы — ${best.name}`;
-    mainDescription.textContent = best.description;
+    const profile = computeProfile()
+    const best = profile[0]
+    showResultsPage(best.name, best.description)
+    sendResults(profile)
+}
 
-    profileList.innerHTML = '';
-    const top = profile.slice(0, 5);
-    top.forEach((item) => {
-        const row = document.createElement('div');
-        row.className = 'profile-row';
-        row.innerHTML = `
-      <span class="profile-label">${item.name}</span>
-      <span class="profile-value">${item.percent.toFixed(1)}%</span>
-    `;
-        profileList.appendChild(row);
-    });
+function showResultsPage(bestName: string, bestDescription: string) {
+    appEl.classList.add('show-results')
+    resultsPage.classList.remove('hidden')
 
-    const rest = profile.slice(5).reduce((acc, item) => acc + item.percent, 0);
-    if (rest > 0) {
-        const row = document.createElement('div');
-        row.className = 'profile-row';
-        row.innerHTML = `
-      <span class="profile-label">Остальные</span>
-      <span class="profile-value">${rest.toFixed(1)}%</span>
-    `;
-        profileList.appendChild(row);
-    }
+    resultTitle.textContent = 'Тест завершён'
+    resultSubtitle.textContent = `Вы — ${bestName}`
+    resultText.textContent = bestDescription
 
-    resultsOverlay.classList.remove('hidden');
-    sendResults(profile);
+    const key = resultImageKeyByArchetype[bestName] ?? 'default'
+    resultImgA.src = `/assets/result/images/${key}-1.jpg`
+    resultImgB.src = `/assets/result/images/${key}-2.jpg`
 }
 
 async function sendResults(profile: ArchetypeResult[]) {
@@ -425,19 +525,19 @@ async function sendResults(profile: ArchetypeResult[]) {
 
 function bindControls() {
     likeBtn.addEventListener('click', () => {
-        const card = cards[state.index];
-        if (!card || state.locked) return;
-        const topCard = stackEl.querySelector('.card[data-state="front"]') as HTMLDivElement | null;
-        if (!topCard) return;
-        swipeAway(topCard, card, 1);
+        const card = cards[state.index]
+        if (!card || state.locked || likeBtn.disabled) return
+        const topCard = stackEl.querySelector('.card[data-state="front"]') as HTMLDivElement | null
+        if (!topCard) return
+        swipeAway(topCard, card, 1)
     });
 
     dislikeBtn.addEventListener('click', () => {
-        const card = cards[state.index];
-        if (!card || state.locked) return;
-        const topCard = stackEl.querySelector('.card[data-state="front"]') as HTMLDivElement | null;
-        if (!topCard) return;
-        swipeAway(topCard, card, -1);
+        const card = cards[state.index]
+        if (!card || state.locked || dislikeBtn.disabled) return
+        const topCard = stackEl.querySelector('.card[data-state="front"]') as HTMLDivElement | null
+        if (!topCard) return
+        swipeAway(topCard, card, -1)
     });
 
     restartBtn.addEventListener('click', () => resetState());

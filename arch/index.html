@@ -2,12 +2,17 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Тест архетипов</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
     <link rel="stylesheet" href="src/style.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV@100..900,0&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="app">
@@ -69,6 +74,23 @@
         <button id="restart" class="primary">Пройти ещё раз</button>
     </div>
 </div>
+
+<section class="results-page hidden" id="resultsPage" aria-hidden="true">
+    <div class="results-page__inner">
+        <p class="results-page__eyebrow" id="resultTitle">Тест завершён</p>
+        <h1 class="results-page__title" id="resultSubtitle">Вы — ...</h1>
+
+        <div class="results-images">
+            <img id="resultImgA" class="results-img results-img--a" alt="" />
+            <img id="resultImgB" class="results-img results-img--b" alt="" />
+        </div>
+
+        <div class="results-page__text-title" id="resultTextTitle"></div>
+        <div class="results-page__text" id="resultText"></div>
+
+        <button class="results-page__close" id="closeResults" type="button">Закрыть</button>
+    </div>
+</section>
 
 <script type="module" src="src/main.ts"></script>
 </body>
