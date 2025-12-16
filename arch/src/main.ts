@@ -280,11 +280,13 @@ function renderStack() {
       ${
           isTutorialCard
               ? ''
-              : `<div class="card-counter">${cardNumber}/${totalQuestions}</div>`
-      }
-       <div class="progress-bar">
+              : `<div class="card-counter">${cardNumber}/${totalQuestions}</div>
+      <div class="progress-bar">
                     <div class="progress-fill" id="progressFill" style="width:${percent}%"></div>
                 </div>
+`
+      }
+ 
       <div class="card-content">
         ${labelMarkup}
         ${bodyMarkup}

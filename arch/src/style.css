@@ -38,8 +38,6 @@ body {
 }
 
 .app.tutorial-mode {
-    background: #efefef;
-    box-shadow: none;
 }
 
 .app {
@@ -159,13 +157,6 @@ body {
     pointer-events: none;
 }
 
-.app.tutorial-mode .card-area::before {
-    opacity: 1;
-    background: linear-gradient(180deg, rgba(115, 115, 115, 0.26) 10%, rgba(217, 217, 217, 0) 80%),
-    radial-gradient(circle at 65% 12%, rgba(160, 232, 115, 0.22), transparent 38%),
-    #efefef;
-}
-
 .card-stack {
     position: absolute;
     inset: 0;
@@ -175,8 +166,8 @@ body {
     position: absolute;
     inset: 0;
     border-radius: 28px;
-    /*background-size: cover;*/
-    /*background-position: center;*/
+    background-size: cover;
+    background-position: center;
     box-shadow: var(--shadow);
     padding: 26px 22px 40px;
     overflow: hidden;
@@ -185,10 +176,10 @@ body {
     justify-content: center;
     text-align: center;
     transform-origin: center;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%);
-linear-gradient(180deg, color(display-p3 0.000 0.000 0.000 / 0) 50%, color(display-p3 0.000 0.000 0.000 / 0.7) 100%),
-linear-gradient(0deg, rgba(0, 0, 0, 0) 90.49%, rgba(0, 0, 0, 0.6) 106.58%);
-linear-gradient(0deg, color(display-p3 0.000 0.000 0.000 / 0) 90.49%, color(display-p3 0.000 0.000 0.000 / 0.6) 106.58%);
+/*    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%);*/
+/*linear-gradient(180deg, color(display-p3 0.000 0.000 0.000 / 0) 50%, color(display-p3 0.000 0.000 0.000 / 0.7) 100%),*/
+/*linear-gradient(0deg, rgba(0, 0, 0, 0) 90.49%, rgba(0, 0, 0, 0.6) 106.58%);*/
+/*linear-gradient(0deg, color(display-p3 0.000 0.000 0.000 / 0) 90.49%, color(display-p3 0.000 0.000 0.000 / 0.6) 106.58%);*/
     transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
     will-change: transform;
 }

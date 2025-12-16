@@ -6,7 +6,7 @@
     "build:js": "esbuild src/main.ts --bundle --minify --sourcemap --outdir=dist",
     "copy:static": "mkdir -p dist && cp src/index.html dist/index.html && cp src/style.css dist/style.css && cp -R src/assets dist/assets",
     "clean": "rm -rf dist",
-    "start": "npm run build && npx serve dist",
+    "start": "npm run build -- --watch && npx serve dist",
     "dev": "npm run build:js -- --watch"
   },
   "devDependencies": {
