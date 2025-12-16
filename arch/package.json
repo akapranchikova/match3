@@ -1,16 +1,14 @@
 {
-  "name": "match3-archetype-quiz",
-  "version": "1.0.0",
+  "name": "archetype-quiz",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "build": "npm run clean && npm run build:js && npm run copy:static",
-    "build:js": "esbuild src/main.ts --bundle --minify --sourcemap --outdir=dist",
-    "copy:static": "mkdir -p dist && cp src/index.html dist/index.html && cp src/style.css dist/style.css && cp -R src/assets dist/assets",
-    "clean": "rm -rf dist",
-    "start": "npm run build -- --watch && npx serve dist",
-    "dev": "npm run build:js -- --watch"
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "esbuild": "^0.21.5",
-    "serve": "^14.2.3"
+    "vite": "^5.4.0"
   }
 }
