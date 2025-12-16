@@ -288,6 +288,78 @@ const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
 const dislikeBtn = document.getElementById('dislikeBtn') as HTMLButtonElement;
 const restartBtn = document.getElementById('restart') as HTMLButtonElement;
 
+const onboardingEl = document.getElementById('onboarding') as HTMLDivElement;
+const onbSlides = Array.from(onboardingEl?.querySelectorAll('.onboarding__slide') ?? []) as HTMLDivElement[];
+const onbNext1 = document.getElementById('onbNext1') as HTMLButtonElement | null;
+const onbNext2 = document.getElementById('onbNext2') as HTMLButtonElement | null;
+const onbStart = document.getElementById('onbStart') as HTMLButtonElement | null;
+
+const finalPageEl = document.getElementById('finalPage') as HTMLDivElement;
+const finalChatBtn = document.getElementById('finalChatBtn') as HTMLButtonElement | null;
+const finalTicketBtn = document.getElementById('finalTicketBtn') as HTMLButtonElement | null;
+const finalCloseBtn = document.getElementById('finalClose') as HTMLButtonElement | null;
+
+const ONBOARDING_KEY = 'onboardingSeen';
+
+/* ----------------- ИНИЦИАЛИЗАЦИЯ ОНБОРДИНГА ----------------- */
+function showOnboardingStep(step: number) {
+    onbSlides.forEach((s) => {
+        const active = Number(s.dataset.step) === step;
+        s.classList.toggle('active', active);
+        s.setAttribute('aria-hidden', active ? 'false' : 'true');
+    });
+}
+
+function startOnboardingIfNeeded(): boolean {
+    const seen = localStorage.getItem(ONBOARDING_KEY) === 'true';
+    if (seen || !onboardingEl) return false;
+
+    onboardingEl.classList.remove('hidden');
+    onboardingEl.setAttribute('aria-hidden', 'false');
+    (document.querySelector('.app') as HTMLDivElement)?.classList.add('hidden'); // скрываем тест до старта
+    showOnboardingStep(1);
+
+    onbNext1?.addEventListener('click', () => showOnboardingStep(2));
+    onbNext2?.addEventListener('click', () => showOnboardingStep(3));
+    onbStart?.addEventListener('click', () => {
+        localStorage.setItem(ONBOARDING_KEY, 'true');
+        onboardingEl.classList.add('hidden');
+        onboardingEl.setAttribute('aria-hidden', 'true');
+        (document.querySelector('.app') as HTMLDivElement)?.classList.remove('hidden');
+        // запускаем вашу существующую логику
+        renderStack();
+    });
+
+    return true;
+}
+
+function showFinalPage() {
+    if (!finalPageEl) return;
+    finalPageEl.classList.remove('hidden');
+    finalPageEl.setAttribute('aria-hidden', 'false');
+}
+
+function hideFinalPage() {
+    if (!finalPageEl) return;
+    finalPageEl.classList.add('hidden');
+    finalPageEl.setAttribute('aria-hidden', 'true');
+}
+
+finalChatBtn?.addEventListener('click', () => {
+    // ВАЖНО: замените на реальную ссылку ГигаЧат/чат-бот
+    window.open('https://gigachat.sber.ru/', '_blank'); // почему: чтобы пользователь не терял прогресс
+});
+
+finalTicketBtn?.addEventListener('click', () => {
+    // ВАЖНО: замените на реальную ссылку на билеты
+    window.open('https://www.tretyakovgallery.ru/', '_blank');
+});
+
+finalCloseBtn?.addEventListener('click', () => {
+    hideFinalPage();
+});
+
+
 function resetState() {
     state.index = 0;
     archetypes.forEach((a) => {
@@ -543,5 +615,15 @@ function bindControls() {
     restartBtn.addEventListener('click', () => resetState());
 }
 
+closeResultsBtn.addEventListener('click', () => {
+    resultsPage.classList.add('hidden');
+    appEl.classList.remove('show-results');
+    showFinalPage(); // почему: по ТЗ финальная страница после результата
+});
+
+// ВМЕСТО прежнего «bindControls(); renderStack();» — запускаем онбординг при необходимости
 bindControls();
-renderStack();
+if (!startOnboardingIfNeeded()) {
+    // если онбординг уже пройден — стартуем сразу
+    renderStack();
+}
