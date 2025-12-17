@@ -63,6 +63,8 @@ body {
     display: flex;
     flex-direction: column;
     padding: 16px;
+    background-color: #91847F;
+    background: linear-gradient(180deg, #fff 10%, #4C3F3A 100%);
     position: relative;
 }
 
@@ -73,8 +75,15 @@ body {
     inset: 0;
     border-radius: 0;
     pointer-events: none;
-    opacity: 0;
+    /*opacity: 0;*/
     z-index: 0;
+
+    opacity: 0.18; /* “интенсивность” шума */
+    mix-blend-mode: overlay; /* похоже на Figma, можно заменить на normal */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 80px 80px; /* “Size” (меньше = зерно мельче) */
+    filter: grayscale(1) contrast(140%);
 }
 
 .app.tutorial-mode::before,
@@ -98,7 +107,6 @@ body {
     z-index: 5;
     pointer-events: none;
     font-family: 'Space Grotesk', sans-serif;
-    color: #0e0e0e;
 }
 
 .app.tutorial-mode .branding {
@@ -114,7 +122,12 @@ body {
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
-
+.created_by {
+    font-size: 10px;
+    margin-top: 20px;
+    font-family: Geologica, sans-serif;
+    color: rgba(255, 255, 255, 0.5);
+}
 .brand-mark {
     background: #000;
     color: #fff;
@@ -174,18 +187,18 @@ body {
     justify-content: center;
     text-align: center;
     transform-origin: center;
-    transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
-    will-change: transform;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    will-change: auto;
 }
 
 .tutorial-card {
     inset: 55px 0 0;
     padding: var(--space-md1) var(--space-md1) clamp(40px, 6vh, 80px) var(--space-md1);
     align-items: flex-start;
+    font-family: Geological, sans-serif;
     justify-content: flex-start;
     box-shadow: 0px 30.15px 24.12px 0px rgba(0, 0, 0, 0.14);
     box-shadow: 0px 100px 80px 0px rgba(0, 0, 0, 0.21);
-
 }
 
 
@@ -212,7 +225,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(185deg, rgba(0, 0, 0, 0.05) 15%, rgba(0, 0, 0, 0.68));
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%);
     pointer-events: none;
 }
 
@@ -285,7 +298,7 @@ body {
 }
 
 .card[data-state='behind'] {
-    /*transform: translateY(14px) scale(1) rotate(0deg);*/
+    transform: translateY(14px) scale(0.98) rotate(0deg);
     /*opacity: 0.7;*/
     /*filter: saturate(0.85);*/
 }
@@ -375,6 +388,7 @@ button {
     border-radius: 122px;
     font-size: 32px;
     user-select: none;
+    font-family: TT Fors, sans-serif;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
     cursor: pointer;
@@ -403,6 +417,7 @@ button {
     mix-blend-mode: overlay; /* похоже на Figma, можно заменить на normal */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
     background-repeat: repeat;
+    border-radius: 122px;
     background-size: 80px 80px; /* “Size” (меньше = зерно мельче) */
     filter: grayscale(1) contrast(140%); /* “Monotone” + плотность/резкость */
 }
@@ -580,13 +595,8 @@ button {
 
 .results-page__close {
     margin-top: auto;
-    border: none;
-    height: 64px;
-    border-radius: 999px;
-    cursor: pointer;
     font-size: 18px;
     color: #fff;
-    letter-spacing: 0.3px;
 }
 
 button:disabled {
@@ -666,22 +676,30 @@ button:disabled {
     transform: translate(-50%, -50%);
 }
 
-.ball--l {
+.ball-1 {
     left: -40px;
     top: 40%;
 }
 
-.ball--m {
+.ball-2 {
     right: -24px;
     top: 18%;
 }
 
-.ball--s {
+.ball-3 {
     left: 20px;
     bottom: 16%;
 }
 
-.ball--xs {
+.ball-4 {
+    right: 14%;
+    bottom: 22%;
+}
+.ball-5 {
+    right: 4%;
+    bottom: 22%;
+}
+.ball-6 {
     right: 14%;
     bottom: 22%;
 }
@@ -808,6 +826,167 @@ button:disabled {
     animation: spinIn .8s cubic-bezier(.2, .9, .2, 1) .3s forwards;
 }
 
+/* ===== базовая раскладка (по желанию) ===== */
+.onboarding__slide {
+    position: relative;
+    overflow: hidden;
+}
+
+.onboarding__balls {
+    position: relative;
+    width: 100%;
+    height: 52vh;
+    min-height: 320px;
+}
+
+.ball {
+    position: absolute;
+    border-radius: 999px;
+    overflow: hidden;
+    /* чтобы выглядело как "обтяжка шара": */
+    box-shadow: inset 0 18px 26px rgba(255, 255, 255, .25),
+    inset 0 -22px 28px rgba(0, 0, 0, .28),
+    0 18px 40px rgba(0, 0, 0, .22);
+    transform-origin: center;
+    /* стартовое состояние: пока не активны — спрятаны */
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(.95);
+    will-change: transform, opacity;
+}
+
+.ball img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    /* Лёгкая "сферизация" картинки — без канваса: */
+    filter: contrast(1.06) saturate(1.08);
+    transform: scale(1.08);
+}
+
+/* ===== запуск анимаций только на активном слайде ===== */
+.onboarding__slide.active .ball {
+    /* единая “программа” для шаров: прилёт + вращение */
+    animation: ball-fly-in 820ms cubic-bezier(.18, .9, .18, 1) var(--delay, 0ms) both,
+    ball-spin 820ms ease-out var(--delay, 0ms) both;
+}
+
+/* ===== направления (прямые) ===== */
+.ball.fly-in-left {
+    --from-x: -140px;
+    --from-y: 0px;
+    --spin: -260deg;
+}
+
+.ball.fly-in-right {
+    --from-x: 140px;
+    --from-y: 0px;
+    --spin: 260deg;
+}
+
+.ball.fly-in-top {
+    --from-x: 0px;
+    --from-y: -140px;
+    --spin: 240deg;
+}
+
+.ball.fly-in-bottom {
+    --from-x: 0px;
+    --from-y: 160px;
+    --spin: -240deg;
+}
+
+/* ===== диагонали (добавь класс fly-diag-*) ===== */
+.ball.fly-diag-lt {
+    --from-x: -160px;
+    --from-y: -160px;
+    --spin: -300deg;
+}
+
+.ball.fly-diag-rt {
+    --from-x: 160px;
+    --from-y: -160px;
+    --spin: 300deg;
+}
+
+.ball.fly-diag-lb {
+    --from-x: -160px;
+    --from-y: 160px;
+    --spin: 320deg;
+}
+
+.ball.fly-diag-rb {
+    --from-x: 160px;
+    --from-y: 160px;
+    --spin: -320deg;
+}
+
+/* ===== keyframes прилёт + вращение ===== */
+@keyframes ball-fly-in {
+    0% {
+        opacity: 0;
+        transform: translate3d(var(--from-x, 0px), var(--from-y, 0px), 0) scale(.88);
+        filter: blur(1.4px);
+    }
+    55% {
+        opacity: 1;
+        transform: translate3d(calc(var(--from-x, 0px) * .18), calc(var(--from-y, 0px) * .18), 0) scale(1.02);
+        filter: blur(.2px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes ball-spin {
+    0% {
+        rotate: 0deg;
+    }
+    100% {
+        rotate: var(--spin, 240deg);
+    }
+}
+
+/* ===== текст + кнопка “вылезают снизу” ===== */
+.onboarding__text,
+.onboarding__actions {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+    will-change: transform, opacity;
+}
+
+.onboarding__slide.active .onboarding__text {
+    animation: rise-in 520ms cubic-bezier(.2, .9, .2, 1) 360ms both;
+}
+
+.onboarding__slide.active .onboarding__actions {
+    animation: rise-in 520ms cubic-bezier(.2, .9, .2, 1) 480ms both;
+}
+
+@keyframes rise-in {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 22px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* ===== уважение reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+    .onboarding__slide.active .ball,
+    .onboarding__slide.active .onboarding__text,
+    .onboarding__slide.active .onboarding__actions {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
 .onboarding__text {
     position: absolute;
     left: 18px;
@@ -818,35 +997,33 @@ button:disabled {
 
 .onboarding__title {
     margin: 0 0 8px;
-    font-size: var(--fs-3xl);
+    font-size: var(--fs-5xl);
+    font-family: 'Geologica', sans-serif;
     line-height: 1.1;
+    font-weight: 400;
     letter-spacing: -.3px;
 }
 
 .onboarding__subtitle {
     margin: 0;
+    font-family: 'Geologica', sans-serif;
     font-size: var(--fs-sm2);
-    opacity: .9;
-    line-height: 1.5;
+    line-height: 140%;
 }
 
 .onboarding__actions {
     position: absolute;
-    left: 18px;
-    right: 18px;
-    bottom: 36px;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
 }
 
 .onb-btn {
     width: 100%;
-    height: 64px;
-    border-radius: 999px;
-    border: none;
-    cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 18px;
-    letter-spacing: .3px;
-    color: #0f0f0f;
-    font-weight: 800;
+    font-weight: 400;
+    line-height: 1;
 }
 
 .onb-btn--primary {
@@ -859,10 +1036,12 @@ button:disabled {
 .final-page {
     position: fixed;
     inset: 0;
+    display: flex;
+    align-items: flex-end;
     z-index: 60;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    background: #1E4A34;
+    background-image: url("assets/result/images/ditya-1.jpg");
+    background-size: cover;
+    background-position: center;
 }
 
 .final-page.hidden {
@@ -875,13 +1054,6 @@ button:disabled {
     min-height: 300px;
 }
 
-.final-hero__img {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-}
-
 .final-hero__overlay {
     position: absolute;
     inset: 0;
@@ -890,17 +1062,16 @@ button:disabled {
 
 .final-content {
     position: relative;
-    padding: 20px 18px 26px;
+    padding: 33px;
     color: #fff;
-    background: radial-gradient(120% 80% at 50% -10%, rgba(255, 255, 255, .18), transparent 60%),
-    linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, 0) 40%),
-    linear-gradient(180deg, #24583F 40%, #1E4A34 100%);
+    background: linear-gradient(180deg,transparent 0%, #24583F 40%, #1E4A34 100%);
 }
 
 .final-title {
     margin: -26px 0 14px;
     font-size: var(--fs-2xl);
     line-height: 1.15;
+    font-weight: normal;
     letter-spacing: -.2px;
     text-align: center;
 }
@@ -908,10 +1079,8 @@ button:disabled {
 .final-logos {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 18px;
-    opacity: .95;
-    margin-bottom: 16px;
+    justify-content: space-between;
+    margin-bottom: 28px;
 }
 
 .final-logos img {
@@ -923,24 +1092,14 @@ button:disabled {
 
 .final-actions {
     display: grid;
-    gap: 14px;
+    gap: 4px;
     margin-top: 8px;
 }
 
 .final-btn {
-    height: 64px;
-    border-radius: 999px;
-    border: none;
-    cursor: pointer;
     font-size: 18px;
-    letter-spacing: .3px;
     color: #fff;
-    font-weight: 700;
-    background: linear-gradient(135deg, #0C4C1F, #13322E);
-}
-
-.final-btn + .final-btn {
-    background: linear-gradient(135deg, #461306, #330B01);
+    background: rgba(52, 84, 44, 1);
 }
 
 .final-close {

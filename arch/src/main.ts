@@ -60,53 +60,52 @@ interface ArchetypeColor {
 
 const resultColorKeyByArchetype: Record<string, ArchetypeColor> = {
     Дитя: {
-        bg: 'linear-gradient(180deg, #EBDBD5 43.41%, #6A5C57 100%)',
-        button: `linear-gradient(0deg, color(display-p3 0.275 0.204 0.024), color(display-p3 0.275 0.204 0.024)),
-        linear-gradient(180deg, #4C1900 0%, #2F0002 100%)`
+        bg: '#F0DDDB',
+        button: `linear-gradient(180deg, #461C06 0%, #2B0404 100%)`
     },
     'Славный малый':  {
-        bg: '',
-        button: ''
+        bg: '#C3DDED',
+        button: `linear-gradient(180deg, #062A46 0%, #04172B 100%)`
     },
     Воин:  {
-        bg: '',
-        button: ''
+        bg: '#B03C34',
+        button: `linear-gradient(180deg, #461C06 0%, #2B0404 100%)`
     },
     Опекун:  {
-        bg: '',
-        button: ''
+        bg: '#89663E',
+        button: `linear-gradient(180deg, #463106 0%, #2B1A04 100%)`
     },
     Искатель:  {
-        bg: '',
-        button: ''
+        bg: '#6D9B70',
+        button: `linear-gradient(180deg, #064633 0%, #032A2D 100%)`
     },
     Бунтарь:  {
-        bg: '',
-        button: ''
+        bg: '#252722',
+        button: `linear-gradient(180deg, #212121 0%, #131313 100%)`
     },
     Эстет:  {
-        bg: '',
-        button: ''
+        bg: '#F1F0EE',
+        button: `linear-gradient(180deg, #212121 0%, #131313 100%)`
     },
     Творец:  {
-        bg: '',
-        button: ''
+        bg: '#F0CC4E',
+        button: `linear-gradient(180deg, #463106 0%, #2B1A04 100%)`
     },
     Правитель:  {
-        bg: '',
-        button: ''
+        bg: '#842E5D',
+        button: `linear-gradient(180deg, #560E35 0%, #1D0612 100%)`
     },
     Маг:  {
-        bg: '',
-        button: ''
+        bg: '#563D78',
+        button: `linear-gradient(180deg, #2E0E56 0%, #17061D 100%)`
     },
     Мудрец:  {
-        bg: '',
-        button: ''
+        bg: '#1C3C7D',
+        button: `linear-gradient(180deg, #061946 0%, #04022C 100%)`
     },
     Шут:  {
-        bg: '',
-        button: ''
+        bg: '#E49E39',
+        button: `linear-gradient(180deg, #463106 0%, #2B1A04 100%)`
     },
 }
 
@@ -416,6 +415,7 @@ function renderStack() {
       <div class="card-content">
         ${labelMarkup}
         ${bodyMarkup}
+        ${isTutorialCard ? '' : '<div class="created_by">Сгенерировано в ГигаЧат</div>'}
       </div>
     `;
         attachDrag(el, card);
@@ -585,8 +585,11 @@ function showResultsPage(bestName: string, bestDescription: string) {
     resultText.textContent = bestDescription
 
     const key = resultImageKeyByArchetype[bestName] ?? 'default'
-    resultImgA.src = `/assets/result/images/${key}-1.jpg`
-    resultImgB.src = `/assets/result/images/${key}-2.jpg`
+    resultImgA.src = `src/assets/result/images/${key}-1.jpg`
+    resultImgB.src = `src/assets/result/images/${key}-2.jpg`
+
+    closeResultsBtn?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].button}`)
+    resultsPage?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].bg}`)
 }
 
 async function sendResults(profile: ArchetypeResult[]) {
