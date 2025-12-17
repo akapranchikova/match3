@@ -700,31 +700,60 @@ button:disabled {
 }
 
 .ball-1 {
-    left: -40px;
-    top: 40%;
+    left: -8%;
+    top: 8%;
 }
 
 .ball-2 {
-    right: -24px;
-    top: 18%;
+    right: -8%;
+    top: 14%;
 }
 
 .ball-3 {
-    left: 20px;
-    bottom: 16%;
+    left: 6%;
+    top: 46%;
 }
 
 .ball-4 {
-    right: 14%;
-    bottom: 22%;
+    right: 4%;
+    top: 42%;
 }
 .ball-5 {
-    right: 4%;
-    bottom: 22%;
+    left: 20%;
+    top: 70%;
 }
 .ball-6 {
-    right: 14%;
-    bottom: 22%;
+    right: -6%;
+    top: 64%;
+}
+.ball-7 {
+    left: -10%;
+    top: 54%;
+}
+
+.ball-8 {
+    left: calc(50% - 90px);
+    top: 46%;
+}
+
+.ball-9 {
+    right: -8%;
+    top: 30%;
+}
+
+.ball-10 {
+    left: 4%;
+    top: 20%;
+}
+
+.ball-11 {
+    left: 46%;
+    bottom: 10%;
+}
+
+.ball-12 {
+    right: -10%;
+    bottom: 8%;
 }
 
 /* анимации влёта */
@@ -789,35 +818,6 @@ button:disabled {
 
 .fly-in-bottom {
     animation: flyBottom .6s cubic-bezier(.2, .9, .2, 1) forwards;
-    animation-delay: var(--delay, 0ms);
-}
-
-/* зум центрального шара */
-@keyframes zoomFocus {
-    from {
-        transform: translate(-50%, -50%) scale(.8);
-        opacity: .6;
-    }
-    to {
-        transform: translate(-50%, -50%) scale(1.2);
-        opacity: 1;
-    }
-}
-
-.zoom-focus {
-    animation: zoomFocus .8s cubic-bezier(.2, .9, .2, 1) forwards;
-}
-
-/* уход вправо (экран 3) */
-@keyframes outRight {
-    to {
-        transform: translateX(140%) rotate(10deg) scale(0.92);
-        opacity: 0;
-    }
-}
-
-.slide-out-right {
-    animation: outRight .7s cubic-bezier(.2, .9, .2, 1) forwards;
     animation-delay: var(--delay, 0ms);
 }
 
@@ -967,6 +967,9 @@ button:disabled {
     0% {
         rotate: 0deg;
     }
+    80% {
+        rotate: var(--spin, 240deg);
+    }
     100% {
         rotate: var(--spin, 240deg);
     }
@@ -975,26 +978,22 @@ button:disabled {
 /* ===== текст + кнопка “вылезают снизу” ===== */
 .onboarding__text,
 .onboarding__actions {
-    opacity: 0;
-    transform: translate3d(0, 22px, 0);
+    opacity: 1;
+    transform: translate3d(0, 120px, 0);
     will-change: transform, opacity;
 }
 
-.onboarding__slide.active .onboarding__text {
-    animation: rise-in 520ms cubic-bezier(.2, .9, .2, 1) 360ms both;
-}
-
+.onboarding__slide.active .onboarding__text,
 .onboarding__slide.active .onboarding__actions {
-    animation: rise-in 520ms cubic-bezier(.2, .9, .2, 1) 480ms both;
+    animation: rise-in 520ms cubic-bezier(.2, .9, .2, 1) both;
 }
 
 @keyframes rise-in {
     from {
-        opacity: 0;
-        transform: translate3d(0, 22px, 0);
+        opacity: 1;
+        transform: translate3d(0, 120px, 0);
     }
     to {
-        opacity: 1;
         transform: translate3d(0, 0, 0);
     }
 }
