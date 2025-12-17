@@ -304,6 +304,7 @@ const restartBtn = document.getElementById('restart') as HTMLButtonElement;
 
 const onboardingEl = document.getElementById('onboarding') as HTMLDivElement;
 const onbSlides = Array.from(onboardingEl?.querySelectorAll('.onboarding__slide') ?? []) as HTMLDivElement[];
+const sharedOnbBalls = Array.from(onboardingEl?.querySelectorAll('.onboarding__balls--shared .ball') ?? []) as HTMLDivElement[];
 const onbNext1 = document.getElementById('onbNext1') as HTMLButtonElement | null;
 const onbNext2 = document.getElementById('onbNext2') as HTMLButtonElement | null;
 const onbStart = document.getElementById('onbStart') as HTMLButtonElement | null;
@@ -317,6 +318,15 @@ const ONBOARDING_KEY = 'onboardingSeen';
 
 /* ----------------- ИНИЦИАЛИЗАЦИЯ ОНБОРДИНГА ----------------- */
 function showOnboardingStep(step: number) {
+    const prevStep = Number(onboardingEl?.dataset.step || 0);
+
+    if (prevStep && sharedOnbBalls.length) {
+        sharedOnbBalls.forEach((ball) => {
+            const current = getComputedStyle(ball).transform;
+            ball.style.transform = current === 'none' ? 'translate3d(0, 0, 0)' : current;
+        });
+    }
+
     onbSlides.forEach((s) => {
         const active = Number(s.dataset.step) === step;
         s.classList.toggle('active', active);
@@ -327,6 +337,19 @@ function showOnboardingStep(step: number) {
             onboardingEl.style.backgroundColor = bgColor?.trim() || '#2E6C46';
         }
     });
+
+    if (onboardingEl) {
+        onboardingEl.classList.remove('onboarding--step-1', 'onboarding--step-2', 'onboarding--step-3');
+        onboardingEl.classList.add(`onboarding--step-${step}`);
+        onboardingEl.dataset.step = String(step);
+    }
+
+    if (prevStep && sharedOnbBalls.length) {
+        onboardingEl?.offsetHeight;
+        requestAnimationFrame(() => {
+            sharedOnbBalls.forEach((ball) => ball.style.removeProperty('transform'));
+        });
+    }
 }
 
 function startOnboardingIfNeeded(): boolean {
