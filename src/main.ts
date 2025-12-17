@@ -273,6 +273,10 @@ const state = {
     locked: false
 };
 
+const SWIPE_OUT_DURATION_MS =650;
+const SWIPE_OUT_EASING = 'cubic-bezier(.42,.59,.95,.19)';
+// const SWIPE_OUT_EASING = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+
 function refreshDeckFromStorage() {
     const seenTutorial = localStorage.getItem(tutorialStorageKey) === 'true';
     tutorialLength = seenTutorial ? 0 : tutorialCards.length;
@@ -533,7 +537,7 @@ function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -
 
     state.locked = true;
     const offset = direction * 650;
-    cardEl.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+    cardEl.style.transition = `transform ${SWIPE_OUT_DURATION_MS}ms ${SWIPE_OUT_EASING}, opacity ${SWIPE_OUT_DURATION_MS}ms ${SWIPE_OUT_EASING}`;
     cardEl.style.transform = `translate(${offset}px, -40px) rotate(${direction * 15}deg)`;
     cardEl.style.opacity = '0';
     cardEl.classList.add(direction > 0 ? 'like' : 'dislike');
@@ -547,7 +551,7 @@ function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -
     setTimeout(() => {
         state.locked = false;
         renderStack();
-    }, 320);
+    }, SWIPE_OUT_DURATION_MS);
 }
 
 function handleVote(card: ArchetypeCard, liked: boolean) {
