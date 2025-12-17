@@ -830,12 +830,6 @@ button:disabled {
     fill: #fff;
 }
 
-/* расположение шаров */
-.ball--xl {
-    left: 50%;
-    top: 26%;
-    transform: translate(-50%, -50%);
-}
 
 .ball-1 {
     left: -4%;
@@ -875,35 +869,6 @@ button:disabled {
     top: 16%;
     --step-2-transform: translate3d(114%, -38%, 0);
     --step-3-transform: translate3d(174%, -134%, 0) scale(.74);
-}
-.ball-7 {
-    left: -10%;
-    top: 54%;
-}
-
-.ball-8 {
-    left: calc(50% - 90px);
-    top: 46%;
-}
-
-.ball-9 {
-    right: -8%;
-    top: 30%;
-}
-
-.ball-10 {
-    left: 4%;
-    top: 20%;
-}
-
-.ball-11 {
-    left: 46%;
-    bottom: 10%;
-}
-
-.ball-12 {
-    right: -10%;
-    bottom: 8%;
 }
 
 /* анимации влёта */
