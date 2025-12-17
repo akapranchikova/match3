@@ -408,9 +408,21 @@ button {
     align-items: center;
     justify-content: center;
     position: relative;
+    overflow: hidden;
+
 }
 
-.action {
+button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.3; /* “интенсивность” шума */
+    mix-blend-mode: multiply; /* встраивается в цвет кнопки */
+    background-image: url('assets/button-texture.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 
 }
 
