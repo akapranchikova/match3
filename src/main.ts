@@ -67,6 +67,56 @@ const resultImageKeyByArchetype: Record<string, string> = {
     Шут: 'shut',
 }
 
+const resultImages: Record<string, { first?: string; second: string }> = {
+    ditya: {
+        first: new URL('./assets/result/images/ditya-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/ditya-2.jpg', import.meta.url).href,
+    },
+    slavnyy: {
+        first: new URL('./assets/result/images/slavnyy-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/slavnyy-2.jpg', import.meta.url).href,
+    },
+    voin: {
+        first: new URL('./assets/result/images/voin-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/voin-2.jpg', import.meta.url).href,
+    },
+    opekun: {
+        first: new URL('./assets/result/images/opekun-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/opekun-2.jpg', import.meta.url).href,
+    },
+    iskatel: {
+        first: new URL('./assets/result/images/iskatel-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/iskatel-2.jpg', import.meta.url).href,
+    },
+    buntar: {
+        first: new URL('./assets/result/images/buntar-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/buntar-2.jpg', import.meta.url).href,
+    },
+    estet: {
+        first: new URL('./assets/result/images/estet-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/estet-2.jpg', import.meta.url).href,
+    },
+    tvorec: {
+        first: new URL('./assets/result/images/tvorec-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/tvorec-2.jpg', import.meta.url).href,
+    },
+    pravitel: {
+        first: new URL('./assets/result/images/pravitel-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/pravitel-2.jpg', import.meta.url).href,
+    },
+    mag: {
+        first: new URL('./assets/result/images/mag-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/mag-2.jpg', import.meta.url).href,
+    },
+    mudrec: {
+        first: new URL('./assets/result/images/mudrec-1.jpg', import.meta.url).href,
+        second: new URL('./assets/result/images/mudrec-2.jpg', import.meta.url).href,
+    },
+    shut: {
+        second: new URL('./assets/result/images/shut-2.jpg', import.meta.url).href,
+    },
+};
+
 interface ArchetypeColor {
     bg: string;
     color: string;
@@ -136,7 +186,9 @@ const resultColorKeyByArchetype: Record<string, ArchetypeColor> = {
     },
 }
 
-const cardImages = Array.from({length: 24}, (_, idx) => `src/assets/cards/card-${String(idx + 1).padStart(2, '0')}.jpg?url`);
+const cardImages = Array.from({length: 24}, (_, idx) =>
+    new URL(`./assets/cards/card-${String(idx + 1).padStart(2, '0')}.jpg`, import.meta.url).href
+);
 
 const preloadCache = new Set<string>();
 function preloadImage(src: string) {
@@ -147,6 +199,11 @@ function preloadImage(src: string) {
     img.src = src;
     preloadCache.add(src);
 }
+
+Object.values(resultImages).forEach(({ first, second }) => {
+    if (first) preloadImage(first);
+    preloadImage(second);
+});
 
 const baseCards: ArchetypeCard[] = [
     {
@@ -489,15 +546,15 @@ function renderStack() {
         ${isTutorialCard ? '' : '<div class="created_by">Сгенерировано в ГигаЧат</div>'}
       </div>
     `;
+        preloadImage(card.art);
         const backgroundImg = document.createElement('img');
         backgroundImg.className = 'card-bg';
         backgroundImg.src = card.art;
         backgroundImg.alt = '';
-        backgroundImg.loading = 'lazy';
+        backgroundImg.loading = 'eager';
         backgroundImg.decoding = 'async';
         backgroundImg.setAttribute('aria-hidden', 'true');
         el.prepend(backgroundImg);
-        preloadImage(card.art);
         attachDrag(el, card);
         stackEl.appendChild(el);
     });
@@ -701,12 +758,12 @@ function showResultsPage(bestName: string, bestDescription: string) {
     if (isJester) {
         resultImgA.classList.add('hidden')
         resultImgB.classList.add('solo')
-        resultImgB.src = `src/assets/result/images/${key}-2.jpg`
+        resultImgB.src = resultImages[key]?.second ?? resultImages.ditya.second
     } else {
         resultImgA.classList.remove('hidden')
         resultImgB.classList.remove('solo')
-        resultImgA.src = `src/assets/result/images/${key}-1.jpg`
-        resultImgB.src = `src/assets/result/images/${key}-2.jpg`
+        resultImgA.src = resultImages[key]?.first ?? resultImages.ditya.first!
+        resultImgB.src = resultImages[key]?.second ?? resultImages.ditya.second
     }
 
     if (animateImages && resultsImages) {
