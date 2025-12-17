@@ -397,6 +397,7 @@ body {
 button {
     height: clamp(75px, 14vw, 96px);
     border-radius: 122px;
+    min-height: 75px;
     font-size: 32px;
     user-select: none;
     font-family: TT Fors, sans-serif;
@@ -563,7 +564,7 @@ button::before {
 .results-page__eyebrow {
     text-align: center;
     margin: 0;
-    font-size: 22px;
+    font-size: var(--fs-lg);
 }
 
 .results-page__title {
@@ -585,7 +586,7 @@ button::before {
 .results-img {
     position: absolute;
     width: 54%;
-    max-width: 313px;
+    max-width: 200px;
     aspect-ratio: 3 / 4;
     object-fit: cover;
     border-radius: 32px;
