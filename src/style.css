@@ -54,8 +54,7 @@ body {
     justify-content: center;
 }
 
-.app.tutorial-mode {
-}
+
 
 .app {
     width: min(420px, 100vw);
@@ -67,6 +66,10 @@ body {
     background: linear-gradient(180deg, #fff 10%, #4C3F3A 100%);
     position: relative;
 }
+.app.tutorial-mode {
+    background: white;
+}
+
 
 .app::before,
 .app::after {
@@ -88,7 +91,7 @@ body {
 
 .app.tutorial-mode::before,
 .app.tutorial-mode::after {
-    opacity: 1;
+    opacity: 0;
 }
 
 .app > * {
