@@ -111,6 +111,16 @@ const resultColorKeyByArchetype: Record<string, ArchetypeColor> = {
 
 const cardImages = Array.from({length: 24}, (_, idx) => `src/assets/cards/card-${String(idx + 1).padStart(2, '0')}.jpg?url`);
 
+const preloadCache = new Set<string>();
+function preloadImage(src: string) {
+    if (!src || preloadCache.has(src)) return;
+
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = src;
+    preloadCache.add(src);
+}
+
 const baseCards: ArchetypeCard[] = [
     {
         id: 1,
@@ -386,21 +396,20 @@ function renderStack() {
         const answeredQuestions = Math.max(0, state.index - tutorialLength);
         const cardNumber = isTutorialCard ? null : answeredQuestions + idx + 1;
         const percent = (answeredQuestions / totalQuestions) * 100;
-        el.style.setProperty('background-image', `url(${card.art})`);
         const labelMarkup = card.tutorialLabel ? `<div class="card-label">${card.tutorialLabel}</div>` : '';
         const bodyClass = card.tutorial ? 'card-text tutorial-body' : 'card-text';
         const bodyMarkup = card.tutorial
             ? `<div class="${bodyClass}"><div class="card-description">${card.description}</div>
-<div><img class="tutorial-icon" src="${card.icon}" alt=""></div>
+<div><img class="tutorial-icon" src="${card.icon}" alt="" loading="lazy" decoding="async"></div>
 
 </div>`
             : `<div class="${bodyClass}">${card.description}</div>`;
         el.innerHTML = `
       <div class="indicator like">
-<img class="indicator-icon" src="${likeIconUrl}" alt="">
+<img class="indicator-icon" src="${likeIconUrl}" alt="" loading="lazy" decoding="async">
        </div>
       <div class="indicator dislike">
-<img class="indicator-icon" src="${dislikeIconUrl}" alt="">
+<img class="indicator-icon" src="${dislikeIconUrl}" alt="" loading="lazy" decoding="async">
        </div>
       ${
             isTutorialCard
@@ -418,9 +427,20 @@ function renderStack() {
         ${isTutorialCard ? '' : '<div class="created_by">Сгенерировано в ГигаЧат</div>'}
       </div>
     `;
+        const backgroundImg = document.createElement('img');
+        backgroundImg.className = 'card-bg';
+        backgroundImg.src = card.art;
+        backgroundImg.alt = '';
+        backgroundImg.loading = 'lazy';
+        backgroundImg.decoding = 'async';
+        backgroundImg.setAttribute('aria-hidden', 'true');
+        el.prepend(backgroundImg);
+        preloadImage(card.art);
         attachDrag(el, card);
         stackEl.appendChild(el);
     });
+    const lookaheadCards = cards.slice(state.index + activeCards.length, state.index + activeCards.length + 3);
+    lookaheadCards.forEach((nextCard) => preloadImage(nextCard.art));
     updateControlsState();
 }
 
