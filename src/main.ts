@@ -537,6 +537,12 @@ function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -
     cardEl.style.transform = `translate(${offset}px, -40px) rotate(${direction * 15}deg)`;
     cardEl.style.opacity = '0';
     cardEl.classList.add(direction > 0 ? 'like' : 'dislike');
+    const nextCard = stackEl.querySelector('.card[data-state="behind"]') as HTMLDivElement | null;
+    if (nextCard) {
+        nextCard.dataset.state = 'front';
+        nextCard.style.transform = '';
+        nextCard.style.opacity = '1';
+    }
     handleVote(card, isRightDirection);
     setTimeout(() => {
         state.locked = false;
