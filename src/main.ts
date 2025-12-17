@@ -287,6 +287,7 @@ const resultsPage = document.getElementById('resultsPage') as HTMLDivElement
 const resultTitle = document.getElementById('resultTitle') as HTMLHeadingElement
 const resultSubtitle = document.getElementById('resultSubtitle') as HTMLParagraphElement
 const resultText = document.getElementById('resultText') as HTMLParagraphElement
+const resultsImages = document.querySelector('.results-images') as HTMLDivElement
 const resultImgA = document.getElementById('resultImgA') as HTMLImageElement
 const resultImgB = document.getElementById('resultImgB') as HTMLImageElement
 const closeResultsBtn = document.getElementById('closeResults') as HTMLButtonElement
@@ -610,8 +611,30 @@ function showResultsPage(bestName: string, bestDescription: string) {
     resultText.textContent = bestDescription
 
     const key = resultImageKeyByArchetype[bestName] ?? 'default'
-    resultImgA.src = `src/assets/result/images/${key}-1.jpg`
-    resultImgB.src = `src/assets/result/images/${key}-2.jpg`
+    const isJester = bestName === 'Шут'
+    const animateImages = !isJester
+
+    resultsImages?.classList.toggle('single', isJester)
+
+    if (isJester) {
+        resultImgA.classList.add('hidden')
+        resultImgB.classList.add('solo')
+        resultImgB.src = `src/assets/result/images/${key}-2.jpg`
+    } else {
+        resultImgA.classList.remove('hidden')
+        resultImgB.classList.remove('solo')
+        resultImgA.src = `src/assets/result/images/${key}-1.jpg`
+        resultImgB.src = `src/assets/result/images/${key}-2.jpg`
+    }
+
+    if (animateImages && resultsImages) {
+        resultsImages.classList.remove('animate')
+        // перезапуск анимации в DOM
+        void resultsImages.offsetWidth
+        resultsImages.classList.add('animate')
+    } else {
+        resultsImages?.classList.remove('animate')
+    }
 
     closeResultsBtn?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].button}`)
     resultsPage?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].bg}`)
