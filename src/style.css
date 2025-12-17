@@ -840,29 +840,41 @@ button:disabled {
 .ball-1 {
     left: -4%;
     top: 6%;
+    --step-2-transform: translate3d(-114%, -42%, 0);
+    --step-3-transform: translate3d(-188%, -122%, 0) scale(.74);
 }
 
 .ball-2 {
     right: -6%;
     top: 10%;
+    --step-2-transform: translate3d(118%, -48%, 0);
+    --step-3-transform: translate3d(192%, -118%, 0) scale(.74);
 }
 
 .ball-3 {
     left: 12%;
     top: 22%;
+    --step-2-transform: translate3d(-92%, -18%, 0);
+    --step-3-transform: translate3d(-172%, -88%, 0) scale(.64);
 }
 
 .ball-4 {
     right: 18%;
     top: 26%;
+    --step-2-transform: translate3d(112%, -16%, 0);
+    --step-3-transform: translate3d(186%, -82%, 0) scale(.64);
 }
 .ball-5 {
     left: 50%;
     top: 32%;
+    --step-2-transform: translate3d(-10%, -18%, 0) scale(1.84);
+    --step-3-transform: translate3d(-18%, -166%, 0) scale(.64);
 }
 .ball-6 {
     right: 30%;
     top: 16%;
+    --step-2-transform: translate3d(114%, -38%, 0);
+    --step-3-transform: translate3d(174%, -134%, 0) scale(.74);
 }
 .ball-7 {
     left: -10%;
@@ -937,26 +949,6 @@ button:disabled {
         transform: translateY(0) scale(1);
         opacity: 1;
     }
-}
-
-.fly-in-left {
-    animation: flyLeft .6s cubic-bezier(.2, .9, .2, 1) forwards;
-    animation-delay: var(--delay, 0ms);
-}
-
-.fly-in-right {
-    animation: flyRight .6s cubic-bezier(.2, .9, .2, 1) forwards;
-    animation-delay: var(--delay, 0ms);
-}
-
-.fly-in-top {
-    animation: flyTop .6s cubic-bezier(.2, .9, .2, 1) forwards;
-    animation-delay: var(--delay, 0ms);
-}
-
-.fly-in-bottom {
-    animation: flyBottom .6s cubic-bezier(.2, .9, .2, 1) forwards;
-    animation-delay: var(--delay, 0ms);
 }
 
 /* спин лого ГигаЧат */
@@ -1044,70 +1036,11 @@ button:disabled {
 /* ===== продолжение движения на втором шаге без пересоздания шаров ===== */
 .onboarding--step-2 .ball {
     opacity: 1;
+    transform: var(--step-2-transform, translate3d(0, 0, 0));
 }
 
-.onboarding--step-2 .ball-1 { transform: translate3d(-114%, -42%, 0); }
-.onboarding--step-2 .ball-2 { transform: translate3d(118%, -48%, 0); }
-.onboarding--step-2 .ball-3 { transform: translate3d(-92%, -18%, 0); }
-.onboarding--step-2 .ball-4 { transform: translate3d(112%, -16%, 0); }
-.onboarding--step-2 .ball-5 { transform: translate3d(-10%, -18%, 0) scale(1.84); }
-.onboarding--step-2 .ball-6 { transform: translate3d(114%, -38%, 0); }
-
-.onboarding--step-3 .ball-1 { transform: translate3d(-188%, -122%, 0) scale(.74); }
-.onboarding--step-3 .ball-2 { transform: translate3d(192%, -118%, 0) scale(.74); }
-.onboarding--step-3 .ball-3 { transform: translate3d(-172%, -88%, 0) scale(.64); }
-.onboarding--step-3 .ball-4 { transform: translate3d(186%, -82%, 0) scale(.64); }
-.onboarding--step-3 .ball-5 { transform: translate3d(-18%, -166%, 0) scale(.64); }
-.onboarding--step-3 .ball-6 { transform: translate3d(174%, -134%, 0) scale(.74); }
-
-/* ===== направления (прямые) ===== */
-.ball.fly-in-left {
-    --from-x: -140px;
-    --from-y: 0px;
-    --spin: -260deg;
-}
-
-.ball.fly-in-right {
-    --from-x: 140px;
-    --from-y: 0px;
-    --spin: 260deg;
-}
-
-.ball.fly-in-top {
-    --from-x: 0px;
-    --from-y: -140px;
-    --spin: 240deg;
-}
-
-.ball.fly-in-bottom {
-    --from-x: 0px;
-    --from-y: 160px;
-    --spin: -240deg;
-}
-
-/* ===== диагонали (добавь класс fly-diag-*) ===== */
-.ball.fly-diag-lt {
-    --from-x: -160px;
-    --from-y: -160px;
-    --spin: -300deg;
-}
-
-.ball.fly-diag-rt {
-    --from-x: 160px;
-    --from-y: -160px;
-    --spin: 300deg;
-}
-
-.ball.fly-diag-lb {
-    --from-x: -160px;
-    --from-y: 160px;
-    --spin: 320deg;
-}
-
-.ball.fly-diag-rb {
-    --from-x: 160px;
-    --from-y: 160px;
-    --spin: -320deg;
+.onboarding--step-3 .ball {
+    transform: var(--step-3-transform, translate3d(0, 0, 0));
 }
 
 /* ===== keyframes прилёт + вращение ===== */
