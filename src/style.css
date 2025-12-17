@@ -211,6 +211,10 @@ body {
     box-shadow: 0px 100px 80px 0px rgba(0, 0, 0, 0.21);
 }
 
+.tutorial-card .indicator {
+    display: none;
+}
+
 
 .tutorial-card::after {
     content: "";
@@ -699,6 +703,7 @@ button:disabled {
     display: none;
     padding: 20px 18px 22px;
     width: min(420px, 100vw);
+    /*width: 100vw;*/
     margin: 0 auto;
     height: 100dvh;
 }
@@ -832,94 +837,44 @@ button:disabled {
 
 
 .ball-1 {
-    left: -4%;
-    top: 6%;
-    --step-2-transform: translate3d(-114%, -42%, 0);
-    --step-3-transform: translate3d(-188%, -122%, 0) scale(.74);
+    --step-0-transform: translate3d(-114%, 40vh, 0);
+    --step-1-transform: translate3d(-60%, 30vh, 0);
+    --step-2-transform: translate3d(-70%, 45vh, 0);
 }
 
 .ball-2 {
-    right: -6%;
-    top: 10%;
-    --step-2-transform: translate3d(118%, -48%, 0);
-    --step-3-transform: translate3d(192%, -118%, 0) scale(.74);
+    --step-0-transform: translate3d(-102%, -80%, 0);
+    --step-1-transform: translate3d(14vw, 15vh, 0);
+    --step-2-transform: translate3d(-50%, -10%, 0) scale(1.2);
 }
 
 .ball-3 {
-    left: 12%;
-    top: 22%;
-    --step-2-transform: translate3d(-92%, -18%, 0);
-    --step-3-transform: translate3d(-172%, -88%, 0) scale(.64);
+    --step-0-transform: translate3d(100vw, -100%, 0);
+    --step-1-transform: translate3d(calc(100vw - 100% - 12vw), 7vh, 0);
+    --step-2-transform: translate3d(calc(100vw - 70%), -40%, 0) scale(1.2);
 }
 
 .ball-4 {
-    right: 18%;
-    top: 26%;
-    --step-2-transform: translate3d(112%, -16%, 0);
-    --step-3-transform: translate3d(186%, -82%, 0) scale(.64);
+    --step-0-transform: translate3d(200vw, 10vh, 0);
+    --step-1-transform: translate3d(calc(100vw - 50%), 20vh, 0);
+    --step-2-transform: translate3d(calc(100vw - 10%), 15vh, 0) scale(1.1);
 }
 .ball-5 {
-    left: 50%;
-    top: 32%;
-    --step-2-transform: translate3d(-10%, -18%, 0) scale(1.84);
-    --step-3-transform: translate3d(-18%, -166%, 0) scale(.64);
+    --step-0-transform: translate3d(100vw, 26vh, 0) scale(1);
+    --step-1-transform: translate3d(calc(50vw - 30%), 31vh, 0) scale(1);
+    --step-2-transform: translate3d(calc(50vw - 50%), 20vh, 0) scale(1.74);
 }
 .ball-6 {
-    right: 30%;
-    top: 16%;
-    --step-2-transform: translate3d(114%, -38%, 0);
-    --step-3-transform: translate3d(174%, -134%, 0) scale(.74);
-}
-
-/* анимации влёта */
-@keyframes flyLeft {
-    from {
-        transform: translateX(-120%) scale(.9);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0) scale(1);
-        opacity: 1;
-    }
-}
-
-@keyframes flyRight {
-    from {
-        transform: translateX(120%) scale(.9);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0) scale(1);
-        opacity: 1;
-    }
-}
-
-@keyframes flyTop {
-    from {
-        transform: translateY(-120%) scale(.9);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-}
-
-@keyframes flyBottom {
-    from {
-        transform: translateY(120%) scale(.9);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
+    --step-0-transform: translate3d(100vw, 41vh, 0);
+    --step-1-transform: translate3d(calc(100vw - 80%), 40vh, 0);
+    --step-2-transform: translate3d(calc(100vw - 30%), 40vh, 0) scale(1.1);
 }
 
 /* спин лого ГигаЧат */
 .gigachat-logo {
     font-weight: 900;
     line-height: .9;
+    height: fit-content;
     font-size: clamp(48px, 21vw, 120px);
     letter-spacing: -2px;
     color: #fff;
@@ -932,7 +887,7 @@ button:disabled {
 @keyframes spinIn {
     0% {
         opacity: 0;
-        transform: scale(.6) rotate(-40deg);
+        transform: scale(.1) rotate(-760deg);
     }
     100% {
         opacity: 1;
@@ -941,11 +896,11 @@ button:disabled {
 }
 
 .spin-in {
-    animation: spinIn .8s cubic-bezier(.2, .9, .2, 1) .3s forwards;
+    animation: spinIn .8s linear .3s forwards;
 }
 
 .onboarding--step-3 #gigachatSpin {
-    animation: spinIn .8s cubic-bezier(.2, .9, .2, 1) .2s forwards;
+    animation: spinIn .8s linear .2s forwards;
 }
 
 /* ===== базовая раскладка (по желанию) ===== */
@@ -965,10 +920,13 @@ button:disabled {
 }
 
 .ball {
-    width: 180px;
-    height: 180px;
+    /*width: 160px;*/
+    /*height: 160px;*/
+    height: clamp(140px, 18vw, 180px);
+    width: clamp(140px, 18vw, 180px);
     position: absolute;
     border-radius: 999px;
+    /*left: 50%;*/
     overflow: hidden;
     /* чтобы выглядело как "обтяжка шара": */
     box-shadow: inset 0 18px 26px rgba(255, 255, 255, .25),
@@ -985,57 +943,47 @@ button:disabled {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: top;
 
     /* Лёгкая "сферизация" картинки — без канваса: */
     filter: contrast(1.06) saturate(1.08);
-    transform: scale(1.08);
+    transform: scale(1.08) matrix(0.64, 0.77, 0.77, -0.64, 0, 0);
 }
 
 /* ===== запуск анимаций только на активном первом шаге ===== */
 .onboarding--step-1 .ball {
+    transform: var(--step-0-transform, translate3d(0, 0, 0));
+}
+.onboarding--step-1 .ball.ready {
+    transform: var(--step-1-transform, translate3d(0, 0, 0));
     /* единая “программа” для шаров: прилёт + вращение */
-    animation: ball-fly-in 820ms cubic-bezier(.18, .9, .18, 1) var(--delay, 0ms) both,
-    ball-spin 820ms ease-out var(--delay, 0ms) both;
+    /*animation: ball-fly-in 820ms ease-in-out var(--delay, 0ms) both;*/
+    /*ball-spin 820ms linear var(--delay, 0ms) both;*/
+    /*animation-direction: normal;*/
 }
 
 /* ===== продолжение движения на втором шаге без пересоздания шаров ===== */
 .onboarding--step-2 .ball {
-    opacity: 1;
     transform: var(--step-2-transform, translate3d(0, 0, 0));
 }
 
 .onboarding--step-3 .ball {
-    transform: var(--step-3-transform, translate3d(0, 0, 0));
+    transform: var(--step-0-transform, translate3d(0, 0, 0));
 }
 
-/* ===== keyframes прилёт + вращение ===== */
-@keyframes ball-fly-in {
-    0% {
-        opacity: 0;
-        transform: translate3d(var(--from-x, 0px), var(--from-y, 0px), 0) scale(.88);
-        filter: blur(1.4px);
-    }
-    55% {
-        opacity: 1;
-        transform: translate3d(calc(var(--from-x, 0px) * .18), calc(var(--from-y, 0px) * .18), 0) scale(1.02);
-        filter: blur(.2px);
-    }
-    100% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-        filter: blur(0);
-    }
-}
 
 @keyframes ball-spin {
     0% {
-        rotate: 0deg;
+        transform: rotate(0deg);
+        /*rotate: 0deg;*/
     }
     80% {
-        rotate: var(--spin, 240deg);
+        transform: rotate(180deg);
+        /*rotate: var(--spin, 180deg);*/
     }
     100% {
-        rotate: var(--spin, 240deg);
+        transform: rotate(360deg);
+        /*rotate: var(--spin, 360deg);*/
     }
 }
 
@@ -1215,4 +1163,16 @@ button:disabled {
 /* доступность (визуально соответствуют макету) */
 .onb-btn:active, .final-btn:active {
     transform: translateY(1px);
+}
+
+.onbording-3 {
+    display: grid;
+    height: 100%;
+    grid-template-rows: 1fr auto auto;
+}
+
+.onboarding__giga {
+    display: flex;
+    justify-content: center;
+    margin-top: 25%;
 }

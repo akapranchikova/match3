@@ -759,3 +759,11 @@ if (!startOnboardingIfNeeded()) {
     // если онбординг уже пройден — стартуем сразу
     renderStack();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const balls: any = document.getElementsByClassName('ball');
+
+    for (const ball of balls) {
+        ball.classList.add('ready');
+    }
+});
