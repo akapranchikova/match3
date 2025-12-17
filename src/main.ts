@@ -316,6 +316,11 @@ function showOnboardingStep(step: number) {
         const active = Number(s.dataset.step) === step;
         s.classList.toggle('active', active);
         s.setAttribute('aria-hidden', active ? 'false' : 'true');
+
+        if (active && onboardingEl) {
+            const bgColor = getComputedStyle(s).getPropertyValue('--onb-bg');
+            onboardingEl.style.backgroundColor = bgColor?.trim() || '#2E6C46';
+        }
     });
 }
 
