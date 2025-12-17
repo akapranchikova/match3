@@ -633,21 +633,39 @@ function handleVote(card: ArchetypeCard, liked: boolean) {
     }
 }
 
+function softplus(x: number): number {
+    return Math.log(1 + Math.exp(x));
+}
+
 function computeProfile(): ArchetypeResult[] {
     const positiveScores = archetypes.map((name) => Math.max(state.scores[name], 0));
-    const sumPositive = positiveScores.reduce((a, b) => a + b, 0);
-    const useExposure = sumPositive < 1e-6;
-    const baseValues = useExposure
-        ? archetypes.map((name) => Math.max(state.exposure[name], 0))
-        : positiveScores;
+    const hasPositive = positiveScores.some((value) => value > 0);
+    const baseValues = hasPositive
+        ? positiveScores
+        : archetypes.map((name) => Math.max(state.exposure[name], 0));
 
     const normalizedForExposure = baseValues.map((value, idx) => {
-        if (useExposure) return value;
+        if (!hasPositive) return value;
         const exposure = state.exposure[archetypes[idx]];
         return exposure > 0 ? value / exposure : value;
     });
 
-    const total = normalizedForExposure.reduce((a, b) => a + b, 0) || 1;
+    let total = normalizedForExposure.reduce((a, b) => a + b, 0);
+
+    // Если в результате получили нулевые веса (например, не было ответов),
+    // используем softplus от S как последний запасной вариант.
+    if (total <= 0) {
+        const softenedScores = archetypes.map((name) => softplus(state.scores[name]));
+        total = softenedScores.reduce((a, b) => a + b, 0) || 1;
+        return archetypes
+            .map((name, idx) => ({
+                name,
+                percent: (softenedScores[idx] / total) * 100,
+                description: archetypeDescriptions[name]
+            }))
+            .sort((a, b) => b.percent - a.percent);
+    }
+
     const profile = archetypes.map((name, idx) => ({
         name,
         percent: (normalizedForExposure[idx] / total) * 100,
