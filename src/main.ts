@@ -329,7 +329,6 @@ const appEl = document.querySelector('.app') as HTMLDivElement;
 
 const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
 const dislikeBtn = document.getElementById('dislikeBtn') as HTMLButtonElement;
-const restartBtn = document.getElementById('restart') as HTMLButtonElement;
 
 const onboardingEl = document.getElementById('onboarding') as HTMLDivElement;
 const onbSlides = Array.from(onboardingEl?.querySelectorAll('.onboarding__slide') ?? []) as HTMLDivElement[];
@@ -746,7 +745,6 @@ function bindControls() {
         swipeAway(topCard, card, -1)
     });
 
-    restartBtn.addEventListener('click', () => resetState());
 }
 
 closeResultsBtn.addEventListener('click', () => {
