@@ -667,6 +667,8 @@ button::before {
 .results-page__text-title {
     text-align: center;
     font-size: var(--fs-2xl);
+    letter-spacing: -0.23px;
+    line-height: 110.00000000000001%;
 }
 
 .results-page__text {
