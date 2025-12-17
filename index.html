@@ -143,28 +143,22 @@
     </main>
 </div>
 
-<div class="overlay hidden" id="resultsOverlay">
-    <div class="overlay-content results">
-        <h2>Тест завершен</h2>
-        <p id="mainResult" class="result-title"></p>
-        <p id="mainDescription" class="result-description"></p>
-        <div class="profile" id="profileList"></div>
-        <button id="restart" class="primary">Пройти ещё раз</button>
-    </div>
-</div>
-
 <section class="results-page hidden" id="resultsPage" aria-hidden="true">
     <div class="results-page__inner">
-        <p class="results-page__eyebrow" id="resultTitle">Тест завершён</p>
-        <h1 class="results-page__title" id="resultSubtitle">Вы — ...</h1>
+        <div>
+            <p class="results-page__eyebrow" id="resultTitle">Тест завершён</p>
+            <h1 class="results-page__title" id="resultSubtitle">Вы — ...</h1>
+        </div>
 
         <div class="results-images">
             <img id="resultImgA" class="results-img results-img--a" alt="" />
             <img id="resultImgB" class="results-img results-img--b" alt="" />
         </div>
 
-        <div class="results-page__text-title" id="resultTextTitle"></div>
-        <div class="results-page__text" id="resultText"></div>
+        <div>
+            <div class="results-page__text-title" id="resultTextTitle"></div>
+            <div class="results-page__text" id="resultText"></div>
+        </div>
 
         <button class="results-page__close" id="closeResults" type="button">Закрыть</button>
     </div>

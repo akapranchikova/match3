@@ -665,7 +665,7 @@ button::before {
 .results-page__text {
     margin: 0;
     text-align: center;
-    font-size: 18px;
+    font-size: var(--fs-sm2);
 }
 
 .results-page__close {

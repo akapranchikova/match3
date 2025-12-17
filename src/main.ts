@@ -191,69 +191,69 @@ const baseCards: ArchetypeCard[] = [
         composition: {Правитель: 1},
         art: cardImages[5]
     },
-    {
-        id: 7,
-        title: 'Дитя/Шут 60/40',
-        description: 'Вам свойственна искренность и живой отклик, потом игра и ирония.',
-        composition: {Дитя: 0.6, Шут: 0.4},
-        art: cardImages[6]
-    },
-    {
-        id: 8,
-        title: 'Творец/Эстет 60/40',
-        description: 'Сначала в вас рождается смелая идея, потом аккуратная её подача.',
-        composition: {Творец: 0.6, Эстет: 0.4},
-        art: cardImages[7]
-    },
-    {
-        id: 9,
-        title: 'Воин/Бунтарь 60/40',
-        description: 'Вам важнее дисциплина и цель, дерзость на втором плане.',
-        composition: {Воин: 0.6, Бунтарь: 0.4},
-        art: cardImages[8]
-    },
-    {
-        id: 10,
-        title: 'Опекун/Славный 60/40',
-        description: 'В первую очередь поддержка и забота, затем простота общения.',
-        composition: {Опекун: 0.6, 'Славный малый': 0.4},
-        art: cardImages[9]
-    },
-    {
-        id: 11,
-        title: 'Искатель/Мудрец 60/40',
-        description: 'Сначала опыт и эксперименты, затем глубокое осмысление.',
-        composition: {Искатель: 0.6, Мудрец: 0.4},
-        art: cardImages[10]
-    },
-    {
-        id: 12,
-        title: 'Правитель/Маг 60/40',
-        description: 'В вас преобладает порядок и структура, затем — аккуратное изменение привычного, как небольшой рабочий «трюк».',
-        composition: {Правитель: 0.6, Маг: 0.4},
-        art: cardImages[11]
-    },
-    {
-        id: 13,
-        title: 'Правитель/Бунтарь 70/30',
-        description: 'В вас преобладает порядок: вам важно, чтобы всё было организовано, но иногда вы допускаете немного свободы для эксперимента.',
-        composition: {Правитель: 0.7, Бунтарь: 0.3},
-        art: cardImages[12]
-    },
-    {
-        id: 14,
-        title: 'Правитель/Бунтарь 30/70',
-        description: 'На первом плане разрыв шаблонов и смелые решения, но при этом минимальные рамки вы всё же сохраняете.',
-        composition: {Правитель: 0.3, Бунтарь: 0.7},
-        art: cardImages[13]
-    },
-    {
-        id: 15,
-        title: 'Эстет/Воин 70/30',
-        description: 'Вам ближе чёткая, аккуратная форма, а для выразительности можете добавить немного движения.',
-        composition: {Эстет: 0.7, Воин: 0.3},
-        art: cardImages[14]
-    }
+    // {
+    //     id: 7,
+    //     title: 'Дитя/Шут 60/40',
+    //     description: 'Вам свойственна искренность и живой отклик, потом игра и ирония.',
+    //     composition: {Дитя: 0.6, Шут: 0.4},
+    //     art: cardImages[6]
+    // },
+    // {
+    //     id: 8,
+    //     title: 'Творец/Эстет 60/40',
+    //     description: 'Сначала в вас рождается смелая идея, потом аккуратная её подача.',
+    //     composition: {Творец: 0.6, Эстет: 0.4},
+    //     art: cardImages[7]
+    // },
+    // {
+    //     id: 9,
+    //     title: 'Воин/Бунтарь 60/40',
+    //     description: 'Вам важнее дисциплина и цель, дерзость на втором плане.',
+    //     composition: {Воин: 0.6, Бунтарь: 0.4},
+    //     art: cardImages[8]
+    // },
+    // {
+    //     id: 10,
+    //     title: 'Опекун/Славный 60/40',
+    //     description: 'В первую очередь поддержка и забота, затем простота общения.',
+    //     composition: {Опекун: 0.6, 'Славный малый': 0.4},
+    //     art: cardImages[9]
+    // },
+    // {
+    //     id: 11,
+    //     title: 'Искатель/Мудрец 60/40',
+    //     description: 'Сначала опыт и эксперименты, затем глубокое осмысление.',
+    //     composition: {Искатель: 0.6, Мудрец: 0.4},
+    //     art: cardImages[10]
+    // },
+    // {
+    //     id: 12,
+    //     title: 'Правитель/Маг 60/40',
+    //     description: 'В вас преобладает порядок и структура, затем — аккуратное изменение привычного, как небольшой рабочий «трюк».',
+    //     composition: {Правитель: 0.6, Маг: 0.4},
+    //     art: cardImages[11]
+    // },
+    // {
+    //     id: 13,
+    //     title: 'Правитель/Бунтарь 70/30',
+    //     description: 'В вас преобладает порядок: вам важно, чтобы всё было организовано, но иногда вы допускаете немного свободы для эксперимента.',
+    //     composition: {Правитель: 0.7, Бунтарь: 0.3},
+    //     art: cardImages[12]
+    // },
+    // {
+    //     id: 14,
+    //     title: 'Правитель/Бунтарь 30/70',
+    //     description: 'На первом плане разрыв шаблонов и смелые решения, но при этом минимальные рамки вы всё же сохраняете.',
+    //     composition: {Правитель: 0.3, Бунтарь: 0.7},
+    //     art: cardImages[13]
+    // },
+    // {
+    //     id: 15,
+    //     title: 'Эстет/Воин 70/30',
+    //     description: 'Вам ближе чёткая, аккуратная форма, а для выразительности можете добавить немного движения.',
+    //     composition: {Эстет: 0.7, Воин: 0.3},
+    //     art: cardImages[14]
+    // }
 ];
 
 const tutorialStorageKey = 'archetypeTutorialSeen';
@@ -318,6 +318,7 @@ const resultsOverlay = document.getElementById('resultsOverlay') as HTMLDivEleme
 const resultsPage = document.getElementById('resultsPage') as HTMLDivElement
 const resultTitle = document.getElementById('resultTitle') as HTMLHeadingElement
 const resultSubtitle = document.getElementById('resultSubtitle') as HTMLParagraphElement
+const resultTextTitle = document.getElementById('resultTextTitle') as HTMLParagraphElement
 const resultText = document.getElementById('resultText') as HTMLParagraphElement
 const resultsImages = document.querySelector('.results-images') as HTMLDivElement
 const resultImgA = document.getElementById('resultImgA') as HTMLImageElement
@@ -690,6 +691,8 @@ function showResultsPage(bestName: string, bestDescription: string) {
     resultSubtitle.textContent = `Вы — ${bestName}`
     resultText.textContent = bestDescription
 
+    resultTextTitle.textContent = archetypeName[bestName];
+
     const key = resultImageKeyByArchetype[bestName] ?? 'default'
     const isJester = bestName === 'Шут'
     const animateImages = !isJester
@@ -717,7 +720,7 @@ function showResultsPage(bestName: string, bestDescription: string) {
     }
 
     closeResultsBtn?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].button}`)
-    resultsPage?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].bg}`)
+    resultsPage?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].bg}; color: ${resultColorKeyByArchetype[bestName].color}`)
 }
 
 async function sendResults(profile: ArchetypeResult[]) {
