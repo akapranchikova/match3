@@ -367,6 +367,7 @@ const state = {
 const SWIPE_OUT_DURATION_MS =650;
 const SWIPE_OUT_EASING = 'cubic-bezier(.42,.59,.95,.19)';
 // const SWIPE_OUT_EASING = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+const CARD_IDLE_TRANSITION = 'transform 0.3s ease, opacity 0.3s ease';
 
 function refreshDeckFromStorage() {
     // const seenTutorial = localStorage.getItem(tutorialStorageKey) === 'true';
@@ -545,6 +546,7 @@ function renderStack() {
         el.dataset.state = idx === 0 ? 'front' : 'behind';
         el.dataset.id = card.id.toString();
         el.style.zIndex = (cards.length - state.index - idx).toString();
+        el.style.transition = CARD_IDLE_TRANSITION;
         const isTutorialCard = Boolean(card.tutorial);
         const totalQuestions = cards.length - tutorialLength;
         const answeredQuestions = Math.max(0, state.index - tutorialLength);
@@ -595,12 +597,18 @@ function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
     let startX = 0;
     let startY = 0;
     let isDragging = false;
+    const resetCard = () => {
+        cardEl.style.transition = CARD_IDLE_TRANSITION;
+        cardEl.style.transform = '';
+        cardEl.classList.remove('like', 'dislike');
+    };
 
     const onPointerDown = (event: PointerEvent) => {
         if (state.locked) return;
         isDragging = true;
         startX = event.clientX;
         startY = event.clientY;
+        cardEl.style.transition = 'none';
         cardEl.setPointerCapture(event.pointerId);
     };
 
@@ -624,14 +632,21 @@ function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
         if (like || dislike) {
             swipeAway(cardEl, card, like ? 1 : -1);
         } else {
-            cardEl.style.transform = '';
-            cardEl.classList.remove('like', 'dislike');
+            resetCard();
         }
+    };
+
+    const onPointerCancel = (event: PointerEvent) => {
+        if (!isDragging) return;
+        isDragging = false;
+        cardEl.releasePointerCapture(event.pointerId);
+        resetCard();
     };
 
     cardEl.addEventListener('pointerdown', onPointerDown);
     cardEl.addEventListener('pointermove', onPointerMove);
     cardEl.addEventListener('pointerup', onPointerUp);
+    cardEl.addEventListener('pointercancel', onPointerCancel);
 }
 
 function updateControlsState() {
