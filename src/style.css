@@ -412,8 +412,10 @@ button {
     min-height: 75px;
     font-size: 32px;
     user-select: none;
-    font-family: TT Fors, sans-serif;
+    font-family: 'TT Fors', sans-serif;
     -webkit-user-select: none;
+    font-weight: 400;
+    line-height: 100%;
     -webkit-tap-highlight-color: transparent;
     cursor: pointer;
     border: none;
@@ -739,6 +741,8 @@ button:disabled {
 
 .onboarding__slide {
     background-image: url('./assets/background/boarding.png');
+    background-repeat: no-repeat;
+    background-size: cover;
 
 }
 
@@ -762,18 +766,6 @@ button:disabled {
 .onboarding__slide > * {
     position: relative;
     z-index: 2;
-}
-
-.onboarding__slide--1 {
-
-}
-
-.onboarding__slide--2 {
-
-}
-
-.onboarding__slide--3 {
-
 }
 
 .onboarding__branding {
@@ -1032,10 +1024,63 @@ button:disabled {
     inset: 0;
     display: flex;
     align-items: flex-end;
+    background: #ffffff;
     z-index: 60;
+
+}
+
+.final-page::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 0;
     background-image: url("assets/result/images/ditya-1.jpg");
     background-size: cover;
     background-position: center;
+    -webkit-mask-image: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 0.99) 30%,
+            rgba(255, 255, 255, 0) 70%,
+            rgba(255, 255, 255, 0) 100%
+    );
+    mask-image: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 0.99) 30%,
+            rgba(255, 255, 255, 0) 70%,
+            rgba(255, 255, 255, 0) 100%
+    );
+}
+.final-page::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 0;
+    background-image: url("assets/background/final.jpg");
+
+    -webkit-mask-image: linear-gradient(
+            to top,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 0.99) 43%,
+            rgba(255, 255, 255, 0) 70%,
+            rgba(255, 255, 255, 0) 100%
+    );
+    mask-image: linear-gradient(
+            to top,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(255, 255, 255, 0.99) 43%,
+            rgba(255, 255, 255, 0) 70%,
+            rgba(255, 255, 255, 0) 100%
+    );
 }
 
 .final-page.hidden {
@@ -1058,7 +1103,7 @@ button:disabled {
     position: relative;
     padding: 33px;
     color: #fff;
-    background: linear-gradient(180deg,transparent 0%, #24583F 40%, #1E4A34 100%);
+    z-index: 2;
 }
 
 .final-title {
@@ -1093,7 +1138,7 @@ button:disabled {
 .final-btn {
     font-size: 18px;
     color: #fff;
-    background: rgba(52, 84, 44, 1);
+    background: linear-gradient(180deg, #004731 0%, #002B2E 100%);
 }
 
 .final-close {

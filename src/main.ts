@@ -537,53 +537,44 @@ function resetState() {
     renderStack();
 }
 
-function renderStack() {
-    stackEl.innerHTML = '';
-    const isTutorial = Boolean(cards[state.index]?.tutorial);
-    appEl.classList.toggle('tutorial-mode', isTutorial);
-    const activeCards = cards.slice(state.index, state.index + 2);
-    const remainingCards = cards.length - state.index;
-
-    if (remainingCards <= 5) {
-        warmupResultImages();
-    }
-
-    activeCards.forEach((card, idx) => {
-        const el = document.createElement('div');
-        el.className = card.tutorial ? 'card tutorial-card' : 'card archetype-card';
-        el.dataset.state = idx === 0 ? 'front' : 'behind';
-        el.dataset.id = card.id.toString();
-        el.style.zIndex = (cards.length - state.index - idx).toString();
-        el.style.transition = CARD_IDLE_TRANSITION;
-        const isTutorialCard = Boolean(card.tutorial);
-        const totalQuestions = cards.length - tutorialLength;
-        const answeredQuestions = Math.max(0, state.index - tutorialLength);
-        const cardNumber = isTutorialCard ? null : answeredQuestions + idx + 1;
-        const percent = (answeredQuestions / totalQuestions) * 100;
-        const labelMarkup = card.tutorialLabel ? `<div class="card-label">${card.tutorialLabel}</div>` : '';
-        const bodyClass = card.tutorial ? 'card-text tutorial-body' : 'card-text';
-        const bodyMarkup = card.tutorial
-            ? `<div class="${bodyClass}"><div class="card-description">${card.description}</div>
+function renderCardElement(card: ArchetypeCard, positionIndex: number, existing?: HTMLDivElement): HTMLDivElement {
+    const el = existing ?? document.createElement('div');
+    const isTutorialCard = Boolean(card.tutorial);
+    const totalQuestions = Math.max(1, cards.length - tutorialLength);
+    const answeredQuestions = Math.max(0, state.index - tutorialLength);
+    const cardNumber = isTutorialCard ? null : answeredQuestions + positionIndex + 1;
+    const percent = isTutorialCard ? 0 : (answeredQuestions / totalQuestions) * 100;
+    const labelMarkup = card.tutorialLabel ? `<div class="card-label">${card.tutorialLabel}</div>` : '';
+    const bodyClass = card.tutorial ? 'card-text tutorial-body' : 'card-text';
+    const bodyMarkup = card.tutorial
+        ? `<div class="${bodyClass}"><div class="card-description">${card.description}</div>
 <div><img class="tutorial-icon" src="${card.icon}" alt="" loading="lazy" decoding="async"></div>
 
 </div>`
-            : `<div class="${bodyClass}">${card.description}</div>`;
-        el.innerHTML = `
+        : `<div class="${bodyClass}">${card.description}</div>`;
+
+    const counterMarkup = isTutorialCard
+        ? ''
+        : `<div class="card-counter">${cardNumber}/${totalQuestions}</div>
+      <div class="progress-bar">
+                    <div class="progress-fill" style="width:${percent}%"></div>
+                </div>`;
+
+    el.className = card.tutorial ? 'card tutorial-card' : 'card archetype-card';
+    el.dataset.state = positionIndex === 0 ? 'front' : 'behind';
+    el.dataset.id = card.id.toString();
+    el.style.zIndex = (cards.length - state.index - positionIndex).toString();
+    el.style.transition = CARD_IDLE_TRANSITION;
+    el.style.transform = '';
+    el.classList.remove('like', 'dislike');
+    el.innerHTML = `
       <div class="indicator like">
 <img class="indicator-icon" src="${likeIconUrl}" alt="" loading="lazy" decoding="async">
        </div>
       <div class="indicator dislike">
 <img class="indicator-icon" src="${dislikeIconUrl}" alt="" loading="lazy" decoding="async">
        </div>
-      ${
-            isTutorialCard
-                ? ''
-                : `<div class="card-counter">${cardNumber}/${totalQuestions}</div>
-      <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width:${percent}%"></div>
-                </div>
-`
-        }
+      ${counterMarkup}
  
       <div class="card-content">
         ${labelMarkup}
@@ -591,11 +582,42 @@ function renderStack() {
         ${isTutorialCard ? '' : '<div class="created_by">Сгенерировано в ГигаЧат</div>'}
       </div>
     `;
-        preloadImage(card.art);
-        el.style.setProperty('--card-bg', `url(${card.art})`);
+    preloadImage(card.art);
+    el.style.setProperty('--card-bg', `url(${card.art})`);
+    if (!el.dataset.dragAttached) {
         attachDrag(el, card);
-        stackEl.appendChild(el);
+        el.dataset.dragAttached = 'true';
+    }
+    return el;
+}
+
+function renderStack() {
+    const currentCard = cards[state.index];
+    const isTutorial = Boolean(currentCard?.tutorial);
+    appEl.classList.toggle('tutorial-mode', isTutorial);
+    const activeCards = currentCard ? cards.slice(state.index, state.index + 2) : [];
+    const remainingCards = cards.length - state.index;
+
+    if (remainingCards > 0 && remainingCards <= 5) {
+        warmupResultImages();
+    }
+
+    const desiredIds = new Set(activeCards.map((card) => card.id));
+    Array.from(stackEl.querySelectorAll('.card')).forEach((el) => {
+        const cardId = Number(el.dataset.id);
+        if (!desiredIds.has(cardId)) {
+            stackEl.removeChild(el);
+        }
     });
+
+    activeCards.forEach((card, idx) => {
+        const existing = stackEl.querySelector(`.card[data-id="${card.id}"]`) as HTMLDivElement | null;
+        const el = renderCardElement(card, idx, existing ?? undefined);
+        if (!existing) {
+            stackEl.appendChild(el);
+        }
+    });
+
     const lookaheadCards = cards.slice(state.index + activeCards.length, state.index + activeCards.length + 3);
     lookaheadCards.forEach((nextCard) => preloadImage(nextCard.art));
     updateControlsState();
@@ -659,7 +681,11 @@ function attachDrag(cardEl: HTMLDivElement, card: ArchetypeCard) {
 
 function updateControlsState() {
     const card = cards[state.index]
-    if (!card) return
+    if (!card) {
+        likeBtn.disabled = true
+        dislikeBtn.disabled = true
+        return
+    }
 
     const inTutorial = Boolean(card.tutorial)
     const must = card.requiredDirection
