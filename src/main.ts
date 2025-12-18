@@ -190,6 +190,8 @@ const cardImages = Array.from({length: 24}, (_, idx) =>
     new URL(`./assets/cards/card-${String(idx + 1).padStart(2, '0')}.jpg`, import.meta.url).href
 );
 
+const finalBackgroundImage = new URL('./assets/background/final.jpg', import.meta.url).href;
+
 const preloadCache = new Set<string>();
 function preloadImage(src: string) {
     if (!src || preloadCache.has(src)) return;
@@ -205,6 +207,7 @@ function warmupResultImages() {
     if (hasPreloadedResults) return;
     hasPreloadedResults = true;
 
+    preloadImage(finalBackgroundImage);
     Object.values(resultImages).forEach(({ first, second }) => {
         if (first) preloadImage(first);
         preloadImage(second);
