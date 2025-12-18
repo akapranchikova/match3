@@ -368,6 +368,14 @@ const SWIPE_OUT_DURATION_MS =650;
 const SWIPE_OUT_EASING = 'cubic-bezier(.42,.59,.95,.19)';
 // const SWIPE_OUT_EASING = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
 const CARD_IDLE_TRANSITION = 'transform 0.3s ease, opacity 0.3s ease';
+const HAPTIC_PATTERN: number | number[] = [18, 18, 24];
+
+function triggerHapticFeedback() {
+    if (typeof navigator === 'undefined') return;
+    if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
+        navigator.vibrate(HAPTIC_PATTERN);
+    }
+}
 
 function refreshDeckFromStorage() {
     // const seenTutorial = localStorage.getItem(tutorialStorageKey) === 'true';
@@ -688,6 +696,7 @@ function swipeAway(cardEl: HTMLDivElement, card: ArchetypeCard, direction: 1 | -
     }
 
     state.locked = true;
+    triggerHapticFeedback();
     const offset = direction * 650;
     cardEl.style.transition = `transform ${SWIPE_OUT_DURATION_MS}ms ${SWIPE_OUT_EASING}, opacity ${SWIPE_OUT_DURATION_MS}ms ${SWIPE_OUT_EASING}`;
     cardEl.style.transform = `translate(${offset}px, -40px) rotate(${direction * 15}deg)`;
