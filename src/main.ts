@@ -364,7 +364,7 @@ const state = {
     locked: false
 };
 
-const SWIPE_OUT_DURATION_MS =650;
+const SWIPE_OUT_DURATION_MS =450;
 const SWIPE_OUT_EASING = 'cubic-bezier(.42,.59,.95,.19)';
 // const SWIPE_OUT_EASING = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
 const CARD_IDLE_TRANSITION = 'transform 0.3s ease, opacity 0.3s ease';

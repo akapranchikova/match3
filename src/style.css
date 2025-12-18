@@ -438,11 +438,6 @@ button::before {
 
 }
 
-.action:hover {
-    transform: translateY(-3px);
-    filter: brightness(1.04);
-}
-
 .action::before {
     content: "";
     position: absolute;
