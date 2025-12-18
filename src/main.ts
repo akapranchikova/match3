@@ -117,6 +117,21 @@ const resultImages: Record<string, { first?: string; second: string }> = {
     },
 };
 
+const resultBackgrounds: Record<string, string> = {
+    ditya: new URL('./assets/result-background/ditya.jpg', import.meta.url).href,
+    slavnyy: new URL('./assets/result-background/slavnyy.jpg', import.meta.url).href,
+    voin: new URL('./assets/result-background/voin.jpg', import.meta.url).href,
+    opekun: new URL('./assets/result-background/opekun.jpg', import.meta.url).href,
+    iskatel: new URL('./assets/result-background/iskatel.jpg', import.meta.url).href,
+    buntar: new URL('./assets/result-background/buntar.jpg', import.meta.url).href,
+    estet: new URL('./assets/result-background/estet.jpg', import.meta.url).href,
+    tvorec: new URL('./assets/result-background/tvorec.jpg', import.meta.url).href,
+    pravitel: new URL('./assets/result-background/pravitel.jpg', import.meta.url).href,
+    mag: new URL('./assets/result-background/mag.jpg', import.meta.url).href,
+    mudrec: new URL('./assets/result-background/mudrec.jpg', import.meta.url).href,
+    shut: new URL('./assets/result-background/shut.jpg', import.meta.url).href,
+};
+
 interface ArchetypeColor {
     bg: string;
     color: string;
@@ -212,6 +227,8 @@ function warmupResultImages() {
         if (first) preloadImage(first);
         preloadImage(second);
     });
+
+    Object.values(resultBackgrounds).forEach((src) => preloadImage(src));
 }
 
 const baseCards: ArchetypeCard[] = [
@@ -401,6 +418,22 @@ const resultImgA = document.getElementById('resultImgA') as HTMLDivElement
 const resultImgB = document.getElementById('resultImgB') as HTMLDivElement
 const closeResultsBtn = document.getElementById('closeResults') as HTMLButtonElement
 
+function hexToRgba(hex: string, alpha: number): string {
+    const normalized = hex.replace('#', '');
+    if (![3, 6].includes(normalized.length)) return hex;
+
+    const fullHex = normalized.length === 3
+        ? normalized.split('').map((c) => c + c).join('')
+        : normalized;
+
+    const num = Number.parseInt(fullHex, 16);
+    const r = (num >> 16) & 255;
+    const g = (num >> 8) & 255;
+    const b = num & 255;
+
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function setupLazyBackground(img: HTMLDivElement | null) {
     if (!img || img.dataset.lazySetup === 'true') return;
     img.dataset.lazySetup = 'true';
@@ -421,6 +454,38 @@ function setLazyBackgroundSource(img: HTMLDivElement | null, src: string) {
     };
     loader.onerror = () => img.classList.add('is-error');
     loader.src = src;
+}
+
+let currentResultBackgroundKey: string | null = null;
+function applyResultBackground(archetypeKey: string) {
+    if (!resultsPage) return;
+    const background = resultBackgrounds[archetypeKey] ?? resultBackgrounds.ditya;
+    if (!background) return;
+
+    currentResultBackgroundKey = archetypeKey;
+    resultsPage.dataset.bgState = 'loading';
+    resultsPage.style.setProperty('--result-bg-image', `url(${background})`);
+
+    const markReady = () => {
+        if (currentResultBackgroundKey !== archetypeKey) return;
+        resultsPage.dataset.bgState = 'loaded';
+        resultsPage.classList.add('results-page--bg-ready');
+    };
+
+    // если картинка уже закеширована — покажем фон сразу, без моргания
+    requestAnimationFrame(markReady);
+
+    const loader = new Image();
+    loader.decoding = 'async';
+    loader.loading = 'lazy';
+    loader.onload = () => {
+        markReady();
+    };
+    loader.onerror = () => {
+        if (currentResultBackgroundKey !== archetypeKey) return;
+        resultsPage.dataset.bgState = 'error';
+    };
+    loader.src = background;
 }
 
 const appEl = document.querySelector('.app') as HTMLDivElement;
@@ -822,6 +887,24 @@ function showResults() {
     sendResults(profile)
 }
 
+function applyResultPalette(archetype: string) {
+    const palette = resultColorKeyByArchetype[archetype] ?? resultColorKeyByArchetype.Дитя;
+    if (closeResultsBtn) {
+        closeResultsBtn.style.setProperty('background', palette.button);
+    }
+
+    const isLightText = palette.color.toLowerCase() === '#ffffff';
+    const overlayAlpha = isLightText ? 0.32 : 0.18;
+
+    resultsPage?.style.setProperty('--result-surface', palette.bg);
+    resultsPage?.style.setProperty('--result-overlay', hexToRgba(palette.bg, overlayAlpha));
+    resultsPage?.style.setProperty('--result-text-color', palette.color);
+    resultsPage?.style.setProperty('--color-final', palette.color);
+    if (resultsPage) {
+        resultsPage.style.color = palette.color;
+    }
+}
+
 function showResultsPage(bestName: string, bestDescription: string) {
     warmupResultImages();
     setupLazyBackground(resultImgA);
@@ -836,9 +919,11 @@ function showResultsPage(bestName: string, bestDescription: string) {
 
     resultTextTitle.textContent = `Ваш архетип авангарда — ${archetypeName[bestName]}.`;
 
-    const key = resultImageKeyByArchetype[bestName] ?? 'default'
+    const key = resultImageKeyByArchetype[bestName] ?? 'ditya'
     const isJester = bestName === 'Шут'
     const animateImages = !isJester
+    applyResultBackground(key);
+    applyResultPalette(bestName);
 
     resultsImages?.classList.toggle('single', isJester)
 
@@ -861,10 +946,6 @@ function showResultsPage(bestName: string, bestDescription: string) {
     } else {
         resultsImages?.classList.remove('animate')
     }
-
-    closeResultsBtn?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].button}`)
-    resultsPage?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].bg}; color: ${resultColorKeyByArchetype[bestName].color}`)
-    resultsPage?.style.setProperty('--color-final', resultColorKeyByArchetype[bestName].color)
 }
 
 async function sendResults(profile: ArchetypeResult[]) {
