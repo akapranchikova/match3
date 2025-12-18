@@ -394,28 +394,30 @@ const resultSubtitle = document.getElementById('resultSubtitle') as HTMLParagrap
 const resultTextTitle = document.getElementById('resultTextTitle') as HTMLParagraphElement
 const resultText = document.getElementById('resultText') as HTMLParagraphElement
 const resultsImages = document.querySelector('.results-images') as HTMLDivElement
-const resultImgA = document.getElementById('resultImgA') as HTMLImageElement
-const resultImgB = document.getElementById('resultImgB') as HTMLImageElement
+const resultImgA = document.getElementById('resultImgA') as HTMLDivElement
+const resultImgB = document.getElementById('resultImgB') as HTMLDivElement
 const closeResultsBtn = document.getElementById('closeResults') as HTMLButtonElement
 
-function setupLazyImage(img: HTMLImageElement | null) {
+function setupLazyBackground(img: HTMLDivElement | null) {
     if (!img || img.dataset.lazySetup === 'true') return;
     img.dataset.lazySetup = 'true';
-    img.loading = 'lazy';
-    img.decoding = 'async';
     img.classList.add('lazy-image');
-
-    const markLoaded = () => img.classList.add('is-loaded');
-    const markError = () => img.classList.add('is-error');
-
-    img.addEventListener('load', markLoaded);
-    img.addEventListener('error', markError);
 }
 
-function setLazyImageSource(img: HTMLImageElement | null, src: string) {
+function setLazyBackgroundSource(img: HTMLDivElement | null, src: string) {
     if (!img) return;
     img.classList.remove('is-loaded', 'is-error');
-    img.src = src;
+
+    img.style.backgroundImage = `url(${src})`;
+
+    const loader = new Image();
+    loader.decoding = 'async';
+    loader.loading = 'lazy';
+    loader.onload = () => {
+        img.classList.add('is-loaded');
+    };
+    loader.onerror = () => img.classList.add('is-error');
+    loader.src = src;
 }
 
 const appEl = document.querySelector('.app') as HTMLDivElement;
@@ -819,8 +821,8 @@ function showResults() {
 
 function showResultsPage(bestName: string, bestDescription: string) {
     warmupResultImages();
-    setupLazyImage(resultImgA);
-    setupLazyImage(resultImgB);
+    setupLazyBackground(resultImgA);
+    setupLazyBackground(resultImgB);
 
     appEl.classList.add('show-results')
     resultsPage.classList.remove('hidden')
@@ -840,12 +842,12 @@ function showResultsPage(bestName: string, bestDescription: string) {
     if (isJester) {
         resultImgA.classList.add('hidden')
         resultImgB.classList.add('solo')
-        setLazyImageSource(resultImgB, resultImages[key]?.second ?? resultImages.ditya.second)
+        setLazyBackgroundSource(resultImgB, resultImages[key]?.second ?? resultImages.ditya.second)
     } else {
         resultImgA.classList.remove('hidden')
         resultImgB.classList.remove('solo')
-        setLazyImageSource(resultImgA, resultImages[key]?.first ?? resultImages.ditya.first!)
-        setLazyImageSource(resultImgB, resultImages[key]?.second ?? resultImages.ditya.second)
+        setLazyBackgroundSource(resultImgA, resultImages[key]?.first ?? resultImages.ditya.first!)
+        setLazyBackgroundSource(resultImgB, resultImages[key]?.second ?? resultImages.ditya.second)
     }
 
     if (animateImages && resultsImages) {
@@ -859,6 +861,7 @@ function showResultsPage(bestName: string, bestDescription: string) {
 
     closeResultsBtn?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].button}`)
     resultsPage?.setAttribute('style', `background: ${resultColorKeyByArchetype[bestName].bg}; color: ${resultColorKeyByArchetype[bestName].color}`)
+    resultsPage?.style.setProperty('--color-final', resultColorKeyByArchetype[bestName].color)
 }
 
 async function sendResults(profile: ArchetypeResult[]) {

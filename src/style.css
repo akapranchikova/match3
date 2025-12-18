@@ -292,8 +292,9 @@ body {
     font-size: 24px;
     user-select: none;
     color: #f4f5ff;
+    line-height: 130%;
+    font-weight: 400;
     letter-spacing: -0.23px;
-    font-weight: normal;
     font-family: 'Geologica', sans-serif;
     text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
 }
@@ -564,16 +565,16 @@ button::before {
 
 .results-page__inner {
     width: 100%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    gap: 14px;
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    gap: var(--space-sm);
 }
 
 .results-page__eyebrow {
     text-align: center;
     margin: 0;
     font-size: var(--fs-lg);
+    opacity: 0.6;
 }
 
 .results-page__title {
@@ -586,7 +587,6 @@ button::before {
 
 .results-images {
     position: relative;
-    height: 360px;
     margin: 6px 0 2px;
     display: grid;
     place-items: center;
@@ -594,10 +594,13 @@ button::before {
 
 .results-img {
     position: absolute;
-    width: 49%;
-    max-width: 200px;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
+    width: 41vw;
+    max-height: 29vh;
+    aspect-ratio: 1 / 2;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, 0.08);
     border-radius: 32px;
     opacity: 1;
     transition: opacity .2s ease;
@@ -606,7 +609,7 @@ button::before {
 }
 
 .lazy-image {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.12));
+    /*background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.12));*/
     filter: blur(18px);
     transform: scale(1.02);
     opacity: 0.7;
@@ -617,7 +620,7 @@ button::before {
     filter: none;
     transform: none;
     opacity: 1;
-    background: transparent;
+    /*background: transparent;*/
 }
 
 .lazy-image.is-error {
@@ -689,6 +692,9 @@ button::before {
 
 .results-page__text-title {
     text-align: center;
+    font-family: 'TT Fors', sans-serif;
+    font-weight: 500;
+    margin-bottom: 16px;
     font-size: var(--fs-2xl);
     letter-spacing: -0.23px;
     line-height: 110.00000000000001%;
@@ -698,6 +704,11 @@ button::before {
     margin: 0;
     text-align: center;
     font-size: var(--fs-sm2);
+    font-family: Geologica, sans-serif;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: 0;
+    color: rgba(var(--color-final), 0.6);
 }
 
 .results-page__close {
@@ -790,7 +801,7 @@ button:disabled {
 
 .ball-2 {
     --step-0-transform: translate3d(-102%, -80%, 0) rotate(-100deg);
-    --step-1-transform: translate3d(14vw, 13vh, 0) rotate(100deg);
+    --step-1-transform: translate3d(14vw, 12vh, 0) rotate(100deg);
     --step-2-transform: translate3d(-50%, -10%, 0) scale(1.2)  rotate(70deg);
 }
 
@@ -807,7 +818,7 @@ button:disabled {
 }
 .ball-5 {
     --step-0-transform: translate3d(100vw, 26vh, 0) scale(1) rotate(160deg);
-    --step-1-transform: translate3d(calc(50vw - 20%), 27vh, 0) scale(1) rotate(160deg);
+    --step-1-transform: translate3d(calc(50vw - 20%), 26vh, 0) scale(1) rotate(160deg);
     --step-2-transform: translate3d(calc(50vw - 50%), 20vh, 0) scale(1.74) rotate(130deg);
 }
 .ball-6 {
@@ -860,8 +871,8 @@ button:disabled {
 }
 
 .ball {
-    height: clamp(140px, 18vw, 180px);
-    width: clamp(140px, 18vw, 180px);
+    height: clamp(140px, 18vh, 180px);
+    width: clamp(140px, 18vh, 180px);
     position: absolute;
     border-radius: 999px;
     /*left: 50%;*/
@@ -981,7 +992,7 @@ button:disabled {
 }
 
 .onboarding__title {
-    margin: 0 0 8px;
+    margin: 0 0 16px;
     font-size: var(--fs-5xl);
     line-height: 90%;
     letter-spacing: -0.23px;
@@ -1217,9 +1228,6 @@ button:disabled {
         margin: 0 auto;
     }
 
-    .results-images {
-        height: 420px;
-    }
 
     .results-img {
         max-width: 240px;
