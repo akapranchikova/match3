@@ -582,14 +582,7 @@ function renderStack() {
       </div>
     `;
         preloadImage(card.art);
-        const backgroundImg = document.createElement('img');
-        backgroundImg.className = 'card-bg';
-        backgroundImg.src = card.art;
-        backgroundImg.alt = '';
-        backgroundImg.loading = idx === 0 ? 'eager' : 'lazy';
-        backgroundImg.decoding = 'async';
-        backgroundImg.setAttribute('aria-hidden', 'true');
-        el.prepend(backgroundImg);
+        el.style.setProperty('--card-bg', `url(${card.art})`);
         attachDrag(el, card);
         stackEl.appendChild(el);
     });
