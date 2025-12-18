@@ -200,10 +200,16 @@ function preloadImage(src: string) {
     preloadCache.add(src);
 }
 
-Object.values(resultImages).forEach(({ first, second }) => {
-    if (first) preloadImage(first);
-    preloadImage(second);
-});
+let hasPreloadedResults = false;
+function warmupResultImages() {
+    if (hasPreloadedResults) return;
+    hasPreloadedResults = true;
+
+    Object.values(resultImages).forEach(({ first, second }) => {
+        if (first) preloadImage(first);
+        preloadImage(second);
+    });
+}
 
 const baseCards: ArchetypeCard[] = [
     {
@@ -383,6 +389,26 @@ const resultImgA = document.getElementById('resultImgA') as HTMLImageElement
 const resultImgB = document.getElementById('resultImgB') as HTMLImageElement
 const closeResultsBtn = document.getElementById('closeResults') as HTMLButtonElement
 
+function setupLazyImage(img: HTMLImageElement | null) {
+    if (!img || img.dataset.lazySetup === 'true') return;
+    img.dataset.lazySetup = 'true';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.classList.add('lazy-image');
+
+    const markLoaded = () => img.classList.add('is-loaded');
+    const markError = () => img.classList.add('is-error');
+
+    img.addEventListener('load', markLoaded);
+    img.addEventListener('error', markError);
+}
+
+function setLazyImageSource(img: HTMLImageElement | null, src: string) {
+    if (!img) return;
+    img.classList.remove('is-loaded', 'is-error');
+    img.src = src;
+}
+
 const appEl = document.querySelector('.app') as HTMLDivElement;
 
 const likeBtn = document.getElementById('likeBtn') as HTMLButtonElement;
@@ -507,6 +533,12 @@ function renderStack() {
     const isTutorial = Boolean(cards[state.index]?.tutorial);
     appEl.classList.toggle('tutorial-mode', isTutorial);
     const activeCards = cards.slice(state.index, state.index + 2);
+    const remainingCards = cards.length - state.index;
+
+    if (remainingCards <= 5) {
+        warmupResultImages();
+    }
+
     activeCards.forEach((card, idx) => {
         const el = document.createElement('div');
         el.className = card.tutorial ? 'card tutorial-card' : 'card archetype-card';
@@ -554,7 +586,7 @@ function renderStack() {
         backgroundImg.className = 'card-bg';
         backgroundImg.src = card.art;
         backgroundImg.alt = '';
-        backgroundImg.loading = 'eager';
+        backgroundImg.loading = idx === 0 ? 'eager' : 'lazy';
         backgroundImg.decoding = 'async';
         backgroundImg.setAttribute('aria-hidden', 'true');
         el.prepend(backgroundImg);
@@ -743,6 +775,10 @@ function showResults() {
 }
 
 function showResultsPage(bestName: string, bestDescription: string) {
+    warmupResultImages();
+    setupLazyImage(resultImgA);
+    setupLazyImage(resultImgB);
+
     appEl.classList.add('show-results')
     resultsPage.classList.remove('hidden')
 
@@ -761,12 +797,12 @@ function showResultsPage(bestName: string, bestDescription: string) {
     if (isJester) {
         resultImgA.classList.add('hidden')
         resultImgB.classList.add('solo')
-        resultImgB.src = resultImages[key]?.second ?? resultImages.ditya.second
+        setLazyImageSource(resultImgB, resultImages[key]?.second ?? resultImages.ditya.second)
     } else {
         resultImgA.classList.remove('hidden')
         resultImgB.classList.remove('solo')
-        resultImgA.src = resultImages[key]?.first ?? resultImages.ditya.first!
-        resultImgB.src = resultImages[key]?.second ?? resultImages.ditya.second
+        setLazyImageSource(resultImgA, resultImages[key]?.first ?? resultImages.ditya.first!)
+        setLazyImageSource(resultImgB, resultImages[key]?.second ?? resultImages.ditya.second)
     }
 
     if (animateImages && resultsImages) {

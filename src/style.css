@@ -602,6 +602,26 @@ button::before {
     transform: var(--final-transform);
 }
 
+.lazy-image {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.12));
+    filter: blur(18px);
+    transform: scale(1.02);
+    opacity: 0.7;
+    transition: filter 0.35s ease, transform 0.35s ease, opacity 0.25s ease, background 0.35s ease;
+}
+
+.lazy-image.is-loaded {
+    filter: none;
+    transform: none;
+    opacity: 1;
+    background: transparent;
+}
+
+.lazy-image.is-error {
+    filter: grayscale(1) blur(6px);
+    opacity: 0.6;
+}
+
 .results-img--a {
     --final-transform: rotate(-12deg) translateX(-62px) translateY(-50px);
 }
