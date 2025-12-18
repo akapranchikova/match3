@@ -56,9 +56,8 @@ body {
 
 .app {
     display: none;
-    width: min(420px, 100vw);
-    height: min(860px, 100dvh);
-    /*display: flex;*/
+    width: 100vw;
+    height: 100dvh;
     flex-direction: column;
     padding: 16px;
     background-color: #91847F;
@@ -186,7 +185,7 @@ body {
     padding: 26px 22px 40px;
     background-image: var(--card-bg);
     background-size: cover;
-    background-position: center;
+    background-position: top;
     background-repeat: no-repeat;
     overflow: hidden;
     display: flex;
@@ -732,11 +731,10 @@ button:disabled {
 .onboarding__slide {
     position: relative;
     display: none;
+    width: 100%;
+    height: 100%;
     padding: 30px;
-    width: min(420px, 100vw);
-    /*width: 100vw;*/
     margin: 0 auto;
-    height: 100dvh;
 }
 
 .onboarding__slide.active {
@@ -1182,6 +1180,87 @@ button:disabled {
     font-size: 18px;
     line-height: 1;
     cursor: pointer;
+}
+
+@media (min-width: 640px) {
+    body {
+        /*padding: 12px;*/
+    }
+
+    .app {
+        padding: 22px;
+    }
+
+    .branding {
+        top: 28px;
+        left: 28px;
+        right: 28px;
+    }
+
+    .content {
+        gap: 22px;
+    }
+
+    .card {
+        border-radius: 38px;
+        padding: 32px 28px 50px;
+    }
+
+    .tutorial-card {
+        inset: 70px 4px 0;
+        padding: 38px 34px 96px 34px;
+    }
+
+    .controls {
+        gap: 22px;
+        padding: 0 10px;
+    }
+
+    button {
+        max-width: 100%;
+    }
+
+    .onboarding__slide {
+        padding: 40px 44px;
+    }
+
+    .onboarding__text {
+        bottom: 160px;
+    }
+
+    .onboarding__actions {
+        bottom: 50px;
+    }
+
+    .results-page {
+        padding: 40px;
+    }
+
+    .results-page__inner {
+        max-width: 580px;
+        margin: 0 auto;
+    }
+
+    .results-images {
+        height: 420px;
+    }
+
+    .results-img {
+        max-width: 240px;
+    }
+
+    .results-images.single .results-img--b {
+        max-width: 420px;
+    }
+
+    .final-hero {
+        height: 52%;
+        min-height: 360px;
+    }
+
+    .final-content {
+        padding: 38px;
+    }
 }
 
 /* доступность (визуально соответствуют макету) */
