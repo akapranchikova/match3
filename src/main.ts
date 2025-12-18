@@ -49,7 +49,7 @@ const archetypeName: Record<string, string> = {
 import likeIconUrl from './assets/elements/like.svg?url'
 import dislikeIconUrl from './assets/elements/dislike.svg?url'
 import likeHelpIconUrl from './assets/elements/helpLike.png?url'
-import dislikeHelpIconUrl from './assets/elements/helpLike.png?url'
+import dislikeHelpIconUrl from './assets/elements/helpDislike.png?url'
 
 
 const resultImageKeyByArchetype: Record<string, string> = {
